@@ -2507,6 +2507,69 @@
     ctx.restore();
   }
 
+  // === DRAIN at the bottom of the tank ===
+  // Subtle suction swirl around the grate; rotates slowly
+  function drawDrain(ctx, cx, cy, r, now) {
+    // suction swirl (always-on flow lines spiraling toward the drain)
+    ctx.save();
+    const flowR = r + 18;
+    for (let i = 0; i < 10; i++) {
+      const baseA = (i / 10) * TAU;
+      const a = baseA + (now / 900);
+      const t = ((now / 60) + i * 4) % 18 / 18; // 0..1
+      const startR = flowR - t * 12;
+      if (startR < r + 1) continue;
+      ctx.strokeStyle = `rgba(140, 200, 240, ${0.35 * (1 - t)})`;
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.arc(cx, cy, startR, a, a + 0.55);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // base/socket recessed circle
+    const recessGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r + 5);
+    recessGrad.addColorStop(0, "rgba(10, 15, 25, 0.7)");
+    recessGrad.addColorStop(1, "rgba(10, 15, 25, 0)");
+    ctx.fillStyle = recessGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r + 6, 0, TAU);
+    ctx.fill();
+
+    // dark void
+    ctx.fillStyle = "rgba(5, 8, 14, 0.95)";
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(160, 175, 195, 0.8)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // metal grate cross-lines (rotate slowly)
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate((now / 2400) % TAU);
+    ctx.strokeStyle = "rgba(190, 200, 215, 0.85)";
+    ctx.lineWidth = 1.6;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.moveTo(-r + 1, 0);
+      ctx.lineTo(r - 1, 0);
+      ctx.stroke();
+      ctx.rotate(Math.PI / 4);
+    }
+    ctx.restore();
+
+    // central darkness suggesting depth
+    const voidGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 0.7);
+    voidGrad.addColorStop(0, "rgba(0, 0, 0, 0.85)");
+    voidGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = voidGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.8, 0, TAU);
+    ctx.fill();
+  }
+
   // === SPLASH effect (droplets + ripple + crown) ===
   function spawnSplash(splashX, surfaceY) {
     const droplets = [];
@@ -3115,13 +3178,33 @@
     }
     ctx.stroke();
 
-    // floating shits (bob with water)
+    // === DRAIN at bottom-center of tank (suction outlet) ===
+    const drainCX = (G.tankLeft + G.tankRight) / 2;
+    const drainCY = G.tankBottom - 6;
+    const drainR  = Math.min(12, h * 0.13);
+    drawDrain(ctx, drainCX, drainCY, drainR, now);
+
+    // floating shits (bob with water; some may be in 'suction' mode)
     if (!STATE.floating || STATE.floating.length === 0) initFloatingShits(G);
     for (const f of STATE.floating) {
-      const fx = G.tankLeft + 16 + f.x * (w - 32);
-      const fy = waterTop + 20 + f.y * (h - 50) + Math.sin(now/600 + f.phase) * 3;
-      const rot = f.rot + Math.sin(now/900 + f.phase) * 0.15;
-      drawShit(ctx, fx, fy, f.scale, 0.85, "", rot);
+      if (f.suckStart) {
+        // Suction: spiral toward the drain
+        const t = clamp((now - f.suckStart) / f.suckDuration, 0, 1);
+        const angle = t * Math.PI * 4;
+        const orbitR = (1 - t) * 14;
+        const baseX = lerp(f.suckStartX, drainCX, t);
+        const baseY = lerp(f.suckStartY, drainCY, t);
+        const fx = baseX + Math.cos(angle) * orbitR * (1 - t);
+        const fy = baseY + Math.sin(angle) * orbitR * 0.4 * (1 - t);
+        const scl = lerp(f.scale, 0.15, t);
+        const rot = (f.rot || 0) + t * Math.PI * 6;
+        drawShit(ctx, fx, fy, scl, lerp(0.95, 0.1, t), "", rot);
+      } else {
+        const fx = G.tankLeft + 16 + f.x * (w - 32);
+        const fy = waterTop + 20 + f.y * (h - 50) + Math.sin(now/600 + f.phase) * 3;
+        const rot = f.rot + Math.sin(now/900 + f.phase) * 0.15;
+        drawShit(ctx, fx, fy, f.scale, 0.85, "", rot);
+      }
     }
 
     // bubbles rising
@@ -3911,17 +3994,19 @@
 
   function splashIntoTank(label, url) {
     if (!STATE.floating || STATE.floating.length === 0) {
-      // wait for next frame when geometry is ready
       STATE.floating = STATE.floating || [];
     }
-    // add a new floater (replaces the oldest if at capacity to keep count steady)
     if (STATE.floating.length >= 18) STATE.floating.shift();
     STATE.floating.push({
       x: rand(0.1, 0.9),
-      y: rand(0.0, 0.2),      // splash in near the top, will settle
+      y: rand(0.0, 0.2),
       phase: rand(0, TAU),
       rot: rand(-0.5, 0.5),
       scale: rand(0.65, 0.95),
+      // Mark this floater as the one queued for delivery — gets pulled
+      // toward the drain after a brief float, then triggers tube delivery
+      pendingDelivery: { label, url },
+      suckAt: performance.now() + 500,
     });
     STATE.inTank = STATE.floating.length;
     // splash bubbles
@@ -3940,8 +4025,44 @@
     const splashX = G.tankLeft + 16 + (newest ? newest.x : 0.5) * (G.tankRight - G.tankLeft - 32);
     const surfaceY = G.tankTop + 22;
     spawnSplash(splashX, surfaceY);
-    // now send the tube delivery to McAmerica
-    setTimeout(() => spawnTubeDelivery(label, url), 400);
+  }
+
+  // Per-frame: progress suction; remove sucked-through floaters and
+  // hand off to the tube delivery (turd reaches the restaurant)
+  function updateFloaters(now) {
+    if (!STATE.floating || STATE.floating.length === 0) return;
+    const G = restaurantGeom();
+    const w = G.tankRight - G.tankLeft;
+    const h = G.tankBottom - G.tankTop;
+    const waterTop = G.tankTop + 22;
+    const drainCX = (G.tankLeft + G.tankRight) / 2;
+    const drainCY = G.tankBottom - 6;
+
+    for (let i = STATE.floating.length - 1; i >= 0; i--) {
+      const f = STATE.floating[i];
+      // Begin suction
+      if (f.suckAt && !f.suckStart && now >= f.suckAt) {
+        f.suckStart = now;
+        f.suckDuration = 700;
+        f.suckStartX = G.tankLeft + 16 + f.x * (w - 32);
+        f.suckStartY = waterTop + 20 + f.y * (h - 50);
+        // gurgle bubbles around drain
+        for (let k = 0; k < 4; k++) {
+          STATE.bubbles.push({
+            x: 0.45 + Math.random() * 0.10,
+            startY: 1, life: 0,
+            maxLife: rand(40, 110), r: rand(1.5, 3),
+          });
+        }
+      }
+      // End of suction → hand off to tube delivery and remove floater
+      if (f.suckStart && (now - f.suckStart) >= f.suckDuration) {
+        const evt = f.pendingDelivery;
+        STATE.floating.splice(i, 1);
+        STATE.inTank = STATE.floating.length;
+        if (evt) spawnTubeDelivery(evt.label, evt.url);
+      }
+    }
   }
 
   function spawnTubeDelivery(label, url) {
@@ -4157,6 +4278,7 @@
     tickHeader(Date.now());
     updateVote(now);
     updateShits(now);
+    updateFloaters(now);
     updateDeliveries(now);
     drawMachine(now);
     drawRestaurant(now);
