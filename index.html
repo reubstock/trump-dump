@@ -868,6 +868,8 @@
     catapult: { phase: "idle", phaseStart: 0 },
     // single in-flight projectile (cross-panel)
     projectile: null,
+    // turd travelling from toilet → tube → ramp → cup
+    toiletShit: null,
     // vote rising from ballot box to Trump's mouth (per deposit)
     vote: null,
     // tally on the box
@@ -957,28 +959,53 @@
   // ============================================================
   function machineGeom() {
     const trumpX = mW * 0.32;
-    const trumpY = mH * 0.50;
+    const trumpY = mH * 0.40;                // raised ~2 inches
     const toiletY = trumpY + 100;
     const thielX = mW * 0.56;
-    const thielY = mH * 0.58;
+    const thielY = mH * 0.50;
     const floorY = mH - 90;
     // catapult sits to the right of Thiel
     const catapultBaseX = mW * 0.82;
-    const catapultBaseY = toiletY + 36;
+    const catapultBaseY = floorY - 30;       // sits on floor
     // ballot box on Trump's right (viewer's left), between him and the column
     const ballotX = mW * 0.14;
-    const ballotY = toiletY + 30;        // bottom of box sits on floor
+    const ballotY = floorY;                  // bottom of box sits on floor
     const ballotSlotX = ballotX;
-    const ballotSlotY = ballotY - 76;    // slot at top of box
+    const ballotSlotY = ballotY - 76;        // slot at top of box
     // Trump's mouth (absolute coords)
     const trumpMouthX = trumpX;
     const trumpMouthY = trumpY + 17;
+
+    // === TUBE: from toilet base, curves down and right to the ramp top ===
+    const tubeP0X = trumpX + 30, tubeP0Y = toiletY + 14;       // exits toilet
+    const rampTopX = mW * 0.66, rampTopY = catapultBaseY - 24; // top of ramp
+    const tubeP1X = trumpX + 110, tubeP1Y = rampTopY + 40;     // bend control
+    const tubeP2X = rampTopX,     tubeP2Y = rampTopY;          // ends at ramp
+
+    // === RAMP: sloped chute from tube end down to catapult cup ===
+    const rampBotX = catapultBaseX - 22;
+    const rampBotY = catapultBaseY - 8;
+
+    // catapult cup position at rest (matches drawCatapult armAngle = -1.0)
+    const cupRestX = catapultBaseX - 18, cupRestY = catapultBaseY - 8;
+
     return {
       trumpX, trumpY, toiletY, thielX, thielY, floorY,
       catapultBaseX, catapultBaseY,
       ballotX, ballotY, ballotSlotX, ballotSlotY,
       trumpMouthX, trumpMouthY,
+      tubeP0X, tubeP0Y, tubeP1X, tubeP1Y, tubeP2X, tubeP2Y,
+      rampTopX, rampTopY, rampBotX, rampBotY,
+      cupRestX, cupRestY,
     };
+  }
+
+  // point + tangent on a quadratic bezier at parameter t
+  function bezier2(p0, p1, p2, t) {
+    const u = 1 - t;
+    const x = u*u * p0[0] + 2*u*t * p1[0] + t*t * p2[0];
+    const y = u*u * p0[1] + 2*u*t * p1[1] + t*t * p2[1];
+    return [x, y];
   }
 
   function restaurantGeom() {
@@ -1575,6 +1602,136 @@
       ctx.lineTo(x + i*4, y + h - 18);
       ctx.stroke();
     }
+  }
+
+  // === TUBE (glass pipe with flowing water) ===
+  function drawTube(ctx, g, now) {
+    const p0 = [g.tubeP0X, g.tubeP0Y];
+    const p1 = [g.tubeP1X, g.tubeP1Y];
+    const p2 = [g.tubeP2X, g.tubeP2Y];
+    const TUBE_W = 22;
+
+    // outer glass walls
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "rgba(180, 220, 240, 0.55)";
+    ctx.lineWidth = TUBE_W + 4;
+    ctx.beginPath();
+    ctx.moveTo(p0[0], p0[1]);
+    ctx.quadraticCurveTo(p1[0], p1[1], p2[0], p2[1]);
+    ctx.stroke();
+
+    // glass body (semi-transparent so contents visible)
+    ctx.strokeStyle = "rgba(180, 220, 250, 0.18)";
+    ctx.lineWidth = TUBE_W;
+    ctx.beginPath();
+    ctx.moveTo(p0[0], p0[1]);
+    ctx.quadraticCurveTo(p1[0], p1[1], p2[0], p2[1]);
+    ctx.stroke();
+
+    // water inside (animated flow gradient)
+    ctx.strokeStyle = "rgba(80, 160, 220, 0.55)";
+    ctx.lineWidth = TUBE_W - 6;
+    ctx.beginPath();
+    ctx.moveTo(p0[0], p0[1]);
+    ctx.quadraticCurveTo(p1[0], p1[1], p2[0], p2[1]);
+    ctx.stroke();
+
+    // flowing water highlights (animated dashes following the path)
+    ctx.strokeStyle = "rgba(220, 240, 255, 0.55)";
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([12, 18]);
+    ctx.lineDashOffset = -((now / 25) % 30);
+    ctx.beginPath();
+    ctx.moveTo(p0[0], p0[1]);
+    ctx.quadraticCurveTo(p1[0], p1[1], p2[0], p2[1]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // bubbles
+    ctx.strokeStyle = "rgba(220, 240, 255, 0.7)";
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([2, 10]);
+    ctx.lineDashOffset = -((now / 18) % 12) + 6;
+    ctx.beginPath();
+    ctx.moveTo(p0[0], p0[1]);
+    ctx.quadraticCurveTo(p1[0], p1[1], p2[0], p2[1]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // tube glass outline (rim shine on top edge)
+    ctx.strokeStyle = "rgba(255,255,255,0.4)";
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(p0[0], p0[1] - TUBE_W/2 + 2);
+    ctx.quadraticCurveTo(p1[0], p1[1] - TUBE_W/2 + 2, p2[0], p2[1] - TUBE_W/2 + 2);
+    ctx.stroke();
+
+    // metal collar at toilet end
+    ctx.fillStyle = "#c9c9d2";
+    ctx.strokeStyle = "rgba(50,60,80,0.7)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(p0[0], p0[1], TUBE_W/2 + 4, 0, TAU);
+    ctx.fill(); ctx.stroke();
+    // bolts
+    ctx.fillStyle = "#3a3a44";
+    for (let i = 0; i < 4; i++) {
+      const a = i * (Math.PI / 2) + Math.PI / 4;
+      ctx.beginPath();
+      ctx.arc(p0[0] + Math.cos(a) * (TUBE_W/2 + 1.5), p0[1] + Math.sin(a) * (TUBE_W/2 + 1.5), 1, 0, TAU);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // === RAMP (sloped chute with rails) ===
+  function drawRamp(ctx, g) {
+    const x0 = g.rampTopX, y0 = g.rampTopY;
+    const x1 = g.rampBotX, y1 = g.rampBotY;
+    // ramp board (wood)
+    ctx.save();
+    const grad = ctx.createLinearGradient(x0, y0, x1, y1);
+    grad.addColorStop(0, "#a87844");
+    grad.addColorStop(1, "#7a4a20");
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = "rgba(40, 20, 5, 0.7)";
+    ctx.lineWidth = 1.2;
+    // slope as a thick quad
+    const dx = x1 - x0, dy = y1 - y0;
+    const len = Math.hypot(dx, dy);
+    const nx = -dy / len, ny = dx / len;
+    const thick = 8;
+    const ax = x0 + nx * thick / 2, ay = y0 + ny * thick / 2;
+    const bx = x1 + nx * thick / 2, by = y1 + ny * thick / 2;
+    const cx = x1 - nx * thick / 2, cy = y1 - ny * thick / 2;
+    const dxp = x0 - nx * thick / 2, dyp = y0 - ny * thick / 2;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.lineTo(cx, cy); ctx.lineTo(dxp, dyp); ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    // top surface highlight
+    ctx.strokeStyle = "rgba(255, 200, 130, 0.6)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+    // side rails
+    ctx.strokeStyle = "rgba(40, 20, 5, 0.6)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(ax + nx * 2, ay + ny * 2); ctx.lineTo(bx + nx * 2, by + ny * 2);
+    ctx.stroke();
+    // wood grain lines
+    ctx.strokeStyle = "rgba(60, 30, 5, 0.35)";
+    ctx.lineWidth = 0.6;
+    for (let i = 1; i < 5; i++) {
+      const tt = i / 5;
+      const sx = lerp(ax, bx, tt), sy = lerp(ay, by, tt);
+      const ex = lerp(dxp, cx, tt), ey = lerp(dyp, cy, tt);
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
+    }
+    // support brace at bottom
+    ctx.fillStyle = "#5a3a18";
+    ctx.fillRect(x1 - 3, y1, 6, 12);
+    ctx.restore();
   }
 
   // === CATAPULT ===
@@ -2425,18 +2582,20 @@
       mCtx.fillText("YES! YES! YES!", bubX, bubY + 3);
     }
 
-    // Sewer trough from toilet to catapult base
-    mCtx.strokeStyle = "rgba(180, 130, 70, 0.45)";
-    mCtx.lineWidth = 1;
-    mCtx.beginPath();
-    mCtx.moveTo(g.trumpX + 16, g.toiletY + 28);
-    mCtx.lineTo(g.catapultBaseX - 30, g.catapultBaseY + 2);
-    mCtx.stroke();
+    // === DELIVERY SYSTEM: tube + ramp from toilet to catapult ===
+    drawTube(mCtx, g, now);
+    drawRamp(mCtx, g);
 
     // Catapult
     const armAngle = currentArmAngle(now);
     const cupLoaded = (STATE.catapult.phase === "wind_up" || STATE.catapult.phase === "loaded");
     drawCatapult(mCtx, g.catapultBaseX, g.catapultBaseY, armAngle, cupLoaded);
+
+    // === TURD IN TRANSIT (toilet → tube → ramp → cup) ===
+    if (STATE.toiletShit && STATE.toiletShit.active) {
+      const t = STATE.toiletShit;
+      drawShit(mCtx, t.x, t.y, t.scale || 0.65, 1, "", t.rot || 0);
+    }
 
     // In-flight projectile in the left panel (catapult → off right edge)
     if (STATE.projectile && STATE.projectile.active) {
@@ -2859,6 +3018,14 @@
     flight: 1100,   // turd arcs across to tank
   };
 
+  // === TURD TRANSIT TIMING ===
+  const TRANSIT = {
+    in_toilet: 280,   // sits briefly in bowl
+    in_tube:   700,   // flows through tube
+    on_ramp:   320,   // slides down ramp into cup
+  };
+  const TRANSIT_TOTAL = TRANSIT.in_toilet + TRANSIT.in_tube + TRANSIT.on_ramp;
+
   // armAngle: -1 = wound back, 0 = neutral (forward-up), +1 = released
   function currentArmAngle(now) {
     const c = STATE.catapult;
@@ -2887,25 +3054,33 @@
 
   function runShitJourney(event) {
     const now = performance.now();
-    // queue catapult sequence: load → wind_up → loaded → fire → flight
-    STATE.catapult = { phase: "load", phaseStart: now, event };
+    // Start turd in toilet bowl. updateShits drives the transit each frame.
+    STATE.toiletShit = {
+      active: true,
+      label: event.label,
+      url: event.url,
+      event,
+      startTime: now,
+      scale: 0.7,
+      x: 0, y: 0, rot: 0,
+    };
+    // After transit, kick off the catapult sequence (wind_up → loaded → fire)
     setTimeout(() => {
       STATE.catapult = { phase: "wind_up", phaseStart: performance.now(), event };
-    }, CATAPULT.load);
+    }, TRANSIT_TOTAL);
     setTimeout(() => {
       STATE.catapult = { phase: "loaded", phaseStart: performance.now(), event };
-    }, CATAPULT.load + CATAPULT.wind_up);
+    }, TRANSIT_TOTAL + CATAPULT.wind_up);
     setTimeout(() => {
       STATE.catapult = { phase: "fire", phaseStart: performance.now(), event };
-    }, CATAPULT.load + CATAPULT.wind_up + CATAPULT.loaded);
-    // launch projectile + start recoil at the END of fire phase
+    }, TRANSIT_TOTAL + CATAPULT.wind_up + CATAPULT.loaded);
     setTimeout(() => {
       launchProjectile(event);
       STATE.catapult = { phase: "recoil", phaseStart: performance.now() };
       setTimeout(() => {
         STATE.catapult = { phase: "idle", phaseStart: performance.now() };
       }, CATAPULT.recoil);
-    }, CATAPULT.load + CATAPULT.wind_up + CATAPULT.loaded + CATAPULT.fire);
+    }, TRANSIT_TOTAL + CATAPULT.wind_up + CATAPULT.loaded + CATAPULT.fire);
   }
 
   function launchProjectile(event) {
@@ -2974,10 +3149,48 @@
   }
 
   function updateShits(now) {
+    // ---- TOILET → TUBE → RAMP → CUP ----
+    const ts = STATE.toiletShit;
+    if (ts && ts.active) {
+      const g = machineGeom();
+      const age = now - ts.startTime;
+      if (age < TRANSIT.in_toilet) {
+        // Sit in the toilet bowl, just above the dark hole, slight bob
+        const t = age / TRANSIT.in_toilet;
+        ts.x = g.trumpX;
+        ts.y = g.toiletY - 4 - (1 - t) * 2;
+        ts.scale = 0.62;
+        ts.rot = Math.sin(now / 80) * 0.15;
+      } else if (age < TRANSIT.in_toilet + TRANSIT.in_tube) {
+        // Travel along the tube bezier
+        const t = (age - TRANSIT.in_toilet) / TRANSIT.in_tube;
+        const [bx, by] = bezier2(
+          [g.tubeP0X, g.tubeP0Y],
+          [g.tubeP1X, g.tubeP1Y],
+          [g.tubeP2X, g.tubeP2Y],
+          t
+        );
+        ts.x = bx; ts.y = by;
+        ts.scale = 0.58;
+        ts.rot = t * Math.PI * 3;
+      } else if (age < TRANSIT_TOTAL) {
+        // Slide down ramp toward the cup
+        const t = (age - TRANSIT.in_toilet - TRANSIT.in_tube) / TRANSIT.on_ramp;
+        ts.x = lerp(g.rampTopX, g.cupRestX, t);
+        ts.y = lerp(g.rampTopY - 4, g.cupRestY - 4, t);
+        ts.scale = lerp(0.58, 0.55, t);
+        ts.rot += 0.25;
+      } else {
+        // delivered into cup; catapult animation handles the visible turd there
+        ts.active = false;
+        STATE.toiletShit = null;
+      }
+    }
+
+    // ---- CROSS-PANEL PROJECTILE (catapult → tank) ----
     const p = STATE.projectile;
     if (!p || !p.active) return;
     const t = Math.min(1, (now - p.startTime) / p.duration);
-    // Quadratic bezier with apex control point
     const u = 1 - t;
     const ctrlX = (p.startX + p.endWorldX) / 2;
     const ctrlY = p.apexY;
