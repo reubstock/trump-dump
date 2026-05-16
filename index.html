@@ -1,1119 +1,713 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>King Dump — every 10 seconds, a fresh deposit</title>
-<meta name="description" content="An animated pixel-art catalog of 100 of Donald Trump's worst acts, 2017–2026. Satire." />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trump's Dumps · one every 8 seconds</title>
+<meta name="description" content="A live animated schematic of Donald Trump's 100 worst acts, 2017–2026. One deposit every 8 seconds. Satire.">
 <style>
-/* ============================================================
-   KING DUMP — pixel-art single-file satire
-   ============================================================ */
-:root {
-  --bg-1:    #2b2840;
-  --bg-2:    #1a1a2e;
-  --paper:   #f1e6c8;
-  --ink:     #0a0a16;
-  --gold:    #f7c948;
-  --gold-d:  #b8860b;
-  --red:     #e53935;
-  --red-d:   #8b1818;
-  --blue:    #2a4d8f;
-  --skin:    #f3c89a;
-  --skin-s:  #c98756;
-  --hair:    #f5d76e;
-  --hair-s:  #a8801d;
-  --turd:    #6b3f1a;
-  --turd-d:  #3a2208;
-  --turd-l:  #946238;
-  --glass:   rgba(150,200,235,0.12);
-  --glass-e: #6aaedb;
-}
-* { box-sizing: border-box; }
-html, body {
-  margin: 0; padding: 0;
-  background: var(--bg-1);
-  color: var(--paper);
-  font-family: "VT323", "Courier New", monospace;
-  font-size: 18px;
-  line-height: 1.2;
-  overflow-x: hidden;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-}
-svg { shape-rendering: crispEdges; image-rendering: pixelated; display: block; }
-button, .modal-card, .speech, .banner, header.top { image-rendering: pixelated; }
+  :root {
+    --bg: #060708;
+    --bg-2: #07090d;
+    --bg-3: #050608;
+    --ink: #f1f3f7;
+    --ink-dim: rgba(241,243,247,0.78);
+    --ink-faint: rgba(241,243,247,0.5);
+    --hairline: rgba(255,255,255,0.08);
+    --cheeto: #ff8c1a;
+    --cheeto-dim: rgba(255,140,26,0.55);
+    --shit: #8a5a2a;
+    --shit-bright: #b87838;
+    --shit-soft: rgba(138,90,42,0.55);
+    --gold: #f7c948;
+    --red: #e53935;
+    --diner: #8cdec7;
+    --diner-bright: #b8f0dc;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background:
+      radial-gradient(ellipse 80% 60% at 75% 35%, #0c0f17 0%, #060708 60%),
+      #060708;
+    color: var(--ink);
+    font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+  .stage { display: grid; grid-template-rows: 96px 1fr; height: 100vh; }
 
-/* Background — starry CRT vibe */
-body {
-  background:
-    radial-gradient(circle at 15% 12%, #463c66 0%, transparent 35%),
-    radial-gradient(circle at 85% 88%, #1a1a2e 0%, transparent 50%),
-    var(--bg-1);
-  background-attachment: fixed;
-  min-height: 100vh;
-}
+  /* ===== TOPBAR ===== */
+  .topbar {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    align-items: center;
+    padding: 0 30px;
+    gap: 32px;
+    border-bottom: 1px solid var(--hairline);
+    background: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent);
+  }
+  .title-zone {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .crown-icon {
+    font-size: 38px;
+    line-height: 1;
+    filter: drop-shadow(0 0 12px rgba(247, 201, 72, 0.6));
+    animation: crown-bob 4s ease-in-out infinite;
+  }
+  @keyframes crown-bob {
+    0%, 100% { transform: rotate(-2deg) translateY(0); }
+    50%      { transform: rotate(2deg) translateY(-2px); }
+  }
+  .title-text { display: flex; flex-direction: column; gap: 6px; }
+  .title-text h1 {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #ffffff;
+    line-height: 1;
+    text-shadow:
+      0 0 18px rgba(255, 140, 26, 0.45),
+      0 0 36px rgba(255, 140, 26, 0.20);
+  }
+  .title-text h1 .apos { color: var(--cheeto); }
+  .title-sub {
+    font-size: 9.5px;
+    letter-spacing: 3.5px;
+    color: rgba(230,232,236,0.45);
+    text-transform: uppercase;
+  }
 
-/* ----- Header ----- */
-header.top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px;
-  background: var(--ink);
-  border-bottom: 4px solid var(--gold);
-  position: sticky; top: 0; z-index: 50;
-  box-shadow: 0 4px 0 var(--red-d);
-}
-h1.brand {
-  margin: 0;
-  font-family: "Press Start 2P", monospace;
-  font-weight: 400;
-  font-size: 22px;
-  color: var(--gold);
-  display: flex; align-items: center; gap: 12px;
-  text-shadow: 3px 3px 0 var(--red-d);
-}
-h1.brand .sub {
-  font-family: "VT323", monospace;
-  font-size: 16px;
-  color: var(--paper);
-  letter-spacing: 1px;
-  text-shadow: none;
-  margin-left: 6px;
-}
-nav.top-buttons { display: flex; gap: 10px; }
-nav.top-buttons button {
-  font-family: "Press Start 2P", monospace;
-  font-size: 10px;
-  padding: 10px 14px;
-  background: var(--red);
-  color: var(--paper);
-  border: 3px solid var(--paper);
-  cursor: pointer;
-  text-transform: uppercase;
-  box-shadow: 4px 4px 0 var(--ink);
-  transition: transform 0.06s, box-shadow 0.06s;
-  letter-spacing: 1px;
-}
-nav.top-buttons button:hover { background: var(--gold); color: var(--ink); }
-nav.top-buttons button:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--ink);
-}
-nav.top-buttons button.alt { background: var(--blue); }
-nav.top-buttons button.alt:hover { background: var(--gold); color: var(--ink); }
+  .clock-wrap {
+    display: flex; align-items: center; gap: 16px;
+    border-left: 1px solid var(--hairline);
+    padding-left: 28px;
+  }
+  .clock { width: 60px; height: 60px; flex-shrink: 0; }
+  .clock .face { fill: rgba(255,255,255,0.015); stroke: rgba(255,255,255,0.20); stroke-width: 1.2; }
+  .clock .tick-major { stroke: rgba(255,255,255,0.6); stroke-width: 1.4; }
+  .clock .tick-minor { stroke: rgba(255,255,255,0.18); stroke-width: 0.6; }
+  .clock .hand { stroke-linecap: round; }
+  .clock .hour   { stroke: var(--ink); stroke-width: 2.6; }
+  .clock .minute { stroke: var(--ink); stroke-width: 1.7; }
+  .clock .second { stroke: var(--cheeto); stroke-width: 0.9; }
+  .clock .center-outer { fill: var(--ink); }
+  .clock .center-inner { fill: var(--cheeto); }
+  .clock-meta {
+    font-size: 10px; letter-spacing: 2px; color: var(--ink-faint);
+    text-transform: uppercase; line-height: 1.6;
+  }
+  .clock-meta strong {
+    display: block; font-size: 13px; color: var(--ink-dim);
+    letter-spacing: 2.5px; font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .clock-meta .cal-date { display: block; font-size: 11px; color: var(--ink-dim); margin-top: 1px; letter-spacing: 1.5px; }
 
-/* ----- Stage ----- */
-.stage {
-  position: relative;
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  height: 660px;
-  overflow: hidden;
-  background:
-    linear-gradient(to bottom, transparent 0%, transparent 75%, #5a4f3a 75%, #5a4f3a 100%);
-}
-.stage::before {
-  /* tiled floor pixel pattern */
-  content: ""; position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 64px;
-  background-image:
-    linear-gradient(45deg, #4a3f2a 25%, transparent 25%),
-    linear-gradient(-45deg, #4a3f2a 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #4a3f2a 75%),
-    linear-gradient(-45deg, transparent 75%, #4a3f2a 75%);
-  background-size: 16px 16px;
-  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
-  background-color: #6b5a3a;
-  z-index: 0;
-}
-.stage::after {
-  content: ""; position: absolute;
-  left: 0; right: 0; bottom: 64px;
-  height: 4px;
-  background: var(--ink);
-  z-index: 1;
-}
+  .counters { display: flex; gap: 28px; justify-content: flex-end; align-items: center; }
+  .counter { text-align: right; }
+  .counter .num {
+    font-size: 22px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .counter .num.primary { font-size: 30px; font-weight: 600; color: var(--cheeto); text-shadow: 0 0 14px rgba(255,140,26,0.5); }
+  .counter .num.fed     { color: var(--shit-bright); }
+  .counter .label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--ink-faint);
+    margin-top: 8px;
+  }
 
-/* Wall (background) tile pattern */
-.wall {
-  position: absolute;
-  inset: 0;
-  bottom: 64px;
-  background:
-    repeating-linear-gradient(90deg,
-      rgba(255,255,255,0.02) 0 32px,
-      rgba(0,0,0,0.06) 32px 64px);
-  z-index: 0;
-}
+  .topbar-buttons {
+    display: flex; gap: 10px; margin-left: 18px;
+    border-left: 1px solid var(--hairline);
+    padding-left: 22px;
+  }
+  .topbar-buttons button {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 9px 14px;
+    background: transparent;
+    color: var(--ink-dim);
+    border: 1px solid rgba(255,255,255,0.18);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.12s;
+  }
+  .topbar-buttons button:hover { color: #fff; border-color: var(--cheeto); background: rgba(255,140,26,0.08); }
 
-/* ----- Trump Zone ----- */
-.trump-zone {
-  position: absolute;
-  left: 20px;
-  bottom: 64px;
-  width: 200px;
-  height: 280px;
-  z-index: 4;
-}
-.toilet-pixel { position: absolute; bottom: 0; left: 12px; }
-.trump-pixel  { position: absolute; bottom: 64px; left: 6px; transform-origin: bottom center; }
-.trump-pixel.strain { animation: strain 0.18s infinite; }
-@keyframes strain {
-  0%, 100% { transform: translateX(0) rotate(0); }
-  25%      { transform: translateX(-2px) rotate(-1deg); }
-  75%      { transform: translateX(2px)  rotate(1deg); }
-}
+  /* ===== PANELS ===== */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100%;
+    min-height: 0;
+  }
+  .machine-panel, .restaurant-panel { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+  .machine-panel {
+    border-right: 1px solid var(--hairline);
+    background: linear-gradient(to right, #07090d, #050608);
+  }
+  .restaurant-panel { background: linear-gradient(to right, #050608, #08090b); }
 
-/* Speech bubble */
-.speech {
-  position: absolute;
-  top: -6px; left: 180px;
-  min-width: 180px; max-width: 280px;
-  background: var(--paper);
-  border: 4px solid var(--ink);
-  padding: 10px 12px;
-  font-family: "VT323", monospace;
-  font-size: 18px;
-  color: var(--ink);
-  line-height: 1.15;
-  opacity: 0;
-  transform: scale(0.7);
-  transform-origin: 0 80%;
-  transition: opacity 0.2s, transform 0.2s;
-  z-index: 5;
-  box-shadow: 4px 4px 0 var(--ink);
-  pointer-events: none;
-}
-.speech::before {
-  content: "";
-  position: absolute;
-  left: -18px; top: 18px;
-  width: 0; height: 0;
-  border: 9px solid transparent;
-  border-right-color: var(--ink);
-  border-left: 0;
-}
-.speech::after {
-  content: "";
-  position: absolute;
-  left: -12px; top: 22px;
-  width: 0; height: 0;
-  border: 6px solid transparent;
-  border-right-color: var(--paper);
-  border-left: 0;
-}
-.speech.show { opacity: 1; transform: scale(1); }
-.speech .quote-mark {
-  font-family: "Press Start 2P", monospace;
-  font-size: 9px;
-  color: var(--red);
-  display: block;
-  margin-bottom: 4px;
-  letter-spacing: 1px;
-}
-.speech .speech-date {
-  font-family: "Press Start 2P", monospace;
-  font-size: 7px;
-  color: var(--blue);
-  display: block;
-  margin-top: 6px;
-  letter-spacing: 1px;
-}
+  canvas { display: block; width: 100%; height: 100%; position: absolute; inset: 0; }
 
-/* ----- Drain (transparent pipe out of toilet to conveyor) ----- */
-.drain {
-  position: absolute;
-  bottom: 78px;
-  left: 86px;
-  width: 28px;
-  height: 60px;
-  z-index: 3;
-  border-left: 3px solid var(--glass-e);
-  border-right: 3px solid var(--glass-e);
-  background:
-    linear-gradient(to right, rgba(150,200,235,0.18), rgba(255,255,255,0.06) 50%, rgba(150,200,235,0.18));
-}
-.drain-elbow {
-  position: absolute;
-  bottom: 78px;
-  left: 86px;
-  width: 92px;
-  height: 28px;
-  z-index: 3;
-  border-bottom: 3px solid var(--glass-e);
-  border-right: 3px solid var(--glass-e);
-}
+  /* Machine panel overlays */
+  .panel-title {
+    position: absolute;
+    top: 18px;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    text-align: center;
+    pointer-events: none;
+  }
+  .panel-title h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 6px;
+    color: #ffffff;
+    font-family: ui-monospace, monospace;
+    text-shadow: 0 0 18px rgba(255, 140, 26, 0.32);
+  }
+  .panel-title .accent-line {
+    width: 64px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,140,26,0.6), transparent);
+    margin: 10px auto 0;
+  }
+  .panel-title .panel-sub {
+    font-size: 9.5px;
+    letter-spacing: 3.5px;
+    color: rgba(230,232,236,0.42);
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+  .restaurant-panel .panel-title h2 { text-shadow: 0 0 18px rgba(140, 222, 199, 0.32); }
+  .restaurant-panel .panel-title .accent-line {
+    background: linear-gradient(to right, transparent, rgba(140,222,199,0.6), transparent);
+  }
 
-/* ----- Conveyor ----- */
-.conveyor {
-  position: absolute;
-  bottom: 78px;
-  left: 180px;
-  width: 360px;
-  height: 18px;
-  background: #2a2a2a;
-  border: 3px solid var(--ink);
-  z-index: 3;
-  overflow: hidden;
-}
-.conveyor::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(90deg,
-    #2a2a2a 0 12px, #555 12px 24px);
-  animation: belt 1s linear infinite;
-}
-@keyframes belt {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-24px); }
-}
-.conveyor-roller {
-  position: absolute;
-  bottom: 70px;
-  width: 16px; height: 16px;
-  background: #888;
-  border: 3px solid var(--ink);
-  z-index: 3;
-}
-.conveyor-roller.l { left: 175px; }
-.conveyor-roller.r { left: 532px; }
-.conveyor-roller::after {
-  content: "";
-  position: absolute;
-  top: 4px; left: 4px;
-  width: 4px; height: 4px;
-  background: var(--ink);
-  animation: spin 0.6s linear infinite;
-  transform-origin: 0 0;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+  /* Footnotes */
+  .footnote {
+    position: absolute; left: 18px; bottom: 14px;
+    font-size: 10px; color: rgba(241,243,247,0.6);
+    letter-spacing: 1.6px; text-transform: uppercase;
+    pointer-events: none;
+    max-width: calc(100% - 36px);
+  }
+  .footnote.right { left: auto; right: 18px; text-align: right; }
+  .footnote em { font-style: normal; color: rgba(241,243,247,0.5); }
 
-/* ----- Catapult ----- */
-.catapult {
-  position: absolute;
-  bottom: 82px;
-  left: 548px;
-  width: 80px;
-  height: 90px;
-  z-index: 4;
-}
-.catapult-base {
-  position: absolute;
-  bottom: 0; left: 0;
-  width: 60px; height: 32px;
-  background: #6b3f15;
-  border: 3px solid var(--ink);
-  clip-path: polygon(0% 100%, 100% 100%, 80% 0%, 20% 0%);
-}
-.catapult-base::before {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  background:
-    repeating-linear-gradient(0deg, #5a3010 0 3px, #6b3f15 3px 8px);
-}
-.catapult-pivot {
-  position: absolute;
-  bottom: 30px; left: 28px;
-  width: 8px; height: 8px;
-  background: var(--ink);
-  z-index: 2;
-}
-.catapult-arm {
-  position: absolute;
-  bottom: 34px; left: 32px;
-  width: 56px; height: 6px;
-  background: #6b3f15;
-  border: 2px solid var(--ink);
-  transform-origin: 0% 50%;
-  transform: rotate(-25deg);
-  transition: transform 0.35s cubic-bezier(0.7, -0.4, 0.4, 1.6);
-}
-.catapult-arm::after {
-  content: "";
-  position: absolute;
-  right: -8px; top: -10px;
-  width: 18px; height: 18px;
-  background: #8b5a2b;
-  border: 2px solid var(--ink);
-}
-.catapult.firing .catapult-arm { transform: rotate(-115deg); }
+  /* Big bright deposit headline */
+  .now-headline {
+    position: absolute;
+    bottom: 50px;
+    left: 24px;
+    right: 24px;
+    z-index: 3;
+    pointer-events: none;
+    font-family: ui-monospace, monospace;
+  }
+  .now-headline .now-eyebrow {
+    font-size: 9.5px;
+    letter-spacing: 3.5px;
+    color: var(--cheeto);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    text-shadow: 0 0 12px rgba(255,140,26,0.45);
+  }
+  .now-headline .now-label {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 1.2px;
+    text-shadow:
+      0 0 22px rgba(255, 140, 26, 0.55),
+      0 0 44px rgba(255, 140, 26, 0.20);
+    margin-bottom: 6px;
+    line-height: 1.1;
+  }
+  .now-headline .now-desc {
+    font-size: 12px;
+    color: rgba(230,232,236,0.75);
+    line-height: 1.4;
+    max-width: 540px;
+  }
+  .now-headline .now-source {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--cheeto);
+    text-decoration: none;
+    border: 1px solid rgba(255,140,26,0.4);
+    padding: 4px 8px;
+    pointer-events: auto;
+    text-transform: uppercase;
+  }
+  .now-headline .now-source:hover { background: rgba(255,140,26,0.12); }
 
-/* ----- USA Tank ----- */
-.tank {
-  position: absolute;
-  bottom: 90px;
-  left: 656px;
-  width: 280px;
-  height: 320px;
-  z-index: 3;
-}
-.tank-label {
-  position: absolute;
-  top: -34px; left: 0; right: 0;
-  text-align: center;
-  font-family: "Press Start 2P", monospace;
-  font-size: 22px;
-  color: var(--paper);
-  letter-spacing: 6px;
-  text-shadow: 3px 3px 0 var(--red-d), 6px 6px 0 var(--ink);
-}
-.tank-label .stars { color: var(--red); }
-.tank-cap {
-  position: absolute;
-  top: -10px; left: -10px; right: -10px;
-  height: 12px;
-  background: var(--gold);
-  border: 3px solid var(--ink);
-}
-.tank-cap::before {
-  content: "";
-  position: absolute;
-  inset: 2px;
-  background: repeating-linear-gradient(90deg,
-    var(--gold-d) 0 4px, var(--gold) 4px 10px);
-}
-.tank-glass {
-  position: absolute;
-  inset: 0;
-  border: 4px solid var(--glass-e);
-  background:
-    linear-gradient(to right,
-      rgba(150,200,235,0.18) 0%,
-      rgba(220,235,250,0.06) 30%,
-      rgba(150,200,235,0.18) 100%);
-  overflow: hidden;
-}
-.tank-glass::before {
-  content: "";
-  position: absolute;
-  top: 8px; left: 12px;
-  width: 6px; bottom: 12px;
-  background: rgba(255,255,255,0.35);
-}
-.tank-glass::after {
-  content: "";
-  position: absolute;
-  top: 18px; right: 14px;
-  width: 3px; height: 60%;
-  background: rgba(255,255,255,0.18);
-}
-.tank-pile {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  pointer-events: none;
-}
-.tank-meter {
-  position: absolute;
-  bottom: 4px; right: 4px;
-  background: var(--ink);
-  border: 2px solid var(--gold);
-  padding: 3px 6px;
-  font-family: "Press Start 2P", monospace;
-  font-size: 8px;
-  color: var(--gold);
-  z-index: 2;
-}
-.pile-turd {
-  position: absolute;
-  width: 26px; height: 18px;
-}
+  /* Cadence bar */
+  .cadence-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 24px;
+    right: 24px;
+    height: 2px;
+    background: rgba(255,255,255,0.08);
+    z-index: 3;
+  }
+  .cadence-bar .fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--cheeto), var(--gold));
+    width: 0%;
+    transition: width 0.12s linear;
+    box-shadow: 0 0 8px rgba(255,140,26,0.5);
+  }
 
-/* ----- Tube to McAmerica ----- */
-.tube-wrap {
-  position: absolute;
-  bottom: 100px;
-  left: 930px;
-  width: 70px;
-  height: 80px;
-  z-index: 3;
-}
-.tube-h {
-  position: absolute;
-  top: 30px; left: 0; right: 0;
-  height: 18px;
-  background: var(--glass);
-  border-top: 3px solid var(--glass-e);
-  border-bottom: 3px solid var(--glass-e);
-}
-.tube-h::before {
-  /* fluid hint */
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(90deg,
-    transparent 0 8px,
-    rgba(150,200,235,0.12) 8px 14px);
-  animation: tube-flow 1s linear infinite;
-}
-@keyframes tube-flow {
-  from { background-position: 0 0; }
-  to   { background-position: -14px 0; }
-}
-.tube-elbow {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 24px;
-  height: 30px;
-  border-right: 3px solid var(--glass-e);
-  border-bottom: 3px solid var(--glass-e);
-  background:
-    linear-gradient(to bottom,
-      rgba(150,200,235,0.12),
-      rgba(150,200,235,0.18));
-}
+  /* Restaurant overlays */
+  .restaurant-readout {
+    position: absolute;
+    top: 86px;
+    right: 22px;
+    z-index: 2;
+    pointer-events: none;
+    text-align: right;
+  }
+  .restaurant-readout .readout-num {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--diner-bright);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    text-shadow: 0 0 18px rgba(140, 222, 199, 0.45);
+  }
+  .restaurant-readout .readout-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2.2px;
+    color: rgba(241,243,247,0.7);
+    margin-top: 9px;
+    line-height: 1.4;
+  }
 
-/* ----- McAmerica ----- */
-.mcamerica {
-  position: absolute;
-  bottom: 64px;
-  left: 1000px;
-  width: 280px;
-  height: 220px;
-  background: #fff5d6;
-  border: 4px solid var(--ink);
-  z-index: 2;
-}
-.mcamerica .stripes {
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(0deg,
-      transparent 0 24px,
-      rgba(229,57,53,0.08) 24px 26px);
-  pointer-events: none;
-}
-.mcamerica .roof {
-  position: absolute;
-  top: -26px; left: -10px; right: -10px;
-  height: 26px;
-  background: var(--red);
-  border: 4px solid var(--ink);
-  clip-path: polygon(0% 100%, 8% 0%, 92% 0%, 100% 100%);
-}
-.mcamerica .sign {
-  position: absolute;
-  top: -56px; left: 50%;
-  transform: translateX(-50%);
-  background: var(--gold);
-  border: 3px solid var(--ink);
-  padding: 6px 12px;
-  font-family: "Press Start 2P", monospace;
-  font-size: 11px;
-  color: var(--ink);
-  letter-spacing: 1px;
-  z-index: 3;
-  box-shadow: 3px 3px 0 var(--ink);
-}
-.mcamerica .table {
-  position: absolute;
-  bottom: 22px; left: 20px; right: 20px;
-  height: 12px;
-  background: #c9a17a;
-  border: 3px solid var(--ink);
-}
-.mcamerica .table-legs {
-  position: absolute;
-  bottom: 4px; left: 24px;
-  width: 4px; height: 18px;
-  background: #6b4f2a;
-  box-shadow:
-    228px 0 #6b4f2a,
-    100px 0 #6b4f2a,
-    132px 0 #6b4f2a;
-}
-.mcamerica .diner {
-  position: absolute;
-  bottom: 36px;
-  z-index: 2;
-  animation: bob 3s ease-in-out infinite;
-}
-.mcamerica .diner.d1 { left: 16px; animation-delay: 0s; }
-.mcamerica .diner.d2 { left: 102px; animation-delay: 0.7s; }
-.mcamerica .diner.d3 { right: 16px; animation-delay: 1.3s; }
-@keyframes bob {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-2px); }
-}
-.mcamerica .burger-slot {
-  position: absolute;
-  bottom: 36px;
-  width: 36px;
-  height: 24px;
-  z-index: 3;
-}
-.mcamerica .burger-slot.b1 { left: 50px; }
-.mcamerica .burger-slot.b2 { left: 136px; }
-.mcamerica .burger-slot.b3 { right: 50px; }
-.mcamerica .heart {
-  position: absolute;
-  top: -14px; left: 50%;
-  transform: translateX(-50%);
-  font-family: "Press Start 2P", monospace;
-  font-size: 12px;
-  color: var(--red);
-  opacity: 0;
-}
-.mcamerica .diner.cheering .heart {
-  animation: float-heart 1.6s ease-out;
-}
-@keyframes float-heart {
-  0%   { opacity: 0; transform: translate(-50%, 0); }
-  25%  { opacity: 1; }
-  100% { opacity: 0; transform: translate(-50%, -32px); }
-}
+  /* Tickertape (recent deposits) */
+  .ticker {
+    position: absolute;
+    bottom: 8px;
+    left: 0; right: 0;
+    height: 30px;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .ticker .strip {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    gap: 28px;
+    white-space: nowrap;
+    padding-left: 100%;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(230,232,236,0.55);
+    animation: ticker-roll 90s linear infinite;
+    will-change: transform;
+  }
+  .ticker .strip .item { display: inline-flex; gap: 8px; align-items: center; }
+  .ticker .strip .item::before {
+    content: "💩";
+    opacity: 0.8;
+  }
+  .ticker .strip .date { color: var(--cheeto); }
+  @keyframes ticker-roll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-100%); }
+  }
 
-/* ----- Peter Thiel ----- */
-.thiel {
-  position: absolute;
-  bottom: 64px;
-  left: 232px;
-  z-index: 4;
-  transform-origin: bottom center;
-}
-.thiel .speech-bubble {
-  position: absolute;
-  top: -28px; left: 50px;
-  background: var(--paper);
-  border: 3px solid var(--ink);
-  padding: 5px 10px;
-  font-family: "Press Start 2P", monospace;
-  font-size: 8px;
-  color: var(--red);
-  opacity: 0;
-  transition: opacity 0.2s;
-  letter-spacing: 1px;
-  box-shadow: 3px 3px 0 var(--ink);
-  white-space: nowrap;
-}
-.thiel.cheer { animation: thiel-jump 0.7s ease; }
-.thiel.cheer .speech-bubble { opacity: 1; }
-@keyframes thiel-jump {
-  0%, 100% { transform: translateY(0); }
-  40%      { transform: translateY(-20px); }
-}
+  /* ===== MODALS ===== */
+  .modal {
+    position: fixed; inset: 0;
+    background: rgba(6, 7, 8, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 30px;
+    backdrop-filter: blur(8px);
+  }
+  .modal.open { display: flex; }
+  .modal-card {
+    background: var(--bg-2);
+    border: 1px solid var(--hairline);
+    max-width: 980px;
+    width: 100%;
+    max-height: 88vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  }
+  .modal-head {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-head h2 {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: var(--ink);
+    text-transform: uppercase;
+  }
+  .modal-head h2 .cheeto { color: var(--cheeto); }
+  .modal-head .close {
+    background: transparent; color: var(--ink-dim);
+    border: 1px solid var(--hairline);
+    width: 30px; height: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: ui-monospace, monospace;
+  }
+  .modal-head .close:hover { color: var(--cheeto); border-color: var(--cheeto); }
+  .modal-body {
+    overflow-y: auto;
+    padding: 18px 22px;
+    flex: 1;
+    color: var(--ink-dim);
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .modal-body th {
+    text-align: left;
+    border-bottom: 1px solid var(--hairline);
+    padding: 8px 8px;
+    color: var(--ink-faint);
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 2px;
+    position: sticky; top: 0;
+    background: var(--bg-2);
+    text-transform: uppercase;
+  }
+  .modal-body td {
+    padding: 10px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  .modal-body td.num { color: var(--ink-faint); width: 36px; font-size: 11px; }
+  .modal-body td.date {
+    color: var(--cheeto);
+    width: 110px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .modal-body td.label {
+    font-weight: 600;
+    width: 180px;
+    color: #fff;
+    font-size: 12px;
+  }
+  .modal-body td.body { color: var(--ink-dim); font-size: 12px; line-height: 1.5; }
+  .modal-body tr.current { background: rgba(255,140,26,0.10); }
+  .modal-body tr.played td.label::before { content: "💩 "; }
+  .modal-body a.read-more {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--cheeto);
+    text-decoration: none;
+    border: 1px solid rgba(255,140,26,0.4);
+    padding: 3px 7px;
+    margin-left: 8px;
+    text-transform: uppercase;
+  }
+  .modal-body a.read-more:hover { background: rgba(255,140,26,0.12); }
 
-/* ----- Flies buzzing over the vat ----- */
-.flies {
-  position: absolute;
-  left: 656px;
-  bottom: 240px;
-  width: 280px;
-  height: 200px;
-  pointer-events: none;
-  z-index: 5;
-  overflow: visible;
-}
-.fly {
-  position: absolute;
-  width: 15px;
-  height: 9px;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
-}
-.fly-flap {
-  display: block;
-  animation: fly-flap 0.07s linear infinite;
-  transform-origin: center center;
-  line-height: 0;
-}
-.fly-v1 { animation-name: buzz-1; }
-.fly-v2 { animation-name: buzz-2; }
-.fly-v3 { animation-name: buzz-3; }
-.fly-v4 { animation-name: buzz-4; }
-@keyframes buzz-1 {
-  0%   { transform: translate(0,0); }
-  20%  { transform: translate(38px,-22px); }
-  40%  { transform: translate(-20px,18px); }
-  60%  { transform: translate(28px,30px); }
-  80%  { transform: translate(-30px,-8px); }
-  100% { transform: translate(0,0); }
-}
-@keyframes buzz-2 {
-  0%   { transform: translate(0,0); }
-  33%  { transform: translate(-28px,34px); }
-  66%  { transform: translate(34px,-18px); }
-  100% { transform: translate(0,0); }
-}
-@keyframes buzz-3 {
-  0%   { transform: translate(0,0); }
-  15%  { transform: translate(22px,-30px); }
-  30%  { transform: translate(-18px,-12px); }
-  50%  { transform: translate(36px,16px); }
-  70%  { transform: translate(-32px,28px); }
-  85%  { transform: translate(14px,-26px); }
-  100% { transform: translate(0,0); }
-}
-@keyframes buzz-4 {
-  0%   { transform: translate(0,0) ; }
-  25%  { transform: translate(40px,8px); }
-  50%  { transform: translate(20px,-32px); }
-  75%  { transform: translate(-30px,20px); }
-  100% { transform: translate(0,0); }
-}
-@keyframes fly-flap {
-  0%, 100% { transform: scaleX(1); }
-  50%      { transform: scaleX(0.4); }
-}
+  .cal-controls {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .cal-controls button {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 7px 12px;
+    border: 1px solid var(--hairline);
+    background: transparent;
+    color: var(--ink-dim);
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .cal-controls button.active {
+    background: rgba(255,140,26,0.1);
+    color: var(--cheeto);
+    border-color: var(--cheeto);
+  }
+  .cal-controls .hint { font-size: 11px; color: var(--ink-faint); margin-left: auto; letter-spacing: 1px; }
+  .cal-month { margin-bottom: 26px; }
+  .cal-month h3 {
+    margin: 8px 0;
+    font-size: 11px;
+    letter-spacing: 3px;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 6px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .cal-day {
+    aspect-ratio: 1/1;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    font-size: 10px;
+    padding: 4px;
+    position: relative;
+    overflow: hidden;
+    color: var(--ink-faint);
+  }
+  .cal-day.has-event {
+    background: rgba(255,140,26,0.08);
+    color: #fff;
+    border-color: rgba(255,140,26,0.4);
+    cursor: pointer;
+  }
+  .cal-day.has-event::after {
+    content: "💩";
+    position: absolute;
+    bottom: 2px; right: 2px;
+    font-size: 12px;
+  }
+  .cal-day.has-event:hover { background: rgba(255,140,26,0.18); }
+  .cal-day.weekday-label {
+    background: transparent;
+    color: var(--ink-faint);
+    aspect-ratio: auto;
+    text-align: center;
+    padding: 4px 0;
+    font-size: 9px;
+    letter-spacing: 1px;
+    border: none;
+  }
+  .cal-tooltip {
+    position: fixed;
+    background: var(--bg-2);
+    color: var(--ink);
+    padding: 10px 12px;
+    border: 1px solid var(--cheeto);
+    font-size: 11px;
+    pointer-events: none;
+    z-index: 200;
+    max-width: 280px;
+    line-height: 1.4;
+    display: none;
+  }
+  .cal-tooltip .tip-link {
+    display: inline-block;
+    margin-top: 5px;
+    color: var(--cheeto);
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
 
-/* ----- Flying turds layer ----- */
-.turd-layer {
-  position: absolute; inset: 0;
-  pointer-events: none;
-  z-index: 6;
-}
-.turd-flying {
-  position: absolute;
-  width: 26px; height: 18px;
-  will-change: transform;
-}
-.turd-label {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Press Start 2P", monospace;
-  font-size: 6px;
-  color: var(--paper);
-  text-shadow: 1px 1px 0 var(--ink), -1px 1px 0 var(--ink), 1px -1px 0 var(--ink), -1px -1px 0 var(--ink);
-  pointer-events: none;
-  line-height: 1;
-  text-align: center;
-  white-space: nowrap;
-  letter-spacing: 0;
-}
+  .coming-list { list-style: none; padding: 0; margin: 0; }
+  .coming-list li {
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .coming-list li:first-child { background: rgba(255,140,26,0.08); }
+  .coming-list .label-row {
+    font-size: 13px; color: #fff; letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .coming-list .desc {
+    font-size: 11px; color: var(--ink-dim);
+    margin-top: 5px; line-height: 1.4;
+  }
+  .coming-list .next-badge {
+    background: var(--cheeto); color: #060708;
+    font-size: 9px; letter-spacing: 2px;
+    padding: 4px 7px;
+    font-weight: 700;
+  }
+  .coming-list .countdown {
+    font-size: 11px; color: var(--ink-faint);
+    letter-spacing: 1px;
+  }
 
-/* Bouncing turd inside tube */
-.tube-turd {
-  position: absolute;
-  width: 18px; height: 12px;
-  top: 33px;
-  left: -20px;
-  z-index: 4;
-}
+  /* Pause hint */
+  .pause-pill {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    z-index: 4;
+    background: rgba(7,9,13,0.85);
+    border: 1px solid var(--hairline);
+    color: var(--ink-dim);
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 8px 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .pause-pill:hover { color: var(--cheeto); border-color: var(--cheeto); }
 
-/* ----- Banner under stage ----- */
-.banner {
-  background: var(--ink);
-  border-top: 4px solid var(--gold);
-  border-bottom: 4px solid var(--red);
-  padding: 10px 20px;
-  font-family: "Press Start 2P", monospace;
-  font-size: 10px;
-  color: var(--paper);
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  letter-spacing: 1px;
-}
-.banner strong { color: var(--gold); font-weight: 400; }
-.banner .count-num { color: var(--red); }
-
-/* ----- Modals ----- */
-.modal {
-  position: fixed; inset: 0;
-  background: rgba(10,10,22,0.85);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  padding: 30px;
-}
-.modal.open { display: flex; }
-.modal-card {
-  background: var(--paper);
-  border: 5px solid var(--ink);
-  max-width: 980px;
-  width: 100%;
-  max-height: 88vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 10px 10px 0 var(--red-d);
-  color: var(--ink);
-}
-.modal-head {
-  padding: 16px 20px;
-  background: var(--ink);
-  color: var(--gold);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 4px solid var(--gold);
-}
-.modal-head h2 {
-  margin: 0;
-  font-family: "Press Start 2P", monospace;
-  font-size: 16px;
-  letter-spacing: 1px;
-}
-.modal-head .close {
-  background: var(--red); color: var(--paper);
-  border: 3px solid var(--paper);
-  width: 34px; height: 34px;
-  font-family: "Press Start 2P", monospace;
-  font-weight: 400; font-size: 13px;
-  cursor: pointer;
-  box-shadow: 3px 3px 0 var(--gold);
-}
-.modal-head .close:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--gold); }
-.modal-body {
-  overflow-y: auto;
-  padding: 18px 20px;
-  flex: 1;
-  background: var(--paper);
-  font-family: "VT323", monospace;
-  font-size: 18px;
-}
-.modal-body table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.modal-body th {
-  text-align: left;
-  border-bottom: 3px solid var(--ink);
-  padding: 6px 8px;
-  background: #d4c89a;
-  font-family: "Press Start 2P", monospace;
-  font-size: 9px;
-  letter-spacing: 1px;
-  position: sticky; top: 0;
-  text-transform: uppercase;
-}
-.modal-body td {
-  padding: 8px;
-  border-bottom: 2px solid #b8a578;
-  vertical-align: top;
-}
-.modal-body td.num { color: #666; width: 36px; font-family: "Press Start 2P", monospace; font-size: 9px; }
-.modal-body td.date { color: #444; width: 110px; font-family: "Press Start 2P", monospace; font-size: 8px; }
-.modal-body td.label {
-  font-family: "Press Start 2P", monospace;
-  font-size: 9px;
-  width: 180px;
-  letter-spacing: 0;
-  line-height: 1.5;
-  color: var(--turd-d);
-}
-.modal-body td.body { font-size: 17px; }
-.modal-body tr.current { background: #fff3a8; }
-.modal-body tr.played { opacity: 0.78; }
-.modal-body tr.played td.label::before { content: "💩 "; }
-.modal-body a.read-more {
-  display: inline-block;
-  font-family: "Press Start 2P", monospace;
-  font-size: 8px;
-  color: var(--blue);
-  text-decoration: none;
-  border: 2px solid var(--blue);
-  padding: 3px 6px;
-  margin-left: 6px;
-  letter-spacing: 1px;
-  background: var(--paper);
-  vertical-align: middle;
-}
-.modal-body a.read-more:hover { background: var(--blue); color: var(--paper); }
-
-.cal-controls {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
-}
-.cal-controls button {
-  font-family: "Press Start 2P", monospace;
-  font-size: 9px;
-  padding: 8px 12px;
-  border: 3px solid var(--ink);
-  background: var(--paper);
-  color: var(--ink);
-  cursor: pointer;
-  letter-spacing: 1px;
-  box-shadow: 3px 3px 0 var(--ink);
-}
-.cal-controls button.active { background: var(--red); color: var(--paper); }
-.cal-controls button:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
-.cal-controls .hint { font-size: 14px; color: #555; margin-left: auto; }
-
-.cal-month {
-  margin-bottom: 26px;
-}
-.cal-month h3 {
-  margin: 8px 0;
-  font-family: "Press Start 2P", monospace;
-  font-size: 12px;
-  letter-spacing: 1px;
-  border-bottom: 3px solid var(--ink);
-  padding-bottom: 6px;
-}
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
-}
-.cal-day {
-  aspect-ratio: 1/1;
-  background: #e8dfbb;
-  border: 2px solid #aa9870;
-  font-family: "Press Start 2P", monospace;
-  font-size: 9px;
-  padding: 4px;
-  position: relative;
-  overflow: hidden;
-  color: #888;
-}
-.cal-day.has-event {
-  background: var(--paper);
-  color: var(--ink);
-  border-color: var(--ink);
-  cursor: pointer;
-}
-.cal-day.has-event::after {
-  content: "💩";
-  position: absolute;
-  bottom: 2px; right: 2px;
-  font-size: 12px;
-}
-.cal-day.has-event:hover { background: var(--gold); }
-.cal-day.weekday-label {
-  background: var(--ink);
-  color: var(--gold);
-  aspect-ratio: auto;
-  text-align: center;
-  padding: 5px 0;
-  font-size: 8px;
-  letter-spacing: 1px;
-}
-
-.cal-tooltip {
-  position: fixed;
-  background: var(--ink);
-  color: var(--paper);
-  padding: 8px 10px;
-  font-family: "VT323", monospace;
-  font-size: 16px;
-  border: 3px solid var(--gold);
-  pointer-events: none;
-  z-index: 200;
-  max-width: 280px;
-  line-height: 1.2;
-  display: none;
-  box-shadow: 3px 3px 0 var(--red-d);
-}
-.cal-tooltip .tip-link {
-  display: inline-block;
-  margin-top: 4px;
-  color: var(--gold);
-  font-family: "Press Start 2P", monospace;
-  font-size: 7px;
-}
-
-/* Coming Turds list */
-.coming-list { list-style: none; padding: 0; margin: 0; }
-.coming-list li {
-  padding: 10px 12px;
-  border-bottom: 2px solid #c9b985;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-.coming-list li:first-child {
-  background: #fff3a8;
-}
-.coming-list .label-pixel {
-  font-family: "Press Start 2P", monospace;
-  font-size: 10px;
-  color: var(--turd-d);
-  letter-spacing: 0;
-}
-.coming-list .desc {
-  font-family: "VT323", monospace;
-  font-size: 15px;
-  color: #444;
-  margin-top: 3px;
-}
-.coming-list .next-badge {
-  background: var(--red);
-  color: var(--paper);
-  font-family: "Press Start 2P", monospace;
-  font-size: 8px;
-  padding: 4px 7px;
-  letter-spacing: 1px;
-}
-.coming-list .countdown {
-  font-family: "Press Start 2P", monospace;
-  font-size: 9px;
-  color: #555;
-}
-
-footer {
-  padding: 24px 28px 50px;
-  text-align: center;
-  color: #ada490;
-  font-family: "VT323", monospace;
-  font-size: 16px;
-  background: var(--ink);
-  border-top: 4px solid var(--gold);
-  margin-top: 0;
-  line-height: 1.4;
-}
-footer strong { color: var(--gold); }
-footer a { color: var(--paper); }
-
-/* Pause hint button on stage */
-.pause-btn {
-  position: absolute;
-  top: 10px; right: 12px;
-  z-index: 7;
-  background: var(--ink);
-  color: var(--gold);
-  border: 3px solid var(--gold);
-  font-family: "Press Start 2P", monospace;
-  font-size: 9px;
-  padding: 8px 10px;
-  cursor: pointer;
-  letter-spacing: 1px;
-}
-.pause-btn:hover { background: var(--gold); color: var(--ink); }
-
-/* Responsive */
-@media (max-width: 1300px) {
-  .stage { transform-origin: top left; transform: scale(0.82); height: 542px; }
-}
-@media (max-width: 1100px) {
-  .stage { transform: scale(0.7); height: 462px; }
-}
-@media (max-width: 880px) {
-  .stage { transform: scale(0.55); height: 364px; }
-  h1.brand { font-size: 16px; }
-  nav.top-buttons button { padding: 8px 10px; font-size: 8px; }
-  .banner { font-size: 8px; }
-}
+  /* Responsive — collapse to single panel on mobile */
+  @media (max-width: 900px) {
+    .stage { grid-template-rows: auto 1fr; }
+    .panels { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    .machine-panel { border-right: none; border-bottom: 1px solid var(--hairline); }
+    .topbar {
+      grid-template-columns: 1fr auto;
+      padding: 12px 14px;
+      gap: 8px;
+      height: auto;
+    }
+    .clock-wrap { display: none; }
+    .counters { gap: 14px; }
+    .counter .num { font-size: 14px; }
+    .counter .num.primary { font-size: 20px; }
+    .counter .label { font-size: 8.5px; letter-spacing: 1.4px; }
+    .title-text h1 { font-size: 18px; letter-spacing: 1.5px; }
+    .topbar-buttons { display: none; }
+  }
 </style>
 </head>
 <body>
+<div class="stage">
 
-<header class="top">
-  <h1 class="brand">
-    KING DUMP
-    <span class="sub">▪ 100 deposits ▪ 2017—2026 ▪ satire</span>
-  </h1>
-  <nav class="top-buttons">
-    <button id="btnAll">📋 All Shits</button>
-    <button id="btnComing" class="alt">⏭ Coming Turds</button>
-  </nav>
-</header>
-
-<main class="stage" id="stage">
-  <div class="wall"></div>
-  <button class="pause-btn" id="pauseBtn">⏸ PAUSE</button>
-
-  <!-- Trump zone -->
-  <div class="trump-zone">
-    <div class="speech" id="speech">
-      <span class="quote-mark">▮▮ I HEREBY DECLARE ▮▮</span>
-      <span id="speech-text">Loading the next deposit...</span>
-      <span class="speech-date" id="speech-date"></span>
+  <header class="topbar">
+    <div class="title-zone">
+      <span class="crown-icon" aria-hidden="true">👑</span>
+      <div class="title-text">
+        <h1>TRUMP<span class="apos">'S</span> DUMPS</h1>
+        <div class="title-sub">live feed · one deposit every 8.000s · 2017—2026</div>
+      </div>
     </div>
-    <div class="toilet-pixel" id="toiletHolder"></div>
-    <div class="trump-pixel" id="trumpHolder"></div>
-  </div>
 
-  <!-- Drain -->
-  <div class="drain"></div>
-  <div class="drain-elbow"></div>
-
-  <!-- Thiel -->
-  <div class="thiel" id="thiel">
-    <div class="speech-bubble">YES! YES! YES!</div>
-    <div id="thielHolder"></div>
-  </div>
-
-  <!-- Conveyor -->
-  <div class="conveyor"></div>
-  <div class="conveyor-roller l"></div>
-  <div class="conveyor-roller r"></div>
-
-  <!-- Catapult -->
-  <div class="catapult" id="catapult">
-    <div class="catapult-base"></div>
-    <div class="catapult-pivot"></div>
-    <div class="catapult-arm"></div>
-  </div>
-
-  <!-- USA Tank -->
-  <div class="tank">
-    <div class="tank-label"><span class="stars">★</span> U S A <span class="stars">★</span></div>
-    <div class="tank-cap"></div>
-    <div class="tank-glass">
-      <div class="tank-pile" id="tankPile"></div>
-      <div class="tank-meter" id="tankMeter">0 / 100</div>
+    <div class="clock-wrap">
+      <svg class="clock" viewBox="-50 -50 100 100" aria-hidden="true">
+        <circle class="face" cx="0" cy="0" r="46"></circle>
+        <g id="ticks"></g>
+        <line class="hand hour"   id="hHour" x1="0" y1="3"  x2="0" y2="-24"></line>
+        <line class="hand minute" id="hMin"  x1="0" y1="5"  x2="0" y2="-34"></line>
+        <line class="hand second" id="hSec"  x1="0" y1="9"  x2="0" y2="-40"></line>
+        <circle class="center-outer" cx="0" cy="0" r="3.2"></circle>
+        <circle class="center-inner" cx="0" cy="0" r="1.4"></circle>
+      </svg>
+      <div class="clock-meta">
+        <strong id="timeNow">--:--:--</strong>
+        <span class="cal-date" id="calDate">—</span>
+      </div>
     </div>
-  </div>
 
-  <!-- Flies buzzing over the vat -->
-  <div class="flies" id="flies"></div>
+    <div></div>
 
-  <!-- Tube to McAmerica -->
-  <div class="tube-wrap" id="tubeWrap">
-    <div class="tube-h"></div>
-    <div class="tube-elbow"></div>
-  </div>
+    <div class="counters">
+      <div class="counter">
+        <div class="num primary" id="cDumped">0</div>
+        <div class="label">In Tank</div>
+      </div>
+      <div class="counter">
+        <div class="num fed" id="cFed">0</div>
+        <div class="label">Fed to America</div>
+      </div>
+      <div class="counter">
+        <div class="num" id="cRemaining">100</div>
+        <div class="label">Remaining</div>
+      </div>
+      <div class="topbar-buttons">
+        <button id="btnAll">All Shits</button>
+        <button id="btnComing">Coming Turds</button>
+      </div>
+    </div>
+  </header>
 
-  <!-- McAmerica -->
-  <div class="mcamerica">
-    <div class="sign">McAMERICA</div>
-    <div class="roof"></div>
-    <div class="stripes"></div>
-    <div class="diner d1"><div class="heart">♥</div><div class="diner-pixel" data-d="0"></div></div>
-    <div class="diner d2"><div class="heart">♥</div><div class="diner-pixel" data-d="1"></div></div>
-    <div class="diner d3"><div class="heart">♥</div><div class="diner-pixel" data-d="2"></div></div>
-    <div class="burger-slot b1" id="burger0"></div>
-    <div class="burger-slot b2" id="burger1"></div>
-    <div class="burger-slot b3" id="burger2"></div>
-    <div class="table"></div>
-    <div class="table-legs"></div>
-  </div>
+  <main class="panels">
+    <section class="machine-panel">
+      <div class="panel-title">
+        <h2>T H E   B O W E L</h2>
+        <div class="accent-line"></div>
+        <div class="panel-sub">production · trump → drain → conveyor → catapult</div>
+      </div>
+      <canvas id="machineCanvas"></canvas>
+      <button class="pause-pill" id="pauseBtn">⏸ PAUSE</button>
+      <div class="now-headline">
+        <div class="now-eyebrow" id="nowEyebrow">· NOW DEPOSITING ·</div>
+        <div class="now-label" id="nowLabel">Loading…</div>
+        <div class="now-desc" id="nowDesc">A live schematic of 100 of Donald Trump's worst acts — first and second terms.</div>
+        <a class="now-source" id="nowSource" href="#" target="_blank" rel="noopener noreferrer">Source ↗</a>
+      </div>
+      <div class="cadence-bar"><div class="fill" id="cadenceFill"></div></div>
+      <div class="footnote">© KING DUMP INDUSTRIES · est. 2017</div>
+    </section>
 
-  <!-- Flying turds layer -->
-  <div class="turd-layer" id="turdLayer"></div>
-</main>
-
-<div class="banner">
-  <span><strong>NOW:</strong> <span id="nowPlaying">—</span></span>
-  <span><strong>NEXT:</strong> <span id="nextUp">—</span> <span class="count-num" id="countdown">8s</span></span>
-  <span><strong>TANK:</strong> <span id="tankPercent" class="count-num">0%</span> FULL</span>
+    <section class="restaurant-panel">
+      <div class="panel-title">
+        <h2>M c A M E R I C A</h2>
+        <div class="accent-line"></div>
+        <div class="panel-sub">consumption · tank → tube → table · everyone's happy</div>
+      </div>
+      <canvas id="restaurantCanvas"></canvas>
+      <div class="restaurant-readout">
+        <div class="readout-num" id="rServed">0</div>
+        <div class="readout-label">Shit Burgers<br/>Served Today</div>
+      </div>
+      <div class="footnote right">flies present · ventilation: optional</div>
+      <div class="ticker"><div class="strip" id="tickerStrip"></div></div>
+    </section>
+  </main>
 </div>
 
-<!-- ============= MODAL: ALL SHITS ============= -->
+<!-- ALL SHITS modal -->
 <div class="modal" id="modalAll">
   <div class="modal-card">
     <div class="modal-head">
-      <h2>📋 ALL SHITS</h2>
+      <h2>📋 <span class="cheeto">ALL</span> SHITS — the catalog</h2>
       <button class="close" data-close>×</button>
     </div>
     <div class="modal-body">
       <div class="cal-controls">
-        <button id="viewList" class="active">LIST</button>
-        <button id="viewCal">CALENDAR</button>
-        <span class="hint">100 actions · click any "SOURCE" to read more</span>
+        <button id="viewList" class="active">List</button>
+        <button id="viewCal">Calendar</button>
+        <span class="hint">100 entries · click any SOURCE to verify</span>
       </div>
       <div id="paneList">
         <table>
           <thead>
             <tr>
-              <th>#</th><th>DATE</th><th>TURD LABEL</th><th>WHAT HAPPENED</th>
+              <th>#</th><th>Date</th><th>Label</th><th>What happened</th>
             </tr>
           </thead>
           <tbody id="allRows"></tbody>
@@ -1124,16 +718,16 @@ footer a { color: var(--paper); }
   </div>
 </div>
 
-<!-- ============= MODAL: COMING TURDS ============= -->
+<!-- COMING TURDS modal -->
 <div class="modal" id="modalComing">
   <div class="modal-card" style="max-width:560px;">
     <div class="modal-head">
-      <h2>⏭ COMING TURDS</h2>
+      <h2>⏭ <span class="cheeto">COMING</span> TURDS</h2>
       <button class="close" data-close>×</button>
     </div>
     <div class="modal-body">
-      <p style="margin-top:0; font-style:italic; color:#666; font-size:16px;">
-        Next ten in the chamber. One drops every 8 seconds.
+      <p style="font-size:11px;color:var(--ink-faint);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase;">
+        Next ten in the chamber · one drops every 8 seconds
       </p>
       <ul class="coming-list" id="comingList"></ul>
     </div>
@@ -1142,820 +736,1533 @@ footer a { color: var(--paper); }
 
 <div class="cal-tooltip" id="tooltip"></div>
 
-<footer>
-  <strong>KING DUMP</strong> — single-page pixel-art editorial cartoon · part of the
-  <a href="https://everyone-ever.vercel.app/">EXPERIMENTS</a> series.<br>
-  All 100 entries link to public reporting / Wikipedia. Satire of a public figure regarding public conduct. No endorsement of consumption depicted.
-</footer>
-
 <script>
-// ============================================================
-//  PIXEL ART SPRITE SYSTEM
-// ============================================================
-const PAL = {
-  '.': null,
-  'k': '#0a0a16',  // black outline
-  'K': '#1a1a2e',  // dark
-  'w': '#fff8e3',  // white
-  'p': '#f3c89a',  // skin (diners)
-  'P': '#c98756',  // skin shadow (diners)
-  'L': '#f9e0bc',  // skin highlight
-  'c': '#e7b885',  // skin med
-  'j': '#ff8c1a',  // Trump CHEETO orange
-  'J': '#b85700',  // Trump cheeto shadow
-  'F': '#ffe0a3',  // Trump goggle pale
-  'y': '#f5d76e',  // hair yellow
-  'Y': '#a8801d',  // hair dark
-  'g': '#f7c948',  // gold
-  'G': '#b8860b',  // gold dark
-  'r': '#e53935',  // red
-  'R': '#8b1818',  // red dark
-  'n': '#1c2438',  // navy
-  'N': '#0a0e1a',  // navy dark
-  'b': '#2a4d8f',  // blue
-  'B': '#1d3357',  // blue dark
-  's': '#a8a8a8',  // grey
-  'S': '#5a5a5a',  // dark grey
-  'H': '#5a4a3a',  // brown hair (Thiel)
-  't': '#6b3f1a',  // turd brown
-  'T': '#3a2208',  // turd dark
-  'l': '#946238',  // turd light
-  'o': '#d49a4f',  // bun orange
-  'O': '#a86a20',  // bun dark
-  'e': '#7ab84a',  // green (pickle/lettuce)
-  'm': '#fff0aa',  // cheese/highlight
-  'd': '#1f1f1f',  // dark eye
-  'q': '#d4b896',  // grey-tan
-  'u': '#2a3b58',  // dark suit
-};
+(() => {
+  'use strict';
+  const TAU = Math.PI * 2;
+  const CADENCE_MS = 8000;
 
-function sprite(grid, scale=4) {
-  const w = grid[0].length, h = grid.length;
-  let out = '';
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const c = PAL[grid[y][x]];
-      if (c) out += `<rect x="${x}" y="${y}" width="1" height="1" fill="${c}"/>`;
-    }
-  }
-  return `<svg width="${w*scale}" height="${h*scale}" viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">${out}</svg>`;
-}
+  // ============================================================
+  //  100 EVENTS — date, label, title, source URL
+  // ============================================================
+  const W = (slug) => "https://en.wikipedia.org/wiki/" + slug;
+  const EVENTS = [
+    { date:"2017-01-27", label:"Muslim Ban",       title:"Executive Order 13769 barred entry from 7 Muslim-majority countries; airport chaos, courts struck v1.", url:W("Executive_Order_13769") },
+    { date:"2017-01-28", label:"Bannon → NSC",     title:"Steve Bannon elevated to the NSC Principals Committee by EO; reversed under pressure.", url:W("Steve_Bannon") },
+    { date:"2017-02-09", label:"Sessions In",      title:"Jeff Sessions confirmed Attorney General despite perjuring on Russia contacts.", url:W("Jeff_Sessions") },
+    { date:"2017-03-16", label:"Slash EPA",        title:"Proposed 31% EPA budget cut; sought to gut climate research and Superfund.", url:W("Environmental_policy_of_the_first_Donald_Trump_administration") },
+    { date:"2017-05-09", label:"Comey Fired",      title:"Fired FBI Director James Comey, then admitted on TV it was over 'this Russia thing.'", url:W("Dismissal_of_James_Comey") },
+    { date:"2017-06-01", label:"Paris Pullout",    title:"Announced U.S. withdrawal from the Paris Climate Agreement.", url:W("Withdrawal_of_the_United_States_from_the_Paris_Agreement") },
+    { date:"2017-06-29", label:"Mika Tweet",       title:"Tweeted that Mika Brzezinski was 'bleeding badly from a face-lift.'", url:W("Social_media_use_by_Donald_Trump") },
+    { date:"2017-07-26", label:"Trans Mil Ban",    title:"Tweeted ban on transgender service members; military leadership blindsided.", url:W("Transgender_personnel_in_the_United_States_military") },
+    { date:"2017-08-15", label:'"Fine People"',    title:"After Charlottesville: said there were 'very fine people on both sides' at a neo-Nazi rally.", url:W("Unite_the_Right_rally") },
+    { date:"2017-08-25", label:"Arpaio Pardon",    title:"Pardoned ex-sheriff Joe Arpaio, convicted of contempt for racially profiling Latinos.", url:W("Joe_Arpaio") },
+    { date:"2017-09-05", label:"Kills DACA",       title:"Rescinded DACA, threatening ~800,000 Dreamers.", url:W("Rescission_of_DACA") },
+    { date:"2017-10-12", label:"Sabotage ACA",     title:"Ended ACA cost-sharing subsidies, destabilizing health insurance markets.", url:W("Efforts_to_repeal_the_Affordable_Care_Act") },
+    { date:"2017-12-06", label:"Jerusalem Move",   title:"Recognized Jerusalem as Israel's capital, ordered embassy move.", url:W("Trump_recognition_of_Jerusalem_as_capital_of_Israel") },
+    { date:"2017-12-22", label:"Tax Cut Bonanza",  title:"Signed Tax Cuts and Jobs Act — most benefits flowed to top earners and corporations.", url:W("Tax_Cuts_and_Jobs_Act") },
+    { date:"2018-01-11", label:'"Shithole"',       title:"Called Haiti, El Salvador, African nations 'shithole countries' in the Oval Office.", url:W("Trump_shithole_countries_comment") },
+    { date:"2018-03-22", label:"Tariff War I",     title:"Launched steel/aluminum tariffs, kicking off trade war with China and allies.", url:W("Trump_tariffs") },
+    { date:"2018-04-06", label:"Family Sep'n",     title:"Sessions announced 'zero tolerance' — thousands of children separated at the border.", url:W("Trump_administration_family_separation_policy") },
+    { date:"2018-05-08", label:"Iran Deal Trash",  title:"Withdrew U.S. from the Iran nuclear deal (JCPOA).", url:W("United_States_withdrawal_from_the_Joint_Comprehensive_Plan_of_Action") },
+    { date:"2018-06-12", label:"Kim Love",         title:"Singapore summit with Kim Jong-un; called him 'very talented,' got nothing on denuclearization.", url:W("2018_North_Korea%E2%80%93United_States_Singapore_Summit") },
+    { date:"2018-06-26", label:"Kids in Cages",    title:"Images surfaced of migrant children held in chain-link cages at Border Patrol facilities.", url:W("Trump_administration_family_separation_policy") },
+    { date:"2018-07-16", label:"Helsinki Bow",     title:"Sided with Putin over U.S. intelligence on 2016 election interference.", url:W("2018_Russia%E2%80%93United_States_summit") },
+    { date:"2018-09-04", label:"Mocks Ford",       title:"Mocked Christine Blasey Ford at a rally days after her Kavanaugh testimony.", url:W("Brett_Kavanaugh_Supreme_Court_nomination") },
+    { date:"2018-10-02", label:"Khashoggi Cover",  title:"Shielded MBS after the murder of WaPo journalist Jamal Khashoggi.", url:W("Assassination_of_Jamal_Khashoggi") },
+    { date:"2018-11-25", label:"Tear-Gas Asylum",  title:"Tear gas fired at migrant families — including children — at the Tijuana crossing.", url:W("Donald_Trump_immigration_policy") },
+    { date:"2018-12-22", label:"Wall Shutdown",    title:"Triggered 35-day government shutdown — longest in U.S. history — over wall funding.", url:W("2018%E2%80%9319_United_States_federal_government_shutdown") },
+    { date:"2019-02-15", label:"Fake Emergency",   title:"Declared a national emergency to divert military funds to the wall after Congress refused.", url:W("Trump_administration_national_emergency_declaration") },
+    { date:"2019-04-18", label:"Mueller Spin",     title:"AG Barr's misleading rollout of the Mueller report buried evidence of obstruction.", url:W("Mueller_report") },
+    { date:"2019-07-14", label:'"Go Back"',        title:"Told four congresswomen of color to 'go back' to the countries they came from.", url:W("The_Squad_(United_States_Congress)") },
+    { date:"2019-07-25", label:"Ukraine Call",     title:"Pressured Zelensky to investigate Bidens while withholding aid — first impeachment.", url:W("Trump%E2%80%93Ukraine_scandal") },
+    { date:"2019-08-21", label:"Greenland I",      title:"Floated buying Greenland; canceled Denmark visit when PM called the idea 'absurd.'", url:W("2019_proposed_United_States_purchase_of_Greenland") },
+    { date:"2019-09-04", label:"Sharpie-gate",     title:"Doctored a hurricane forecast map with a Sharpie to defend a wrong tweet about Alabama.", url:W("Hurricane_Dorian%E2%80%93Alabama_controversy") },
+    { date:"2019-10-06", label:"Abandons Kurds",   title:"Withdrew troops from N. Syria, greenlighting Turkish assault on Kurdish allies.", url:W("2019_Turkish_offensive_into_north-eastern_Syria") },
+    { date:"2019-12-18", label:"Impeached #1",     title:"Impeached by the House for abuse of power & obstruction over the Ukraine scheme.", url:W("First_impeachment_of_Donald_Trump") },
+    { date:"2020-01-03", label:"Soleimani Hit",    title:"Drone strike killed Iran's Gen. Soleimani at Baghdad airport; near-war.", url:W("Assassination_of_Qasem_Soleimani") },
+    { date:"2020-02-26", label:'"Disappear"',      title:"Said COVID-19 'is going to disappear. One day — like a miracle — it will disappear.'", url:W("U.S._federal_government_response_to_the_COVID-19_pandemic") },
+    { date:"2020-03-13", label:"Test Failure",     title:"Botched COVID testing rollout: 'I don't take responsibility at all.'", url:W("U.S._federal_government_response_to_the_COVID-19_pandemic") },
+    { date:"2020-04-23", label:"Bleach Cure",      title:"Mused publicly about injecting disinfectant to fight COVID.", url:W("Donald_Trump%27s_disinfectant_comments") },
+    { date:"2020-05-29", label:'"Shooting"',       title:"Tweeted 'when the looting starts, the shooting starts' during George Floyd protests.", url:W("George_Floyd_protests") },
+    { date:"2020-06-01", label:"Lafayette Gas",    title:"Officers gassed peaceful protesters in Lafayette Square so he could hold a Bible at a church.", url:W("Lafayette_Square_protester_removal") },
+    { date:"2020-07-30", label:"Delay Election",   title:"Floated delaying the 2020 election — a power he does not have.", url:W("Attempts_to_overturn_the_2020_United_States_presidential_election") },
+    { date:"2020-08-13", label:"USPS Sabotage",    title:"Admitted to blocking USPS funding to hurt mail-in voting; DeJoy slowed mail service.", url:W("2020_United_States_Postal_Service_crisis") },
+    { date:"2020-09-29", label:'"Stand By"',       title:"Told Proud Boys to 'stand back and stand by' during the first debate.", url:W("Proud_Boys") },
+    { date:"2020-11-04", label:'"Stop Count"',     title:"Falsely declared victory at 2:30am; demanded counting stop in states where he was ahead.", url:W("Attempts_to_overturn_the_2020_United_States_presidential_election") },
+    { date:"2020-12-01", label:"Big Lie",          title:"Began the months-long 'Stolen Election' campaign — over 60 lawsuits lost.", url:W("Big_lie") },
+    { date:"2020-12-23", label:"Pardons Crooks",   title:"Pardoned Manafort, Stone, Kushner Sr., and Blackwater contractors who massacred Iraqis.", url:W("List_of_people_pardoned_or_granted_clemency_by_Donald_Trump") },
+    { date:"2021-01-02", label:'"Find Votes"',     title:"Called Georgia SoS Raffensperger: 'I just want to find 11,780 votes.'", url:W("Trump_Raffensperger_phone_call") },
+    { date:"2021-01-06", label:"Coup Attempt",     title:"Incited the Capitol assault to stop certification; watched on TV for hours before acting.", url:W("January_6_United_States_Capitol_attack") },
+    { date:"2021-01-13", label:"Impeached #2",     title:"Impeached again for incitement of insurrection — most bipartisan in U.S. history.", url:W("Second_impeachment_of_Donald_Trump") },
+    { date:"2021-01-19", label:"Last-Day Pardons", title:"Final-hour pardons for Bannon, Lil Wayne, fraudsters, and political allies.", url:W("List_of_people_pardoned_or_granted_clemency_by_Donald_Trump") },
+    { date:"2022-08-08", label:"Mar-a-Lago Docs",  title:"FBI search recovered hundreds of classified documents stashed at Mar-a-Lago.", url:W("FBI_search_of_Mar-a-Lago") },
+    { date:"2023-04-04", label:"34 Felonies",      title:"First U.S. president indicted — 34 NY felony counts over Stormy Daniels hush money.", url:W("Prosecution_of_Donald_Trump_in_New_York") },
+    { date:"2023-05-09", label:"Carroll Verdict",  title:"Civil jury found Trump liable for sexual abuse and defamation of E. Jean Carroll.", url:W("E._Jean_Carroll_v._Donald_J._Trump") },
+    { date:"2024-02-16", label:"$454M Fraud",      title:"NY civil fraud verdict — $454M for inflating asset values for years.", url:W("People_of_the_State_of_New_York_v._Trump") },
+    { date:"2024-05-30", label:"Convicted x34",    title:"Convicted on all 34 NY felony counts — first U.S. ex-president as felon.", url:W("Prosecution_of_Donald_Trump_in_New_York") },
+    { date:"2025-01-20", label:"J6 Pardons",       title:"Day 1: mass pardons/commutations for ~1,500 Jan 6 defendants, including violent felons.", url:W("January_6_United_States_Capitol_attack") },
+    { date:"2025-01-20", label:"Paris Pull II",    title:"Withdrew U.S. from the Paris Climate Agreement for a second time.", url:W("Withdrawal_of_the_United_States_from_the_Paris_Agreement") },
+    { date:"2025-01-20", label:"WHO Quit II",      title:"Announced U.S. withdrawal from the World Health Organization.", url:W("United_States_and_the_World_Health_Organization") },
+    { date:"2025-01-20", label:"Birthright EO",    title:"Signed EO trying to end birthright citizenship — blocked nationwide by courts.", url:W("Birthright_citizenship_in_the_United_States") },
+    { date:"2025-01-20", label:"DEI Banned",       title:"Ordered federal DEI offices shut and gov-wide DEI programs dismantled.", url:W("Second_presidency_of_Donald_Trump") },
+    { date:"2025-01-20", label:"Trans Ban II",     title:"Ordered federal recognition collapsed to 'two sexes assigned at birth.'", url:W("Transgender_personnel_in_the_United_States_military") },
+    { date:"2025-01-21", label:"Gulf Renamed",     title:"Renamed the Gulf of Mexico to the 'Gulf of America' by executive fiat.", url:W("Gulf_of_Mexico") },
+    { date:"2025-01-22", label:"TikTok Bailout",   title:"Extended TikTok ban deadline by EO of dubious legality after the law took effect.", url:W("TikTok_v._Garland") },
+    { date:"2025-01-24", label:"IG Purge",         title:"Fired ~18 inspectors general overnight without the 30-day notice required by law.", url:W("Inspector_general") },
+    { date:"2025-01-27", label:"Funding Freeze",   title:"OMB tried to freeze all federal grants/loans — pulled after chaos and court orders.", url:W("Second_presidency_of_Donald_Trump") },
+    { date:"2025-02-01", label:"Tariff Tantrum",   title:"25% tariffs on Canada and Mexico, 10% on China; markets and allies reel.", url:W("Trump_tariffs") },
+    { date:"2025-02-03", label:"USAID Killed",     title:"Musk's DOGE began dismantling USAID; lifesaving programs halted overnight.", url:W("United_States_Agency_for_International_Development") },
+    { date:"2025-02-04", label:"Gaza 'Riviera'",   title:"Proposed U.S. 'take over' Gaza and 'own it,' relocate Palestinians — called it a 'Riviera.'", url:W("United_States_and_the_Israeli%E2%80%93Palestinian_conflict") },
+    { date:"2025-02-14", label:"Vance Munich",     title:"Vance lectured European allies, sided with the far right at Munich Security Conference.", url:W("Munich_Security_Conference") },
+    { date:"2025-02-19", label:"Zelensky Slur",    title:"Called Zelensky 'a dictator without elections' while flattering Putin.", url:W("Volodymyr_Zelenskyy") },
+    { date:"2025-02-28", label:"Oval Office Yell", title:"Trump & Vance ambushed Zelensky in the Oval Office on camera; minerals deal collapsed.", url:W("Second_presidency_of_Donald_Trump") },
+    { date:"2025-03-04", label:"Tariffs Live",     title:"Canada/Mexico tariffs went into effect; immediate retaliation, stock selloff.", url:W("Trump_tariffs") },
+    { date:"2025-03-08", label:"Khalil Snatched",  title:"ICE detained Columbia grad Mahmoud Khalil for protest speech; greencard holder, no charges.", url:W("Mahmoud_Khalil") },
+    { date:"2025-03-12", label:"Law Firms EO",     title:"EOs targeting Perkins Coie, Covington — punishing lawyers who took adverse cases.", url:W("Second_presidency_of_Donald_Trump") },
+    { date:"2025-03-15", label:"El Salvador Air",  title:"Used Alien Enemies Act to fly Venezuelans to El Salvador's CECOT prison; judge ordered halt mid-flight.", url:W("CECOT") },
+    { date:"2025-03-22", label:"Defies Court",     title:"Admin claimed planes were already over international waters; refused to turn around.", url:W("Second_presidency_of_Donald_Trump") },
+    { date:"2025-04-02", label:"Liberation Day",   title:"Announced sweeping 'reciprocal' tariffs on most trading partners using a nonsense formula.", url:W("Trump_tariffs") },
+    { date:"2025-04-04", label:"Market Crash",     title:"Worst 2-day market drop since COVID; $6T in equity value wiped out.", url:W("Trump_tariffs") },
+    { date:"2025-04-09", label:"90-Day Pause",     title:"Reversed most tariffs after bond market revolt; called the panic 'YIPPY.'", url:W("Trump_tariffs") },
+    { date:"2025-04-14", label:"Bukele Visit",     title:"Hosted Bukele, floated deporting U.S. citizens to El Salvador; called for new prisons.", url:W("Nayib_Bukele") },
+    { date:"2025-04-15", label:"Harvard Cut",      title:"Froze $2.2B in Harvard funding after the university refused federal speech demands.", url:W("Harvard_University") },
+    { date:"2025-04-18", label:"Abrego Case",      title:"SCOTUS ordered admin to 'facilitate' return of wrongly deported Kilmar Abrego Garcia; admin stalled.", url:W("Kilmar_Abrego_Garcia") },
+    { date:"2025-05-06", label:"VOA Silenced",     title:"Voice of America taken off the air worldwide for the first time since WWII.", url:W("Voice_of_America") },
+    { date:"2025-05-12", label:"Qatar Jet",        title:"Accepted $400M luxury 747 from Qatar 'gift' to use as Air Force One; emoluments outcry.", url:W("Air_Force_One") },
+    { date:"2025-05-22", label:"$TRUMP Dinner",    title:"Hosted top buyers of his memecoin at a private dinner — pay-to-access scheme.", url:W("Official_Trump") },
+    { date:"2025-06-06", label:"Marines to LA",    title:"Federalized CA Guard, deployed Marines to LA over Newsom's objections during ICE protests.", url:W("Second_presidency_of_Donald_Trump") },
+    { date:"2025-06-14", label:"Birthday Parade",  title:"Held a multi-million-dollar military parade on his birthday — tanks on Constitution Ave.", url:W("Second_presidency_of_Donald_Trump") },
+    { date:"2025-06-21", label:"Iran Strike",      title:"Ordered U.S. strikes on Iran's nuclear sites; bypassed Congress; near-war.", url:W("Iran%E2%80%93United_States_relations") },
+    { date:"2025-07-04", label:"Big Ugly Bill",    title:"'Big Beautiful' bill — massive Medicaid/SNAP cuts to fund tax cuts for the rich.", url:W("One_Big_Beautiful_Bill_Act") },
+    { date:"2025-07-22", label:"Powell Threats",   title:"Repeatedly threatened to fire Fed Chair Powell over interest rates.", url:W("Jerome_Powell") },
+    { date:"2025-08-11", label:"DC Takeover",      title:"Federalized DC police; deployed National Guard in the U.S. capital over local objections.", url:W("Second_presidency_of_Donald_Trump") },
+    { date:"2025-09-02", label:"Antifa Terror",    title:"Designated 'Antifa' a terrorist organization by EO; legal scholars: 'not a thing.'", url:W("Antifa_(United_States)") },
+    { date:"2025-09-25", label:"Jail Opponents",   title:"Publicly demanded DOJ prosecute Comey, Schiff, James; AG Bondi complied with referrals.", url:W("Second_presidency_of_Donald_Trump") },
+    { date:"2025-10-08", label:"Nobel Demand",     title:"Repeatedly demanded the Nobel Peace Prize; pressured Norway via diplomatic channels.", url:W("Nobel_Peace_Prize") },
+    { date:"2025-10-22", label:"Comey Charged",    title:"Former FBI Director Comey indicted on flimsy charges after Trump's public demand.", url:W("James_Comey") },
+    { date:"2025-11-06", label:"Press Lawsuits",   title:"Sued WSJ, NYT, ABC under new theory; chilled critical reporting via discovery costs.", url:W("Second_presidency_of_Donald_Trump") },
+    { date:"2025-11-19", label:"Mamdani Threats",  title:"Threatened to deport NYC mayor-elect, withhold federal funds from 'communist' city.", url:W("Zohran_Mamdani") },
+    { date:"2025-12-10", label:"Pardon Friends",   title:"Pardoned crypto fraudsters and donors; commuted Santos-adjacent allies.", url:W("List_of_people_pardoned_or_granted_clemency_by_Donald_Trump") },
+    { date:"2026-01-09", label:"Greenland II",     title:"Refused to rule out military force to take Greenland; Denmark mobilized.", url:W("2019_proposed_United_States_purchase_of_Greenland") },
+    { date:"2026-01-22", label:"Panama Talk",      title:"Demanded Panama 'return' the canal; sent USS deployment to the region.", url:W("Panama_Canal") },
+    { date:"2026-02-04", label:"51st State",       title:"Continued calling Canada the '51st state'; tariffs as annexation pressure.", url:W("Canada%E2%80%93United_States_relations") },
+    { date:"2026-02-18", label:"Press Subpoenas",  title:"DOJ subpoenaed reporters' phone records over leaks investigations.", url:W("Freedom_of_the_press_in_the_United_States") },
+    { date:"2026-03-05", label:"Venezuela Boats",  title:"Ordered Navy to intercept Venezuelan vessels; civilian deaths reported.", url:W("United_States%E2%80%93Venezuela_relations") },
+    { date:"2026-03-22", label:"Pardon Spree",     title:"Mass pardons of MAGA-allied officials convicted in 2020 election cases.", url:W("List_of_people_pardoned_or_granted_clemency_by_Donald_Trump") },
+    { date:"2026-04-01", label:"Tariff Round 4",   title:"Fourth wave of tariffs; recession watch upgraded by Fed.", url:W("Trump_tariffs") },
+    { date:"2026-04-28", label:"3rd-Term Talk",    title:"Floated 'ways' to run again in 2028 despite 22nd Amendment; sold THIRD TERM hats.", url:W("Twenty-second_Amendment_to_the_United_States_Constitution") },
+    { date:"2026-05-12", label:"Federalize Cops",  title:"Proposed federalizing big-city police forces and creating a 'Patriot Force.'", url:W("Second_presidency_of_Donald_Trump") },
+  ];
 
-// ----- Trump (24 wide x 30 tall, Cheeto edition) -----
-const TRUMP = [
-  "........................",
-  ".........gggggggg.......",  // crown peaks
-  "........g.g.g.g.g.......",  // crown points
-  ".......GGGGGGGGGGGG.....",  // crown base
-  "......kkkkkkkkkkkkkk....",  // crown outline
-  ".....kyyyyyyyyyyyyyyk...",  // hair top
-  "....kyyyyyyyyyyyyyyyyk..",
-  "....kyyyYYyyyyyyYYyyyk..",  // hair shadow accents
-  "....kyyjjjjjjjjjjjyyyk..",  // forehead orange
-  "...kyyjjjjjjjjjjjjjyyk..",
-  "...kyjjFFjjjjjjjFFjjyk..",  // pale goggle rings
-  "...kyjYFjjjjjjjjjFYjyk..",  // brows + goggle
-  "...kyjFdFjjjjjjjFdFjyk..",  // eyes inside white rings
-  "...kyjjFjjjjjjjjjFjjyk..",
-  "...kyjjjjjjjJJjjjjjjyk..",  // nose shadow
-  "....kyjjjjjjJJjjjjjyk...",
-  "....kyjjjRRRRRRjjjyk....",  // mouth
-  ".....kyjjRRRRRRjjyk.....",
-  "......kyjjjjjjjjjjk.....",  // chin
-  ".......kkkwwwkk.........",  // collar
-  "......nnnwwwwnnn........",  // top of suit
-  ".....nnnnwrrwnnnnn......",  // shoulders + tie top
-  "....nnnnnnRRnnnnnnnn....",  // suit + tie
-  "....nnnnnnRRnnnnnnnnn...",
-  "...nnnnnnnRRnnnnnnnnnn..",
-  "...nnnnnnnRRnnnnnnnnnn..",
-  "....nnnnnnRRnnnnnnnnn...",
-  "....nnnnnnRRnnnnnnnn....",
-  ".....nnnnRRRRnnnnn......",
-  "......nnnRRRRnnnn.......",
-];
-
-// ----- Toilet (28 x 18) -----
-const TOILET = [
-  "............................",
-  "....wwwwwwwwwwwwwwwww.......",
-  "...wkkkkkkkkkkkkkkkkk.......",
-  "...wkqqqqqqqqqqqqqqkw.......",  // tank top
-  "...wkqqqqqqqqqqqqqqkw.......",
-  "...wkqqqqqqqqqqqqqqkw.......",
-  "...wkkkkkkkkkkkkkkkkw.......",
-  "...wwwwwwwwwwwwwwwww........",
-  "....wwwwwwwwwwwwwwwwww......",
-  "..wwwwwwwwwwwwwwwwwwwwww....",  // seat top
-  ".wkkkkkkkkkkkkkkkkkkkkkkw...",
-  ".wwwwwwwwwwwwwwwwwwwwwwww...",
-  ".wkkkkkkkkkkkkkkkkkkkkkkw...",
-  ".wwwwkkkkkkkkkkkkkkkwwww....",  // bowl interior
-  "..wwwwwwwwwwwwwwwwwwww......",
-  "...wwwwwwwwwwwwwwwwww.......",
-  "....wwwwwwwwwwwwwwww........",
-  "......wwwwwwwwwwww..........",
-];
-
-// ----- Thiel (16 x 22) -----
-const THIEL = [
-  "................",
-  "....HHHHHHHHH...",  // hair top
-  "...HHHHHHHHHHH..",
-  "..HHpppppppppHH.",  // forehead/hair
-  ".HpppppppppppppH",
-  ".HppppppppppppPH",  // face shadow
-  ".HpdppppppppdppH",  // eyes
-  ".HppppppppppppPH",
-  ".HppppppPPpppppH",  // nose
-  ".HppwwwwwwwwppPH",  // grin
-  ".HpwkkkkkkkkkwpH",  // grin teeth
-  "..HwwwwwwwwwwwH.",
-  "..HHppppppppppH.",
-  "...wwwwwwwwww...",  // collar
-  "..uwwuuuuwwuuu..",  // suit
-  ".uuuwwuwuuuuuuu.",
-  ".uuuwwwwuuuuuuu.",
-  ".uuuuuwuuuuuuuu.",
-  ".uuuuuwuuuuuuuu.",
-  ".uuuuuuuuuuuuuu.",
-  "..NNNNNN..NNNNN.",
-  "..NNNNN....NNNN.",
-];
-
-// ----- Diner sprites (varied) 14x18 -----
-const DINER_A = [
-  "..............",
-  "....yyyyyy....",  // blond hair
-  "...yyyyyyyy...",
-  "..pppppppppp..",
-  "..pppdpppdpp..",
-  "..pppppppppp..",
-  "..ppppOOpppp..",  // open mouth
-  "...ppppppppp..",
-  "....pppppp....",
-  "..bbbbbbbbbb..",  // blue shirt
-  ".bbbbwwwwbbbb.",  // shirt detail
-  ".bbbwwwwwwbbb.",
-  ".bbbbbbbbbbbb.",
-  ".bbbbbbbbbbbb.",
-  ".bbbbbbbbbbbb.",
-  ".bbbbbbbbbbbb.",
-  "..bbbb..bbbb..",
-  "..bbbb..bbbb..",
-];
-const DINER_B = [
-  "..............",
-  "..HHHHHHHHHH..",  // brown hair cap
-  ".HHcccccccHHH.",
-  "..ccccccccccc.",  // face
-  "..cccdccccdcc.",
-  "..ccccccccccc.",
-  "..ccccccOcccc.",  // open mouth
-  "...ccccccccc..",
-  "....ccccccc...",
-  "...rrrrrrrrr..",  // red shirt
-  "..rrrrwwwwrrr.",
-  "..rrrwwwwwwrr.",
-  "..rrrrrrrrrrr.",
-  "..rrrrrrrrrrr.",
-  "..rrrrrrrrrrr.",
-  "..rrrrrrrrrrr.",
-  "...rr....rr...",
-  "...rr....rr...",
-];
-const DINER_C = [
-  "..............",
-  "...YYYYYYYY...",  // dark hair
-  "..YYYYYYYYYY..",
-  ".YYpLLLLLLpYY.",  // face highlight
-  ".YpLLLLLLLLpY.",
-  ".YpLddLLddLpY.",  // eyes (glasses?)
-  ".YpLLLLLLLLpY.",
-  ".YpLLLLOOLLpY.",  // mouth
-  "..pLLLLLLLLp..",
-  "...pppppppp...",
-  "..gggggggggg..",  // green shirt
-  ".ggggwwwwgggg.",
-  ".gggwwwwwwggg.",
-  ".gggggggggggg.",
-  ".gggggggggggg.",
-  ".gggggggggggg.",
-  "..ggg....ggg..",
-  "..ggg....ggg..",
-];
-
-// ----- Burger (14 x 10) -----
-const BURGER = [
-  "...oooooooo...",
-  "..oooommoooo..",   // sesame seeds
-  ".ommoommoommo.",
-  ".OOOOOOOOOOOO.",
-  ".eeeeeeeeeeee.",   // lettuce
-  ".tttttttttttt.",   // patty (shit)
-  ".TTTTTTTTTTTT.",
-  ".eeeeeeeeeeee.",
-  ".OOOOOOOOOOOO.",
-  "...OOOOOOOO...",
-];
-
-// ----- Turd sprite (14 x 10) - tall poop swirl -----
-const TURD = [
-  "....lllll.....",
-  "...llltttll...",
-  "..lllttttttl..",
-  "..ttttttttttl.",
-  ".tttttTTtttttt",
-  ".tttTTTTTttttt",
-  ".tttttTTttttTT",
-  "..ttttttttTT..",
-  "..TTTTTTTTT...",
-  "...TTTTTTT....",
-];
-
-// ----- Tube turd (10 x 7) smaller -----
-const TUBE_TURD = [
-  "...lllll..",
-  "..ltttttl.",
-  ".ttttTTttt",
-  ".tttTTTttt",
-  ".ttttTttt.",
-  "..TTTTT...",
-  "..........",
-];
-
-// ----- Fly (5x3) — wings + body -----
-const FLY = [
-  "s.k.s",
-  ".kkk.",
-  "s.k.s",
-];
-
-function inject(id, html) {
-  const el = document.getElementById(id);
-  if (el) el.innerHTML = html;
-}
-
-// Render base sprites
-inject("trumpHolder", sprite(TRUMP, 6));
-inject("toiletHolder", sprite(TOILET, 5));
-inject("thielHolder", sprite(THIEL, 5));
-document.querySelectorAll(".diner-pixel").forEach(el => {
-  const d = el.dataset.d;
-  const map = [DINER_A, DINER_B, DINER_C];
-  el.innerHTML = sprite(map[d % 3], 4);
-});
-// Pre-render burger sprite to a string we reuse
-const BURGER_SVG = sprite(BURGER, 3);
-const TURD_SVG   = sprite(TURD, 2);
-const TUBE_TURD_SVG = sprite(TUBE_TURD, 2);
-const FLY_SVG       = sprite(FLY, 3);
-
-// Spawn flies hovering over the vat
-function spawnFlies(n = 8) {
-  const host = document.getElementById("flies");
-  for (let i = 0; i < n; i++) {
-    const f = document.createElement("div");
-    const v = 1 + (i % 4);
-    f.className = "fly fly-v" + v;
-    f.style.left = (Math.random() * 240) + "px";
-    f.style.top  = (Math.random() * 130) + "px";
-    f.style.animationDelay    = (-Math.random() * 6) + "s";
-    f.style.animationDuration = (3.2 + Math.random() * 2.6) + "s";
-    f.innerHTML = `<div class="fly-flap" style="animation-delay:${-Math.random()*0.1}s">${FLY_SVG}</div>`;
-    host.appendChild(f);
-  }
-}
-spawnFlies(9);
-
-// Initial burgers
-[0,1,2].forEach(i => {
-  document.getElementById("burger"+i).innerHTML = BURGER_SVG;
-});
-
-// ============================================================
-//  DATA — 100 events with source links
-// ============================================================
-const W = (slug) => "https://en.wikipedia.org/wiki/" + slug;
-
-const EVENTS = [
-  // ---- TERM 1 ----
-  { date:"2017-01-27", label:"Muslim Ban",       title:"Executive Order 13769 barred entry from 7 Muslim-majority countries; airport chaos, courts struck v1.", url:W("Executive_Order_13769") },
-  { date:"2017-01-28", label:"Bannon → NSC",     title:"Steve Bannon elevated to the NSC Principals Committee by EO; reversed under pressure.", url:W("Steve_Bannon") },
-  { date:"2017-02-09", label:"Sessions In",      title:"Jeff Sessions confirmed Attorney General despite perjuring on Russia contacts.", url:W("Jeff_Sessions") },
-  { date:"2017-03-16", label:"Slash EPA",        title:"Proposed 31% EPA budget cut; sought to gut climate research and Superfund.", url:W("Environmental_policy_of_the_first_Donald_Trump_administration") },
-  { date:"2017-05-09", label:"Comey Fired",      title:"Fired FBI Director James Comey, then admitted on TV it was over 'this Russia thing.'", url:W("Dismissal_of_James_Comey") },
-  { date:"2017-06-01", label:"Paris Pullout",    title:"Announced U.S. withdrawal from the Paris Climate Agreement.", url:W("Withdrawal_of_the_United_States_from_the_Paris_Agreement") },
-  { date:"2017-06-29", label:"Mika Tweet",       title:"Tweeted that Mika Brzezinski was 'bleeding badly from a face-lift.'", url:W("Social_media_use_by_Donald_Trump") },
-  { date:"2017-07-26", label:"Trans Mil Ban",    title:"Tweeted ban on transgender service members; military leadership blindsided.", url:W("Transgender_personnel_in_the_United_States_military") },
-  { date:"2017-08-15", label:'"Fine People"',    title:"After Charlottesville: said there were 'very fine people on both sides' at a neo-Nazi rally.", url:W("Unite_the_Right_rally") },
-  { date:"2017-08-25", label:"Arpaio Pardon",    title:"Pardoned ex-sheriff Joe Arpaio, convicted of contempt for racially profiling Latinos.", url:W("Joe_Arpaio") },
-  { date:"2017-09-05", label:"Kills DACA",       title:"Rescinded DACA, threatening ~800,000 Dreamers.", url:W("Rescission_of_DACA") },
-  { date:"2017-10-12", label:"Sabotage ACA",     title:"Ended ACA cost-sharing subsidies, destabilizing health insurance markets.", url:W("Efforts_to_repeal_the_Affordable_Care_Act") },
-  { date:"2017-12-06", label:"Jerusalem Move",   title:"Recognized Jerusalem as Israel's capital, ordered embassy move.", url:W("Trump_recognition_of_Jerusalem_as_capital_of_Israel") },
-  { date:"2017-12-22", label:"Tax Cut Bonanza",  title:"Signed Tax Cuts and Jobs Act — most benefits flowed to top earners and corporations.", url:W("Tax_Cuts_and_Jobs_Act") },
-  { date:"2018-01-11", label:'"Shithole"',       title:"Called Haiti, El Salvador, African nations 'shithole countries' in the Oval Office.", url:W("Trump_shithole_countries_comment") },
-  { date:"2018-03-22", label:"Tariff War",       title:"Launched steel/aluminum tariffs, kicking off trade war with China and allies.", url:W("Trump_tariffs") },
-  { date:"2018-04-06", label:"Family Sep'n",     title:"Sessions announced 'zero tolerance' — thousands of children separated at the border.", url:W("Trump_administration_family_separation_policy") },
-  { date:"2018-05-08", label:"Iran Deal Trash",  title:"Withdrew U.S. from the Iran nuclear deal (JCPOA).", url:W("United_States_withdrawal_from_the_Joint_Comprehensive_Plan_of_Action") },
-  { date:"2018-06-12", label:"Kim Love",         title:"Singapore summit with Kim Jong-un; called him 'very talented,' got nothing on denuclearization.", url:W("2018_North_Korea%E2%80%93United_States_Singapore_Summit") },
-  { date:"2018-06-26", label:"Kids in Cages",    title:"Images surfaced of migrant children held in chain-link cages at Border Patrol facilities.", url:W("Trump_administration_family_separation_policy") },
-  { date:"2018-07-16", label:"Helsinki Bow",     title:"Sided with Putin over U.S. intelligence on 2016 election interference.", url:W("2018_Russia%E2%80%93United_States_summit") },
-  { date:"2018-09-04", label:"Mocks Ford",       title:"Mocked Christine Blasey Ford at a rally days after her Kavanaugh testimony.", url:W("Brett_Kavanaugh_Supreme_Court_nomination") },
-  { date:"2018-10-02", label:"Khashoggi Cover",  title:"Shielded MBS after the murder of WaPo journalist Jamal Khashoggi.", url:W("Assassination_of_Jamal_Khashoggi") },
-  { date:"2018-11-25", label:"Tear-Gas Asylum",  title:"Tear gas fired at migrant families — including children — at the Tijuana crossing.", url:W("Donald_Trump_immigration_policy") },
-  { date:"2018-12-22", label:"Wall Shutdown",    title:"Triggered 35-day government shutdown — longest in U.S. history — over wall funding.", url:W("2018%E2%80%9319_United_States_federal_government_shutdown") },
-  { date:"2019-02-15", label:"Fake Emergency",   title:"Declared a national emergency to divert military funds to the wall after Congress refused.", url:W("Trump_administration_national_emergency_declaration") },
-  { date:"2019-04-18", label:"Mueller Spin",     title:"AG Barr's misleading rollout of the Mueller report buried evidence of obstruction.", url:W("Mueller_report") },
-  { date:"2019-07-14", label:'"Go Back"',        title:"Told four congresswomen of color to 'go back' to the countries they came from.", url:W("The_Squad_(United_States_Congress)") },
-  { date:"2019-07-25", label:"Ukraine Call",     title:"Pressured Zelensky to investigate Bidens while withholding aid — first impeachment.", url:W("Trump%E2%80%93Ukraine_scandal") },
-  { date:"2019-08-21", label:"Greenland I",      title:"Floated buying Greenland; canceled Denmark visit when PM called the idea 'absurd.'", url:W("2019_proposed_United_States_purchase_of_Greenland") },
-  { date:"2019-09-04", label:"Sharpie-gate",     title:"Doctored a hurricane forecast map with a Sharpie to defend a wrong tweet about Alabama.", url:W("Hurricane_Dorian%E2%80%93Alabama_controversy") },
-  { date:"2019-10-06", label:"Abandons Kurds",   title:"Withdrew troops from N. Syria, greenlighting Turkish assault on Kurdish allies.", url:W("2019_Turkish_offensive_into_north-eastern_Syria") },
-  { date:"2019-12-18", label:"Impeached #1",     title:"Impeached by the House for abuse of power & obstruction over the Ukraine scheme.", url:W("First_impeachment_of_Donald_Trump") },
-  { date:"2020-01-03", label:"Soleimani Hit",    title:"Drone strike killed Iran's Gen. Soleimani at Baghdad airport; near-war.", url:W("Assassination_of_Qasem_Soleimani") },
-  { date:"2020-02-26", label:'"Disappear"',      title:"Said COVID-19 'is going to disappear. One day — like a miracle — it will disappear.'", url:W("U.S._federal_government_response_to_the_COVID-19_pandemic") },
-  { date:"2020-03-13", label:"Test Failure",     title:"Botched COVID testing rollout: 'I don't take responsibility at all.'", url:W("U.S._federal_government_response_to_the_COVID-19_pandemic") },
-  { date:"2020-04-23", label:"Bleach Cure",      title:"Mused publicly about injecting disinfectant to fight COVID.", url:W("Donald_Trump%27s_disinfectant_comments") },
-  { date:"2020-05-29", label:'"Shooting"',       title:"Tweeted 'when the looting starts, the shooting starts' during George Floyd protests.", url:W("George_Floyd_protests") },
-  { date:"2020-06-01", label:"Lafayette Gas",    title:"Officers gassed peaceful protesters in Lafayette Square so he could hold a Bible at a church.", url:W("Lafayette_Square_protester_removal") },
-  { date:"2020-07-30", label:"Delay Election",   title:"Floated delaying the 2020 election — a power he does not have.", url:W("Attempts_to_overturn_the_2020_United_States_presidential_election") },
-  { date:"2020-08-13", label:"USPS Sabotage",    title:"Admitted to blocking USPS funding to hurt mail-in voting; DeJoy slowed mail service.", url:W("2020_United_States_Postal_Service_crisis") },
-  { date:"2020-09-29", label:'"Stand By"',       title:"Told Proud Boys to 'stand back and stand by' during the first debate.", url:W("Proud_Boys") },
-  { date:"2020-11-04", label:'"Stop Count"',     title:"Falsely declared victory at 2:30am; demanded counting stop in states where he was ahead.", url:W("Attempts_to_overturn_the_2020_United_States_presidential_election") },
-  { date:"2020-12-01", label:"Big Lie",          title:"Began the months-long 'Stolen Election' campaign — over 60 lawsuits lost.", url:W("Big_lie") },
-  { date:"2020-12-23", label:"Pardons Crooks",   title:"Pardoned Manafort, Stone, Kushner Sr., and Blackwater contractors who massacred Iraqis.", url:W("List_of_people_pardoned_or_granted_clemency_by_Donald_Trump") },
-  { date:"2021-01-02", label:'"Find Votes"',     title:"Called Georgia SoS Raffensperger: 'I just want to find 11,780 votes.'", url:W("Trump_Raffensperger_phone_call") },
-  { date:"2021-01-06", label:"Coup Attempt",     title:"Incited the Capitol assault to stop certification; watched on TV for hours before acting.", url:W("January_6_United_States_Capitol_attack") },
-  { date:"2021-01-13", label:"Impeached #2",     title:"Impeached again for incitement of insurrection — most bipartisan in U.S. history.", url:W("Second_impeachment_of_Donald_Trump") },
-  { date:"2021-01-19", label:"Last-Day Pardons", title:"Final-hour pardons for Bannon, Lil Wayne, fraudsters, and political allies.", url:W("List_of_people_pardoned_or_granted_clemency_by_Donald_Trump") },
-  { date:"2022-08-08", label:"Mar-a-Lago Docs",  title:"FBI search recovered hundreds of classified documents stashed at Mar-a-Lago.", url:W("FBI_search_of_Mar-a-Lago") },
-  { date:"2023-04-04", label:"34 Felonies",      title:"First U.S. president indicted — 34 NY felony counts over Stormy Daniels hush money.", url:W("Prosecution_of_Donald_Trump_in_New_York") },
-  { date:"2023-05-09", label:"Carroll Verdict",  title:"Civil jury found Trump liable for sexual abuse and defamation of E. Jean Carroll.", url:W("E._Jean_Carroll_v._Donald_J._Trump") },
-  { date:"2024-02-16", label:"$454M Fraud",      title:"NY civil fraud verdict — $454M for inflating asset values for years.", url:W("People_of_the_State_of_New_York_v._Trump") },
-  { date:"2024-05-30", label:"Convicted x34",    title:"Convicted on all 34 NY felony counts — first U.S. ex-president as felon.", url:W("Prosecution_of_Donald_Trump_in_New_York") },
-
-  // ---- TERM 2 ----
-  { date:"2025-01-20", label:"J6 Pardons",       title:"Day 1: mass pardons/commutations for ~1,500 Jan 6 defendants, including violent felons.", url:W("January_6_United_States_Capitol_attack") },
-  { date:"2025-01-20", label:"Paris Pull II",    title:"Withdrew U.S. from the Paris Climate Agreement for a second time.", url:W("Withdrawal_of_the_United_States_from_the_Paris_Agreement") },
-  { date:"2025-01-20", label:"WHO Quit II",      title:"Announced U.S. withdrawal from the World Health Organization.", url:W("United_States_and_the_World_Health_Organization") },
-  { date:"2025-01-20", label:"Birthright EO",    title:"Signed EO trying to end birthright citizenship — blocked nationwide by courts.", url:W("Birthright_citizenship_in_the_United_States") },
-  { date:"2025-01-20", label:"DEI Banned",       title:"Ordered federal DEI offices shut and gov-wide DEI programs dismantled.", url:W("Second_presidency_of_Donald_Trump") },
-  { date:"2025-01-20", label:"Trans Ban II",     title:"Ordered federal recognition collapsed to 'two sexes assigned at birth.'", url:W("Transgender_personnel_in_the_United_States_military") },
-  { date:"2025-01-21", label:"Gulf Renamed",     title:"Renamed the Gulf of Mexico to the 'Gulf of America' by executive fiat.", url:W("Gulf_of_Mexico") },
-  { date:"2025-01-22", label:"TikTok Bailout",   title:"Extended TikTok ban deadline by EO of dubious legality after the law took effect.", url:W("TikTok_v._Garland") },
-  { date:"2025-01-24", label:"IG Purge",         title:"Fired ~18 inspectors general overnight without the 30-day notice required by law.", url:W("Inspector_general") },
-  { date:"2025-01-27", label:"Funding Freeze",   title:"OMB tried to freeze all federal grants/loans — pulled after chaos and court orders.", url:W("Second_presidency_of_Donald_Trump") },
-  { date:"2025-02-01", label:"Tariff Tantrum",   title:"25% tariffs on Canada and Mexico, 10% on China; markets and allies reel.", url:W("Trump_tariffs") },
-  { date:"2025-02-03", label:"USAID Killed",     title:"Musk's DOGE began dismantling USAID; lifesaving programs halted overnight.", url:W("United_States_Agency_for_International_Development") },
-  { date:"2025-02-04", label:"Gaza 'Riviera'",   title:"Proposed U.S. 'take over' Gaza and 'own it,' relocate Palestinians — called it a 'Riviera.'", url:W("United_States_and_the_Israeli%E2%80%93Palestinian_conflict") },
-  { date:"2025-02-14", label:"Vance Munich",     title:"Vance lectured European allies, sided with the far right at Munich Security Conference.", url:W("Munich_Security_Conference") },
-  { date:"2025-02-19", label:"Zelensky Slur",    title:"Called Zelensky 'a dictator without elections' while flattering Putin.", url:W("Volodymyr_Zelenskyy") },
-  { date:"2025-02-28", label:"Oval Office Yell", title:"Trump & Vance ambushed Zelensky in the Oval Office on camera; minerals deal collapsed.", url:W("Second_presidency_of_Donald_Trump") },
-  { date:"2025-03-04", label:"Tariffs Live",     title:"Canada/Mexico tariffs went into effect; immediate retaliation, stock selloff.", url:W("Trump_tariffs") },
-  { date:"2025-03-08", label:"Khalil Snatched",  title:"ICE detained Columbia grad Mahmoud Khalil for protest speech; greencard holder, no charges.", url:W("Mahmoud_Khalil") },
-  { date:"2025-03-12", label:"Law Firms EO",     title:"EOs targeting Perkins Coie, Covington — punishing lawyers who took adverse cases.", url:W("Second_presidency_of_Donald_Trump") },
-  { date:"2025-03-15", label:"El Salvador Air",  title:"Used Alien Enemies Act to fly Venezuelans to El Salvador's CECOT prison; judge ordered halt mid-flight.", url:W("CECOT") },
-  { date:"2025-03-22", label:"Defies Court",     title:"Admin claimed planes were already over international waters; refused to turn around.", url:W("Second_presidency_of_Donald_Trump") },
-  { date:"2025-04-02", label:"Liberation Day",   title:"Announced sweeping 'reciprocal' tariffs on most trading partners using a nonsense formula.", url:W("Trump_tariffs") },
-  { date:"2025-04-04", label:"Market Crash",     title:"Worst 2-day market drop since COVID; $6T in equity value wiped out.", url:W("Trump_tariffs") },
-  { date:"2025-04-09", label:"90-Day Pause",     title:"Reversed most tariffs after bond market revolt; called the panic 'YIPPY.'", url:W("Trump_tariffs") },
-  { date:"2025-04-14", label:"Bukele Visit",     title:"Hosted Bukele, floated deporting U.S. citizens to El Salvador; called for new prisons.", url:W("Nayib_Bukele") },
-  { date:"2025-04-15", label:"Harvard Cut",      title:"Froze $2.2B in Harvard funding after the university refused federal speech demands.", url:W("Harvard_University") },
-  { date:"2025-04-18", label:"Abrego Case",      title:"SCOTUS ordered admin to 'facilitate' return of wrongly deported Kilmar Abrego Garcia; admin stalled.", url:W("Kilmar_Abrego_Garcia") },
-  { date:"2025-05-06", label:"VOA Silenced",     title:"Voice of America taken off the air worldwide for the first time since WWII.", url:W("Voice_of_America") },
-  { date:"2025-05-12", label:"Qatar Jet",        title:"Accepted $400M luxury 747 from Qatar 'gift' to use as Air Force One; emoluments outcry.", url:W("Air_Force_One") },
-  { date:"2025-05-22", label:"$TRUMP Dinner",    title:"Hosted top buyers of his memecoin at a private dinner — pay-to-access scheme.", url:W("Official_Trump") },
-  { date:"2025-06-06", label:"Marines to LA",    title:"Federalized CA Guard, deployed Marines to LA over Newsom's objections during ICE protests.", url:W("Second_presidency_of_Donald_Trump") },
-  { date:"2025-06-14", label:"Birthday Parade",  title:"Held a multi-million-dollar military parade on his birthday — tanks on Constitution Ave.", url:W("Second_presidency_of_Donald_Trump") },
-  { date:"2025-06-21", label:"Iran Strike",      title:"Ordered U.S. strikes on Iran's nuclear sites; bypassed Congress; near-war.", url:W("Iran%E2%80%93United_States_relations") },
-  { date:"2025-07-04", label:"Big Ugly Bill",    title:"'Big Beautiful' bill — massive Medicaid/SNAP cuts to fund tax cuts for the rich.", url:W("One_Big_Beautiful_Bill_Act") },
-  { date:"2025-07-22", label:"Powell Threats",   title:"Repeatedly threatened to fire Fed Chair Powell over interest rates.", url:W("Jerome_Powell") },
-  { date:"2025-08-11", label:"DC Takeover",      title:"Federalized DC police; deployed National Guard in the U.S. capital over local objections.", url:W("Second_presidency_of_Donald_Trump") },
-  { date:"2025-09-02", label:"Antifa Terror",    title:"Designated 'Antifa' a terrorist organization by EO; legal scholars: 'not a thing.'", url:W("Antifa_(United_States)") },
-  { date:"2025-09-25", label:"Jail Opponents",   title:"Publicly demanded DOJ prosecute Comey, Schiff, James; AG Bondi complied with referrals.", url:W("Second_presidency_of_Donald_Trump") },
-  { date:"2025-10-08", label:"Nobel Demand",     title:"Repeatedly demanded the Nobel Peace Prize; pressured Norway via diplomatic channels.", url:W("Nobel_Peace_Prize") },
-  { date:"2025-10-22", label:"Comey Charged",    title:"Former FBI Director Comey indicted on flimsy charges after Trump's public demand.", url:W("James_Comey") },
-  { date:"2025-11-06", label:"Press Lawsuits",   title:"Sued WSJ, NYT, ABC under new theory; chilled critical reporting via discovery costs.", url:W("Second_presidency_of_Donald_Trump") },
-  { date:"2025-11-19", label:"Mamdani Threats",  title:"Threatened to deport NYC mayor-elect, withhold federal funds from 'communist' city.", url:W("Zohran_Mamdani") },
-  { date:"2025-12-10", label:"Pardon Friends",   title:"Pardoned crypto fraudsters and donors; commuted Santos-adjacent allies.", url:W("List_of_people_pardoned_or_granted_clemency_by_Donald_Trump") },
-  { date:"2026-01-09", label:"Greenland II",     title:"Refused to rule out military force to take Greenland; Denmark mobilized.", url:W("2019_proposed_United_States_purchase_of_Greenland") },
-  { date:"2026-01-22", label:"Panama Talk",      title:"Demanded Panama 'return' the canal; sent USS deployment to the region.", url:W("Panama_Canal") },
-  { date:"2026-02-04", label:"51st State",       title:"Continued calling Canada the '51st state'; tariffs as annexation pressure.", url:W("Canada%E2%80%93United_States_relations") },
-  { date:"2026-02-18", label:"Press Subpoenas",  title:"DOJ subpoenaed reporters' phone records over leaks investigations.", url:W("Freedom_of_the_press_in_the_United_States") },
-  { date:"2026-03-05", label:"Venezuela Boats",  title:"Ordered Navy to intercept Venezuelan vessels; civilian deaths reported.", url:W("United_States%E2%80%93Venezuela_relations") },
-  { date:"2026-03-22", label:"Pardon Spree",     title:"Mass pardons of MAGA-allied officials convicted in 2020 election cases.", url:W("List_of_people_pardoned_or_granted_clemency_by_Donald_Trump") },
-  { date:"2026-04-01", label:"Tariff Round 4",   title:"Fourth wave of tariffs; recession watch upgraded by Fed.", url:W("Trump_tariffs") },
-  { date:"2026-04-28", label:"3rd-Term Talk",    title:"Floated 'ways' to run again in 2028 despite 22nd Amendment; sold THIRD TERM hats.", url:W("Twenty-second_Amendment_to_the_United_States_Constitution") },
-  { date:"2026-05-12", label:"Federalize Cops",  title:"Proposed federalizing big-city police forces and creating a 'Patriot Force.'", url:W("Second_presidency_of_Donald_Trump") },
-];
-
-// ============================================================
-//  STATE + ENGINE
-// ============================================================
-const STATE = {
-  idx: 0,
-  played: new Set(),
-  intervalMs: 8_000,
-  nextAt: 0,
-  paused: false,
-  tankColumns: Array(10).fill(0),
-};
-
-const el = (id) => document.getElementById(id);
-const speechEl = el("speech");
-const speechTextEl = el("speech-text");
-const speechDateEl = el("speech-date");
-const trumpHolder = el("trumpHolder");
-const turdLayer = el("turdLayer");
-const catapultEl = el("catapult");
-const tankPile = el("tankPile");
-const tankMeter = el("tankMeter");
-const tankPercent = el("tankPercent");
-const nowPlaying = el("nowPlaying");
-const nextUp = el("nextUp");
-const countdownEl = el("countdown");
-const thielEl = el("thiel");
-const tubeWrap = el("tubeWrap");
-const pauseBtn = el("pauseBtn");
-const burgerSlots = [el("burger0"), el("burger1"), el("burger2")];
-const dinerEls = document.querySelectorAll(".mcamerica .diner");
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-function formatDate(d) {
-  const [y, m, day] = d.split("-");
-  const months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-  return `${months[+m - 1]} ${+day}, ${y}`;
-}
-
-// Anchor coordinates (in stage px) tuned to layout above
-function anchors() {
-  return {
-    toilet:     { x: 96,  y: 250 },   // turd spawn (under bowl)
-    drainBot:   { x: 168, y: 540 },   // bottom of drain elbow
-    convStart:  { x: 200, y: 540 },
-    convEnd:    { x: 540, y: 540 },
-    catapult:   { x: 580, y: 540 },
-    launchTop:  { x: 700, y: 280 },   // arc apex
-    tankEntry:  { x: 800, y: 380 },   // top of tank
+  // ============================================================
+  //  STATE
+  // ============================================================
+  const STATE = {
+    idx: 0,
+    inTank: 0,      // shits currently in vat
+    fed: 0,         // burgers eaten
+    paused: false,
+    lastDrop: 0,
+    pile: [],       // {x,y,rot,scale} in machine canvas tank coords
+    shitsInFlight: [],     // shits flying machine→catapult arc
+    deliveries: [],        // shits traveling tube → restaurant table
+    burgers: [],           // {slot, life, label} active burgers at table
+    chamberFlash: 0,
+    catapultFire: 0,
+    flies: [],
+    diners: [],
+    history: [],    // recent past for tickertape
   };
-}
 
-function makeTurd(label) {
-  const node = document.createElement("div");
-  node.className = "turd-flying";
-  node.innerHTML = TURD_SVG + `<div class="turd-label">${escapeHtml(label.toUpperCase())}</div>`;
-  return node;
-}
+  // ============================================================
+  //  UTIL
+  // ============================================================
+  const $ = id => document.getElementById(id);
+  const fmt = n => Math.round(n).toLocaleString("en-US");
+  const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
+  const lerp = (a,b,t) => a + (b-a)*t;
+  const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+  const rand = (a,b) => a + Math.random() * (b-a);
+  const pad = n => String(n).padStart(2,"0");
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function formatDate(d) {
+    const [y,m,day] = d.split("-");
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return `${months[+m-1]} ${+day}, ${y}`;
+  }
 
-async function dropAndLaunch(label) {
-  const A = anchors();
-  const t = makeTurd(label);
-  turdLayer.appendChild(t);
-  t.style.left = A.toilet.x + "px";
-  t.style.top  = A.toilet.y + "px";
-
-  // 1. Fall through transparent drain
-  await runAnim(t, [
-    { transform: "translate(0,0) rotate(0deg)" },
-    { transform: `translate(${A.drainBot.x - A.toilet.x}px, ${A.drainBot.y - A.toilet.y}px) rotate(180deg)` }
-  ], { duration: 850, easing: "cubic-bezier(0.4, 0, 0.7, 1)", fill: "forwards" });
-
-  // 2. Conveyor ride
-  await runAnim(t, [
-    { transform: `translate(${A.drainBot.x - A.toilet.x}px, ${A.drainBot.y - A.toilet.y}px) rotate(180deg)` },
-    { transform: `translate(${A.catapult.x - A.toilet.x}px, ${A.drainBot.y - A.toilet.y}px) rotate(540deg)` }
-  ], { duration: 2100, easing: "linear", fill: "forwards" });
-
-  // 3. Fire catapult
-  catapultEl.classList.add("firing");
-  setTimeout(() => catapultEl.classList.remove("firing"), 600);
-
-  // 4. Arc into tank
-  await arcTurd(t, A.toilet, A.catapult, A.tankEntry, A.launchTop, 880);
-
-  // 5. Pile up
-  pileTurdInTank(label);
-  t.remove();
-
-  // 6. Send via tube to McAmerica (briefly delayed)
-  setTimeout(() => sendThroughTube(label), 350);
-}
-
-function runAnim(node, kf, opts) {
-  return node.animate(kf, opts).finished.catch(() => {});
-}
-function arcTurd(node, origin, start, end, apex, dur=900) {
-  return new Promise((resolve) => {
-    const t0 = performance.now();
-    function tick(now) {
-      const u = Math.min(1, (now - t0) / dur);
-      const x = (1-u)*(1-u)*start.x + 2*(1-u)*u*apex.x + u*u*end.x;
-      const y = (1-u)*(1-u)*start.y + 2*(1-u)*u*apex.y + u*u*end.y;
-      node.style.transform =
-        `translate(${x - origin.x}px, ${y - origin.y}px) rotate(${720 + u*540}deg)`;
-      if (u < 1) requestAnimationFrame(tick); else resolve();
+  // ============================================================
+  //  CLOCK TICKS
+  // ============================================================
+  (() => {
+    let svg = "";
+    for (let i = 0; i < 60; i++) {
+      const a = (i/60)*TAU - Math.PI/2;
+      const r1 = i % 5 === 0 ? 38 : 42;
+      const r2 = 46;
+      const x1 = Math.cos(a)*r1, y1 = Math.sin(a)*r1;
+      const x2 = Math.cos(a)*r2, y2 = Math.sin(a)*r2;
+      svg += `<line class="${i%5===0?'tick-major':'tick-minor'}" x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}"></line>`;
     }
-    requestAnimationFrame(tick);
-  });
-}
+    $("ticks").innerHTML = svg;
+  })();
 
-// ----- Pile turds inside USA tank -----
-function pileTurdInTank(label) {
-  const COLUMNS = 10;
-  const TANK_W  = 280 - 8;   // minus borders
-  const COL_W   = TANK_W / COLUMNS;
-  const TURD_H  = 14;        // visual stack step
-
-  // pick the shortest column (with slight randomness)
-  let minH = Infinity;
-  for (const h of STATE.tankColumns) if (h < minH) minH = h;
-  const candidates = [];
-  for (let i = 0; i < COLUMNS; i++) {
-    if (STATE.tankColumns[i] <= minH + 1) candidates.push(i);
+  const hHour = $("hHour"), hMin = $("hMin"), hSec = $("hSec");
+  const timeNow = $("timeNow"), calDate = $("calDate");
+  function tickHeader(now) {
+    const d = new Date(now);
+    const s = d.getSeconds() + d.getMilliseconds()/1000;
+    const m = d.getMinutes() + s/60;
+    const h = (d.getHours()%12) + m/60;
+    hSec.setAttribute("transform", `rotate(${s*6})`);
+    hMin.setAttribute("transform", `rotate(${m*6})`);
+    hHour.setAttribute("transform", `rotate(${h*30})`);
+    timeNow.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    calDate.textContent = d.toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
   }
-  const col = candidates[Math.floor(Math.random() * candidates.length)];
-  const stackI = STATE.tankColumns[col];
-  STATE.tankColumns[col]++;
 
-  const x = 4 + col * COL_W + (Math.random() - 0.5) * 4;
-  const y = stackI * TURD_H + (Math.random() * 2 - 1);  // little jitter
+  // ============================================================
+  //  CANVASES
+  // ============================================================
+  const mCanvas = $("machineCanvas");
+  const mCtx = mCanvas.getContext("2d");
+  const rCanvas = $("restaurantCanvas");
+  const rCtx = rCanvas.getContext("2d");
+  let mW = 0, mH = 0, rW = 0, rH = 0;
 
-  const node = document.createElement("div");
-  node.className = "pile-turd";
-  node.innerHTML = TURD_SVG;
-  node.style.left = x + "px";
-  node.style.bottom = y + "px";
-  node.style.transform = `rotate(${(Math.random()-0.5)*30}deg) scale(${0.85 + Math.random()*0.3})`;
-  node.style.opacity = "0.92";
-  // drop in
-  node.style.opacity = "0";
-  tankPile.appendChild(node);
-  requestAnimationFrame(() => {
-    node.animate([
-      { opacity: 0, transform: node.style.transform + " translateY(-30px)" },
-      { opacity: 0.92, transform: node.style.transform }
-    ], { duration: 350, easing: "ease-out", fill: "forwards" });
-  });
+  function resize() {
+    const r = dpr();
+    const mRect = mCanvas.parentElement.getBoundingClientRect();
+    mCanvas.width  = Math.round(mRect.width * r);
+    mCanvas.height = Math.round(mRect.height * r);
+    mCtx.setTransform(r,0,0,r,0,0);
+    mW = mRect.width; mH = mRect.height;
 
-  // Update meter
-  const total = Math.min(100, STATE.played.size);
-  tankMeter.textContent = `${total} / 100`;
-  tankPercent.textContent = total + "%";
-}
-
-// ----- Tube delivery animation -----
-function sendThroughTube(label) {
-  const tube = tubeWrap;
-  const turd = document.createElement("div");
-  turd.className = "tube-turd";
-  turd.innerHTML = TUBE_TURD_SVG;
-  tube.appendChild(turd);
-
-  const startX = -20;
-  const endX = 80;
-  turd.animate([
-    { left: startX + "px",   top: "33px",  transform: "rotate(0deg)" },
-    { left: endX + "px",     top: "33px",  transform: "rotate(360deg)" }
-  ], { duration: 1200, easing: "linear", fill: "forwards" }).finished.then(() => {
-    // Fall down elbow
-    return turd.animate([
-      { left: endX + "px",     top: "33px",  transform: "rotate(360deg)" },
-      { left: (endX-10) + "px", top: "70px", transform: "rotate(540deg)" }
-    ], { duration: 400, easing: "cubic-bezier(0.4, 0, 0.8, 1)", fill: "forwards" }).finished;
-  }).then(() => {
-    turd.remove();
-    cookBurger();
-  }).catch(() => turd.remove());
-}
-
-// ----- McAmerica burger pop + cheering -----
-function cookBurger() {
-  const idx = Math.floor(Math.random() * 3);
-  const slot = burgerSlots[idx];
-  // briefly empty, then re-pop fresh burger
-  slot.innerHTML = "";
-  setTimeout(() => {
-    slot.innerHTML = BURGER_SVG;
-    slot.animate([
-      { transform: "translateY(-26px) scale(0.4)", opacity: 0 },
-      { transform: "translateY(0) scale(1)", opacity: 1 }
-    ], { duration: 500, easing: "cubic-bezier(0.3, 1.7, 0.5, 1)" });
-  }, 50);
-
-  // diners cheer
-  dinerEls.forEach((d, i) => {
-    setTimeout(() => {
-      d.classList.add("cheering");
-      setTimeout(() => d.classList.remove("cheering"), 1700);
-    }, i * 120);
-  });
-}
-
-// ----- Trump speaks + strains -----
-function performDump(event) {
-  speechTextEl.textContent = event.title;
-  speechDateEl.textContent = "◤ " + formatDate(event.date) + " ◢";
-  speechEl.classList.add("show");
-
-  setTimeout(() => trumpHolder.classList.add("strain"), 800);
-  setTimeout(() => {
-    trumpHolder.classList.remove("strain");
-    dropAndLaunch(event.label);
-    thielEl.classList.add("cheer");
-    setTimeout(() => thielEl.classList.remove("cheer"), 800);
-  }, 1900);
-  setTimeout(() => speechEl.classList.remove("show"), 6200);
-}
-
-// ----- Main tick -----
-function tick() {
-  if (STATE.paused) return;
-  const event = EVENTS[STATE.idx];
-  STATE.played.add(STATE.idx);
-  nowPlaying.textContent = `${event.label}`;
-  performDump(event);
-
-  STATE.idx = (STATE.idx + 1) % EVENTS.length;
-  if (STATE.idx === 0) {
-    // recycle — clear pile so it doesn't fill forever past 100
-    STATE.played.clear();
-    STATE.tankColumns = Array(10).fill(0);
-    tankPile.innerHTML = "";
-    tankMeter.textContent = "0 / 100";
-    tankPercent.textContent = "0%";
+    const rRect = rCanvas.parentElement.getBoundingClientRect();
+    rCanvas.width  = Math.round(rRect.width * r);
+    rCanvas.height = Math.round(rRect.height * r);
+    rCtx.setTransform(r,0,0,r,0,0);
+    rW = rRect.width; rH = rRect.height;
   }
-  STATE.nextAt = Date.now() + STATE.intervalMs;
-  nextUp.textContent = `${EVENTS[STATE.idx].label}`;
-  refreshAllRowsHighlight();
-}
-let loopTimer = null;
-function startLoop() {
-  tick();
-  loopTimer = setInterval(tick, STATE.intervalMs);
-  setInterval(() => {
-    const s = Math.max(0, Math.ceil((STATE.nextAt - Date.now())/1000));
-    countdownEl.textContent = (STATE.paused ? "—" : `${s}s`);
-  }, 250);
-}
-function togglePause() {
-  STATE.paused = !STATE.paused;
-  pauseBtn.textContent = STATE.paused ? "▶ RESUME" : "⏸ PAUSE";
-  if (!STATE.paused) STATE.nextAt = Date.now() + STATE.intervalMs;
-}
-pauseBtn.addEventListener("click", togglePause);
+  window.addEventListener("resize", resize);
 
-// ============================================================
-//  ALL SHITS modal — list + calendar
-// ============================================================
-function buildAllList() {
-  const tbody = el("allRows");
-  tbody.innerHTML = EVENTS.map((e, i) =>
-    `<tr data-i="${i}">
-       <td class="num">${String(i+1).padStart(2,'0')}</td>
-       <td class="date">${formatDate(e.date)}</td>
-       <td class="label">${escapeHtml(e.label)}</td>
-       <td class="body">${escapeHtml(e.title)}
-         <a class="read-more" href="${e.url}" target="_blank" rel="noopener noreferrer">SOURCE ↗</a>
-       </td>
-     </tr>`).join("");
-}
-function refreshAllRowsHighlight() {
-  document.querySelectorAll("#allRows tr").forEach(tr => {
-    const i = +tr.dataset.i;
-    tr.classList.toggle("played", STATE.played.has(i));
-    tr.classList.toggle("current", i === (STATE.idx - 1 + EVENTS.length) % EVENTS.length);
-  });
-  buildComingList();
-}
-
-// ============================================================
-//  COMING TURDS list
-// ============================================================
-function buildComingList() {
-  const list = el("comingList");
-  const upcoming = [];
-  for (let n = 0; n < 10; n++) {
-    const i = (STATE.idx + n) % EVENTS.length;
-    upcoming.push({ i, ev: EVENTS[i], when: n });
+  // ============================================================
+  //  MACHINE GEOMETRY (computed each frame from mW/mH)
+  // ============================================================
+  function machineGeom() {
+    const cx = mW * 0.30;        // trump x position
+    const trumpY = mH * 0.30;     // trump y (head/body center)
+    const toiletY = trumpY + 60;  // toilet seat y
+    const chamberY = mH * 0.58;   // formation chamber center y
+    const chR = 46;
+    const beltY = mH - 110;
+    const beltStart = 50;
+    const beltEnd = mW - 90;
+    const catapultX = mW - 60;
+    const tankX = mW * 0.72;
+    const tankTop = mH * 0.30;
+    const tankBottom = beltY - 10;
+    const tankLeft = tankX - 70;
+    const tankRight = tankX + 70;
+    return { cx, trumpY, toiletY, chamberY, chR, beltY, beltStart, beltEnd, catapultX, tankX, tankTop, tankBottom, tankLeft, tankRight };
   }
-  list.innerHTML = upcoming.map((u, n) => `
-    <li>
-      <div style="flex:1">
-        <span class="label-pixel">${escapeHtml(u.ev.label)}</span>
-        <div class="desc">${escapeHtml(u.ev.title.slice(0, 110))}${u.ev.title.length>110?'…':''}
-          <a class="read-more" href="${u.ev.url}" target="_blank" rel="noopener noreferrer">SOURCE ↗</a>
-        </div>
-      </div>
-      <div>
-        ${n === 0
-          ? '<span class="next-badge">NOW</span>'
-          : `<span class="countdown">+${n*8}s</span>`}
-      </div>
-    </li>
-  `).join("");
-}
 
-// ============================================================
-//  CALENDAR
-// ============================================================
-function buildCalendar() {
-  const pane = el("paneCal");
-  const byMonth = new Map();
-  EVENTS.forEach((e, i) => {
-    const ym = e.date.slice(0,7);
-    if (!byMonth.has(ym)) byMonth.set(ym, []);
-    byMonth.get(ym).push({ ...e, i });
-  });
-  const months = Array.from(byMonth.keys()).sort();
-  pane.innerHTML = months.map(ym => {
-    const [y, m] = ym.split("-").map(Number);
-    const monthName = new Date(y, m-1, 1).toLocaleString("en", { month: "long" });
-    const firstDay = new Date(y, m-1, 1).getDay();
-    const daysInMonth = new Date(y, m, 0).getDate();
-    const evs = byMonth.get(ym);
-    const eventsByDay = new Map();
-    evs.forEach(e => {
-      const d = +e.date.split("-")[2];
-      if (!eventsByDay.has(d)) eventsByDay.set(d, []);
-      eventsByDay.get(d).push(e);
-    });
-    let cells = '<div class="cal-day weekday-label">S</div><div class="cal-day weekday-label">M</div><div class="cal-day weekday-label">T</div><div class="cal-day weekday-label">W</div><div class="cal-day weekday-label">T</div><div class="cal-day weekday-label">F</div><div class="cal-day weekday-label">S</div>';
-    for (let i = 0; i < firstDay; i++) cells += '<div class="cal-day"></div>';
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dayEvs = eventsByDay.get(d);
-      const has = dayEvs && dayEvs.length;
-      const tip = has ? dayEvs.map(e => `${e.label}: ${e.title}|${e.url}`).join('§') : '';
-      cells += `<div class="cal-day ${has?'has-event':''}" data-tip="${escapeHtml(tip)}" data-url="${has?dayEvs[0].url:''}">${d}</div>`;
+  function restaurantGeom() {
+    const buildingLeft = rW * 0.15;
+    const buildingRight = rW * 0.92;
+    const buildingTop = rH * 0.30;
+    const buildingBottom = rH - 80;
+    const tableY = buildingBottom - 60;
+    const tubeY = rH * 0.45;
+    return { buildingLeft, buildingRight, buildingTop, buildingBottom, tableY, tubeY };
+  }
+
+  // ============================================================
+  //  PRIMITIVES
+  // ============================================================
+  function strokeRoundedRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r, y);
+    ctx.arc(x+w-r, y+r, r, -Math.PI/2, 0);
+    ctx.lineTo(x+w, y+h-r);
+    ctx.arc(x+w-r, y+h-r, r, 0, Math.PI/2);
+    ctx.lineTo(x+r, y+h);
+    ctx.arc(x+r, y+h-r, r, Math.PI/2, Math.PI);
+    ctx.lineTo(x, y+r);
+    ctx.arc(x+r, y+r, r, Math.PI, 3*Math.PI/2);
+    ctx.closePath();
+  }
+  function hex(ctx, x, y, r) {
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const a = (i/6)*TAU - Math.PI/2;
+      const px = x + r*Math.cos(a);
+      const py = y + r*Math.sin(a);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     }
-    return `<div class="cal-month">
-      <h3>${monthName.toUpperCase()} ${y} — ${evs.length} DEPOSIT${evs.length===1?'':'S'}</h3>
-      <div class="cal-grid">${cells}</div>
-    </div>`;
-  }).join("");
+    ctx.closePath();
+  }
 
-  const tip = el("tooltip");
-  pane.querySelectorAll(".cal-day.has-event").forEach(d => {
-    d.addEventListener("mouseenter", () => {
-      const raw = d.dataset.tip;
-      const lines = raw.split('§').map(line => {
-        const [text, url] = line.split('|');
-        return `${text}<br><a class="tip-link" href="${url}" target="_blank">SOURCE ↗</a>`;
+  // ============================================================
+  //  CHARACTERS — drawn as detailed vectors
+  // ============================================================
+  function drawTrump(ctx, cx, cy, scale=1, straining=false) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    const wob = straining ? Math.sin(performance.now()/40) * 1.2 : 0;
+    ctx.translate(wob, 0);
+    ctx.scale(scale, scale);
+
+    // crown (gold zigzag, glowing)
+    const crownY = -54;
+    const crownGlow = ctx.createRadialGradient(0, crownY, 0, 0, crownY, 30);
+    crownGlow.addColorStop(0, "rgba(247, 201, 72, 0.55)");
+    crownGlow.addColorStop(1, "rgba(247, 201, 72, 0)");
+    ctx.fillStyle = crownGlow;
+    ctx.beginPath();
+    ctx.arc(0, crownY, 30, 0, TAU);
+    ctx.fill();
+
+    ctx.fillStyle = "#f7c948";
+    ctx.beginPath();
+    ctx.moveTo(-22, -45);
+    ctx.lineTo(-18, -58);
+    ctx.lineTo(-12, -49);
+    ctx.lineTo(-6,  -62);
+    ctx.lineTo(0,   -50);
+    ctx.lineTo(6,   -62);
+    ctx.lineTo(12,  -49);
+    ctx.lineTo(18,  -58);
+    ctx.lineTo(22,  -45);
+    ctx.closePath();
+    ctx.fill();
+    // crown band
+    ctx.fillStyle = "#b8860b";
+    ctx.fillRect(-22, -48, 44, 4);
+    // jewels
+    ctx.fillStyle = "#e53935";
+    ctx.beginPath(); ctx.arc(-12, -46, 1.4, 0, TAU); ctx.fill();
+    ctx.fillStyle = "#7ab84a";
+    ctx.beginPath(); ctx.arc(0, -46, 1.4, 0, TAU); ctx.fill();
+    ctx.fillStyle = "#2a4d8f";
+    ctx.beginPath(); ctx.arc(12, -46, 1.4, 0, TAU); ctx.fill();
+
+    // hair (yellow swoop)
+    ctx.fillStyle = "#f5d76e";
+    ctx.beginPath();
+    ctx.moveTo(-26, -28);
+    ctx.bezierCurveTo(-28, -42, -22, -44, -10, -44);
+    ctx.bezierCurveTo(0, -48, 24, -45, 26, -34);
+    ctx.bezierCurveTo(28, -22, 22, -22, 22, -22);
+    ctx.bezierCurveTo(20, -28, 8, -28, 0, -25);
+    ctx.bezierCurveTo(-12, -22, -22, -22, -26, -28);
+    ctx.closePath();
+    ctx.fill();
+    // hair shadow
+    ctx.fillStyle = "#c9a533";
+    ctx.beginPath();
+    ctx.moveTo(-22, -28);
+    ctx.bezierCurveTo(-20, -34, -10, -36, 0, -34);
+    ctx.bezierCurveTo(8, -32, 18, -28, 22, -22);
+    ctx.bezierCurveTo(12, -25, 0, -23, -22, -28);
+    ctx.closePath();
+    ctx.fill();
+
+    // face — CHEETO ORANGE
+    const skinGlow = ctx.createRadialGradient(0, -8, 0, 0, -8, 28);
+    skinGlow.addColorStop(0, "rgba(255, 140, 26, 0.35)");
+    skinGlow.addColorStop(1, "rgba(255, 140, 26, 0)");
+    ctx.fillStyle = skinGlow;
+    ctx.beginPath();
+    ctx.arc(0, -8, 28, 0, TAU);
+    ctx.fill();
+
+    ctx.fillStyle = "#ff8c1a";  // cheeto orange
+    ctx.beginPath();
+    ctx.ellipse(0, -10, 21, 23, 0, 0, TAU);
+    ctx.fill();
+    // chin shadow
+    ctx.fillStyle = "#b85700";
+    ctx.beginPath();
+    ctx.ellipse(0, 6, 14, 7, 0, 0, Math.PI);
+    ctx.fill();
+
+    // goggle rings (iconic pale circles around eyes)
+    ctx.fillStyle = "#ffe0a3";
+    ctx.beginPath();
+    ctx.arc(-7, -14, 6, 0, TAU);
+    ctx.arc(7, -14, 6, 0, TAU);
+    ctx.fill();
+
+    // brows
+    ctx.strokeStyle = "#a8801d";
+    ctx.lineWidth = 1.8;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(-13, -19); ctx.lineTo(-3, -20);
+    ctx.moveTo(3, -20);   ctx.lineTo(13, -19);
+    ctx.stroke();
+
+    // eyes
+    ctx.fillStyle = "#0a0a16";
+    ctx.beginPath();
+    ctx.arc(-7, -14, 1.6, 0, TAU);
+    ctx.arc(7,  -14, 1.6, 0, TAU);
+    ctx.fill();
+    // glint
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(-6.4, -14.5, 0.5, 0, TAU);
+    ctx.arc(7.6,  -14.5, 0.5, 0, TAU);
+    ctx.fill();
+
+    // mouth
+    if (straining) {
+      ctx.fillStyle = "#3a0a0a";
+      ctx.beginPath();
+      ctx.ellipse(0, 4, 5, 4, 0, 0, TAU);
+      ctx.fill();
+    } else {
+      ctx.strokeStyle = "#7a1a1a";
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(-6, 4); ctx.lineTo(6, 4);
+      ctx.stroke();
+    }
+
+    // neck
+    ctx.fillStyle = "#ff8c1a";
+    ctx.fillRect(-7, 14, 14, 8);
+
+    // body (dark navy suit, sitting)
+    ctx.fillStyle = "#1c2438";
+    ctx.beginPath();
+    ctx.moveTo(-30, 22);
+    ctx.bezierCurveTo(-36, 32, -34, 48, -28, 56);
+    ctx.lineTo(28, 56);
+    ctx.bezierCurveTo(34, 48, 36, 32, 30, 22);
+    ctx.closePath();
+    ctx.fill();
+
+    // shirt opening (white v)
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.moveTo(-5, 22);
+    ctx.lineTo(0, 30);
+    ctx.lineTo(5, 22);
+    ctx.closePath();
+    ctx.fill();
+
+    // tie (red, exaggerated long)
+    ctx.fillStyle = "#e53935";
+    ctx.beginPath();
+    ctx.moveTo(-4, 22);
+    ctx.lineTo(4, 22);
+    ctx.lineTo(3, 50);
+    ctx.lineTo(0, 56);
+    ctx.lineTo(-3, 50);
+    ctx.closePath();
+    ctx.fill();
+
+    // tiny hands resting on knees
+    ctx.fillStyle = "#ff8c1a";
+    ctx.beginPath();
+    ctx.arc(-26, 52, 5, 0, TAU);
+    ctx.arc( 26, 52, 5, 0, TAU);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawToilet(ctx, cx, cy) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.strokeStyle = "rgba(220, 228, 240, 0.45)";
+    ctx.lineWidth = 1.4;
+    ctx.fillStyle = "rgba(245, 248, 252, 0.08)";
+
+    // tank (back)
+    strokeRoundedRect(ctx, -28, -40, 56, 30, 4);
+    ctx.fill();
+    ctx.stroke();
+    // flush handle
+    ctx.fillStyle = "rgba(220, 228, 240, 0.6)";
+    ctx.fillRect(-24, -32, 6, 2);
+
+    // bowl
+    ctx.fillStyle = "rgba(245, 248, 252, 0.05)";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 50, 18, 0, 0, TAU);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 50, 18, 0, 0, TAU);
+    ctx.stroke();
+    // seat ring
+    ctx.beginPath();
+    ctx.ellipse(0, -5, 48, 14, 0, 0, TAU);
+    ctx.stroke();
+    // dark hole
+    const holeGrad = ctx.createRadialGradient(0, -3, 0, 0, -3, 22);
+    holeGrad.addColorStop(0, "rgba(0,0,0,0.95)");
+    holeGrad.addColorStop(1, "rgba(0,0,0,0.4)");
+    ctx.fillStyle = holeGrad;
+    ctx.beginPath();
+    ctx.ellipse(0, -3, 24, 9, 0, 0, TAU);
+    ctx.fill();
+
+    // base
+    ctx.strokeStyle = "rgba(220, 228, 240, 0.35)";
+    ctx.beginPath();
+    ctx.moveTo(-28, 14);
+    ctx.lineTo(-32, 30);
+    ctx.lineTo(32, 30);
+    ctx.lineTo(28, 14);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawShit(ctx, cx, cy, size=1, alpha=1, label="", rotation=0) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+    ctx.scale(size, size);
+    ctx.globalAlpha = alpha;
+
+    // glow
+    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, 26);
+    glow.addColorStop(0, "rgba(184, 120, 56, 0.5)");
+    glow.addColorStop(1, "rgba(184, 120, 56, 0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, 0, 26, 0, TAU);
+    ctx.fill();
+
+    // stacked swirl
+    ctx.fillStyle = "#6b3f1a";
+    ctx.beginPath();
+    ctx.ellipse(0, 8, 14, 5, 0, 0, TAU);  // base
+    ctx.fill();
+    ctx.fillStyle = "#7a4820";
+    ctx.beginPath();
+    ctx.ellipse(0, 2, 12, 5, 0, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#8a5828";
+    ctx.beginPath();
+    ctx.ellipse(0, -4, 9, 4, 0, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#8e5e30";
+    ctx.beginPath();
+    ctx.ellipse(0, -9, 6, 3, 0, 0, TAU);
+    ctx.fill();
+    // tip
+    ctx.fillStyle = "#a06a35";
+    ctx.beginPath();
+    ctx.moveTo(0, -14);
+    ctx.bezierCurveTo(-3, -16, 3, -16, 0, -10);
+    ctx.fill();
+
+    // highlight
+    ctx.fillStyle = "rgba(184, 120, 56, 0.45)";
+    ctx.beginPath();
+    ctx.ellipse(-4, -3, 4, 1.5, -0.3, 0, TAU);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(-3, 3, 5, 2, -0.2, 0, TAU);
+    ctx.fill();
+
+    ctx.restore();
+
+    // label (un-rotated, un-scaled, just below the shit)
+    if (label) {
+      ctx.save();
+      ctx.translate(cx, cy + 20 * size);
+      ctx.globalAlpha = alpha;
+      ctx.font = `700 ${10*Math.max(0.7, size)}px ui-monospace, monospace`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(255, 140, 26, 0.9)";
+      ctx.shadowBlur = 12;
+      ctx.fillStyle = "rgba(255, 215, 150, 1)";
+      ctx.fillText(label.toUpperCase(), 0, 0);
+      ctx.shadowBlur = 0;
+      ctx.fillText(label.toUpperCase(), 0, 0);
+      ctx.restore();
+    }
+  }
+
+  function drawFly(ctx, x, y, wingFlap=1, alpha=0.85) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.globalAlpha = alpha;
+    // wings
+    ctx.fillStyle = "rgba(220, 220, 240, 0.55)";
+    const ws = 0.4 + 0.6 * wingFlap;
+    ctx.beginPath();
+    ctx.ellipse(-3, -2, 3 * ws, 2, -0.4, 0, TAU);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(3, -2, 3 * ws, 2, 0.4, 0, TAU);
+    ctx.fill();
+    // body
+    ctx.fillStyle = "#080812";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 2.4, 1.6, 0, 0, TAU);
+    ctx.fill();
+    // head
+    ctx.beginPath();
+    ctx.arc(0, -2.5, 1.3, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawDiner(ctx, cx, cy, scale=1, shirtColor="#2a4d8f", skinColor="#f3c89a", eating=false, eatPhase=0) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(scale, scale);
+
+    // body
+    ctx.fillStyle = shirtColor;
+    ctx.beginPath();
+    ctx.moveTo(-18, 6);
+    ctx.bezierCurveTo(-22, 30, -16, 40, -10, 40);
+    ctx.lineTo(10, 40);
+    ctx.bezierCurveTo(16, 40, 22, 30, 18, 6);
+    ctx.closePath();
+    ctx.fill();
+    // shirt collar
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.moveTo(-5, 6);
+    ctx.lineTo(0, 14);
+    ctx.lineTo(5, 6);
+    ctx.closePath();
+    ctx.fill();
+
+    // head
+    ctx.fillStyle = skinColor;
+    ctx.beginPath();
+    ctx.arc(0, -8, 12, 0, TAU);
+    ctx.fill();
+
+    // hair tuft
+    ctx.fillStyle = "rgba(80, 50, 30, 0.85)";
+    ctx.beginPath();
+    ctx.arc(0, -16, 10, Math.PI * 1.1, Math.PI * 1.9);
+    ctx.fill();
+
+    // eyes (closed in happiness when eating)
+    ctx.strokeStyle = "#0a0a16";
+    ctx.lineWidth = 1.4;
+    ctx.lineCap = "round";
+    if (eating) {
+      // happy closed eyes ^^
+      ctx.beginPath();
+      ctx.arc(-4, -10, 1.8, Math.PI * 0.2, Math.PI * 0.8, true);
+      ctx.arc(4,  -10, 1.8, Math.PI * 0.2, Math.PI * 0.8, true);
+      ctx.stroke();
+    } else {
+      // open dots
+      ctx.fillStyle = "#0a0a16";
+      ctx.beginPath();
+      ctx.arc(-4, -10, 1.2, 0, TAU);
+      ctx.arc(4,  -10, 1.2, 0, TAU);
+      ctx.fill();
+    }
+
+    // mouth (chewing animation)
+    if (eating) {
+      const open = 1 + Math.sin(eatPhase * 8) * 0.4;
+      ctx.fillStyle = "#3d2510";
+      ctx.beginPath();
+      ctx.ellipse(0, -5, 3.5, 2.5 * open, 0, 0, TAU);
+      ctx.fill();
+      // brown smear (shit)
+      ctx.fillStyle = "rgba(107, 63, 26, 0.7)";
+      ctx.beginPath();
+      ctx.arc(-3, -3, 1.5, 0, TAU);
+      ctx.arc(3, -3, 1.5, 0, TAU);
+      ctx.fill();
+    } else {
+      // contented smile
+      ctx.beginPath();
+      ctx.arc(0, -5, 3, 0.15, Math.PI - 0.15);
+      ctx.stroke();
+    }
+
+    // happy cheek blush
+    ctx.fillStyle = "rgba(255, 140, 140, 0.4)";
+    ctx.beginPath();
+    ctx.arc(-7, -5, 2, 0, TAU);
+    ctx.arc(7,  -5, 2, 0, TAU);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawBurger(ctx, cx, cy, scale=1, freshness=1) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(scale, scale);
+
+    // shadow
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.beginPath();
+    ctx.ellipse(0, 9, 16, 2, 0, 0, TAU);
+    ctx.fill();
+
+    // bottom bun
+    ctx.fillStyle = "#c98244";
+    ctx.beginPath();
+    ctx.ellipse(0, 5, 16, 5, 0, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#a86a20";
+    ctx.beginPath();
+    ctx.ellipse(0, 7, 16, 2, 0, 0, TAU);
+    ctx.fill();
+
+    // patty (shit-brown)
+    ctx.fillStyle = "#6b3f1a";
+    ctx.beginPath();
+    ctx.ellipse(0, 1, 17, 3, 0, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#5a3010";
+    ctx.beginPath();
+    ctx.ellipse(0, 2.5, 17, 1, 0, 0, TAU);
+    ctx.fill();
+
+    // lettuce (wavy green)
+    ctx.fillStyle = "#7ab84a";
+    ctx.beginPath();
+    ctx.moveTo(-15, -2);
+    for (let i = -14; i <= 14; i += 4) {
+      ctx.lineTo(i, -2 + ((i/4)%2 === 0 ? -1.5 : 1.5));
+    }
+    ctx.lineTo(15, 0);
+    ctx.lineTo(-15, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // top bun (dome)
+    ctx.fillStyle = "#d49a4f";
+    ctx.beginPath();
+    ctx.ellipse(0, -6, 15, 8, 0, Math.PI, 0);
+    ctx.fill();
+
+    // sesame seeds
+    ctx.fillStyle = "#fff0aa";
+    for (const [sx, sy] of [[-8,-10],[-3,-12],[3,-12],[8,-10],[0,-13]]) {
+      ctx.beginPath();
+      ctx.ellipse(sx, sy, 1, 0.5, sx/8, 0, TAU);
+      ctx.fill();
+    }
+
+    // steam/stink wisp (only when fresh)
+    if (freshness > 0.4) {
+      ctx.strokeStyle = `rgba(150, 130, 100, ${0.45 * freshness})`;
+      ctx.lineWidth = 1;
+      ctx.lineCap = "round";
+      const t = performance.now() / 600;
+      for (let i = 0; i < 3; i++) {
+        const ox = (i - 1) * 4;
+        ctx.beginPath();
+        ctx.moveTo(ox, -14);
+        ctx.bezierCurveTo(ox + Math.sin(t + i)*3, -18, ox - Math.sin(t + i)*3, -22, ox + Math.sin(t + i)*2, -26);
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+  }
+
+  // ============================================================
+  //  FLIES (over the tank)
+  // ============================================================
+  function initFlies(n=12) {
+    STATE.flies.length = 0;
+    for (let i = 0; i < n; i++) {
+      STATE.flies.push({
+        x: rand(0,1), y: rand(0,1),
+        phaseX: rand(0, TAU),
+        phaseY: rand(0, TAU),
+        speedX: rand(0.15, 0.35) * (Math.random() < 0.5 ? -1 : 1),
+        speedY: rand(0.1, 0.25) * (Math.random() < 0.5 ? -1 : 1),
+        flap: rand(0, TAU),
       });
-      tip.innerHTML = lines.join('<hr style="border:none;border-top:1px dashed #888;margin:6px 0;">');
-      tip.style.display = "block";
+    }
+  }
+  initFlies(14);
+
+  // ============================================================
+  //  DINERS (3 seats)
+  // ============================================================
+  STATE.diners = [
+    { seat: 0, eating: false, eatStart: 0, shirt: "#2a4d8f", skin: "#f3c89a" },
+    { seat: 1, eating: false, eatStart: 0, shirt: "#e53935", skin: "#e7b885" },
+    { seat: 2, eating: false, eatStart: 0, shirt: "#7ab84a", skin: "#d4a373" },
+  ];
+
+  // ============================================================
+  //  DRAW MACHINE
+  // ============================================================
+  function drawMachine(now) {
+    mCtx.clearRect(0, 0, mW, mH);
+    const g = machineGeom();
+
+    mCtx.strokeStyle = "rgba(220,228,240,0.20)";
+    mCtx.lineWidth = 1;
+
+    // Drop pipe from toilet → chamber
+    mCtx.strokeStyle = "rgba(220, 228, 240, 0.30)";
+    mCtx.lineWidth = 1.4;
+    mCtx.beginPath();
+    mCtx.moveTo(g.cx - 16, g.toiletY + 14);
+    mCtx.lineTo(g.cx - 8, g.chamberY - g.chR);
+    mCtx.moveTo(g.cx + 16, g.toiletY + 14);
+    mCtx.lineTo(g.cx + 8, g.chamberY - g.chR);
+    mCtx.stroke();
+    // pipe inner shimmer
+    mCtx.strokeStyle = "rgba(150, 90, 40, 0.18)";
+    mCtx.lineWidth = 6;
+    mCtx.beginPath();
+    mCtx.moveTo(g.cx, g.toiletY + 14);
+    mCtx.lineTo(g.cx, g.chamberY - g.chR);
+    mCtx.stroke();
+
+    // Toilet
+    drawToilet(mCtx, g.cx, g.toiletY);
+
+    // Trump (with strain animation)
+    const trumpStrain = (now - STATE.lastDrop) < 1200;
+    drawTrump(mCtx, g.cx, g.trumpY, 1.0, trumpStrain);
+
+    // Formation chamber (hex)
+    mCtx.strokeStyle = "rgba(220,228,240,0.30)";
+    mCtx.lineWidth = 1.2;
+    hex(mCtx, g.cx, g.chamberY, g.chR);
+    mCtx.stroke();
+    mCtx.strokeStyle = "rgba(220,228,240,0.10)";
+    mCtx.beginPath();
+    mCtx.arc(g.cx, g.chamberY, g.chR - 12, 0, TAU);
+    mCtx.stroke();
+
+    // chamber glow (pulse)
+    const sinceDrop = (now - STATE.lastDrop);
+    const baseGlow = 0.2 + 0.15 * Math.sin(now/700);
+    const dropGlow = sinceDrop < 1500 ? (1 - sinceDrop/1500) : 0;
+    const glowK = clamp(baseGlow + dropGlow, 0, 1);
+    const grad = mCtx.createRadialGradient(g.cx, g.chamberY, 0, g.cx, g.chamberY, g.chR + 8);
+    grad.addColorStop(0, `rgba(255, 140, 26, ${0.35 + glowK * 0.35})`);
+    grad.addColorStop(0.5, `rgba(184, 87, 0, ${0.08 + glowK * 0.10})`);
+    grad.addColorStop(1, "rgba(184, 87, 0, 0)");
+    mCtx.fillStyle = grad;
+    mCtx.beginPath();
+    mCtx.arc(g.cx, g.chamberY, g.chR + 8, 0, TAU);
+    mCtx.fill();
+
+    // chamber label
+    mCtx.fillStyle = "rgba(230,232,236,0.36)";
+    mCtx.font = "9px ui-monospace, monospace";
+    mCtx.textAlign = "center";
+    mCtx.fillText("F O R M A T I O N   C H A M B E R", g.cx, g.chamberY - g.chR - 12);
+
+    // Chute from chamber to belt
+    mCtx.strokeStyle = "rgba(220, 228, 240, 0.42)";
+    mCtx.lineWidth = 1.2;
+    mCtx.beginPath();
+    mCtx.moveTo(g.cx - 14, g.chamberY + g.chR - 4);
+    mCtx.lineTo(g.cx - 26, g.beltY - 18);
+    mCtx.moveTo(g.cx + 14, g.chamberY + g.chR - 4);
+    mCtx.lineTo(g.cx + 26, g.beltY - 18);
+    mCtx.stroke();
+
+    // Conveyor frame
+    mCtx.strokeStyle = "rgba(220,228,240,0.25)";
+    mCtx.beginPath();
+    mCtx.moveTo(g.beltStart, g.beltY);
+    mCtx.lineTo(g.beltEnd, g.beltY);
+    mCtx.moveTo(g.beltStart, g.beltY + 14);
+    mCtx.lineTo(g.beltEnd, g.beltY + 14);
+    mCtx.stroke();
+    // pulleys
+    mCtx.beginPath();
+    mCtx.arc(g.beltStart, g.beltY + 7, 14, 0, TAU);
+    mCtx.arc(g.beltEnd, g.beltY + 7, 14, 0, TAU);
+    mCtx.stroke();
+    // spinning marks
+    [g.beltStart, g.beltEnd].forEach((px, i) => {
+      mCtx.save();
+      mCtx.translate(px, g.beltY + 7);
+      mCtx.rotate(((now / 500) * (i === 0 ? 1 : -1)) % TAU);
+      mCtx.strokeStyle = "rgba(220,228,240,0.5)";
+      mCtx.beginPath();
+      mCtx.moveTo(-10, 0); mCtx.lineTo(10, 0);
+      mCtx.moveTo(0, -10); mCtx.lineTo(0, 10);
+      mCtx.stroke();
+      mCtx.restore();
     });
-    d.addEventListener("mousemove", (e) => {
-      tip.style.left = (e.clientX + 12) + "px";
-      tip.style.top  = (e.clientY + 12) + "px";
+    // belt motion dashes
+    mCtx.strokeStyle = "rgba(220,228,240,0.18)";
+    mCtx.setLineDash([7, 13]);
+    mCtx.lineDashOffset = -((now / 30) % 20);
+    mCtx.beginPath();
+    mCtx.moveTo(g.beltStart, g.beltY + 7);
+    mCtx.lineTo(g.beltEnd, g.beltY + 7);
+    mCtx.stroke();
+    mCtx.setLineDash([]);
+    mCtx.fillStyle = "rgba(230,232,236,0.36)";
+    mCtx.font = "9px ui-monospace, monospace";
+    mCtx.textAlign = "left";
+    mCtx.fillText("C O N V E Y O R   →", g.beltStart + 4, g.beltY - 22);
+
+    // Catapult (wooden arm)
+    mCtx.save();
+    mCtx.translate(g.catapultX, g.beltY + 7);
+    mCtx.strokeStyle = "rgba(180, 130, 70, 0.85)";
+    mCtx.lineWidth = 2;
+    // base triangle
+    mCtx.beginPath();
+    mCtx.moveTo(-18, 14);
+    mCtx.lineTo(0, -10);
+    mCtx.lineTo(18, 14);
+    mCtx.closePath();
+    mCtx.fillStyle = "rgba(140, 90, 50, 0.4)";
+    mCtx.fill();
+    mCtx.stroke();
+    // arm — angle depends on fire animation
+    const fireAge = (now - STATE.catapultFire);
+    let armAngle = -Math.PI / 4; // resting
+    if (fireAge >= 0 && fireAge < 400) {
+      const t = fireAge / 400;
+      armAngle = -Math.PI/4 + t * (Math.PI - Math.PI/2);
+    } else if (fireAge >= 400 && fireAge < 900) {
+      const t = (fireAge - 400) / 500;
+      armAngle = Math.PI/4 + (1-t) * 0;
+      armAngle = -Math.PI/4 + (1-t) * (Math.PI/2);
+    }
+    mCtx.save();
+    mCtx.translate(0, -10);
+    mCtx.rotate(armAngle);
+    mCtx.strokeStyle = "rgba(180, 130, 70, 0.95)";
+    mCtx.lineWidth = 4;
+    mCtx.beginPath();
+    mCtx.moveTo(0, 0);
+    mCtx.lineTo(36, 0);
+    mCtx.stroke();
+    // bucket
+    mCtx.fillStyle = "rgba(180, 130, 70, 0.6)";
+    mCtx.strokeStyle = "rgba(140, 90, 50, 0.85)";
+    mCtx.lineWidth = 1.5;
+    mCtx.beginPath();
+    mCtx.arc(36, 0, 6, 0, TAU);
+    mCtx.fill();
+    mCtx.stroke();
+    mCtx.restore();
+    mCtx.restore();
+
+    // USA Tank (right of conveyor in machine panel)
+    drawTank(mCtx, g);
+
+    // Shits on conveyor / in-flight
+    for (const s of STATE.shitsInFlight) {
+      drawShit(mCtx, s.x, s.y, s.scale || 1, s.alpha != null ? s.alpha : 1, s.showLabel ? s.label : "", s.rot || 0);
+    }
+
+    // Cadence bar
+    const frac = clamp(((now - STATE.lastDrop) / CADENCE_MS), 0, 1);
+    $("cadenceFill").style.width = (frac * 100).toFixed(1) + "%";
+  }
+
+  function drawTank(ctx, g) {
+    // tank cap (gold) + label "USA"
+    const tankW = g.tankRight - g.tankLeft;
+    const tankH = g.tankBottom - g.tankTop;
+    // glass
+    ctx.save();
+    ctx.fillStyle = "rgba(150,200,235,0.04)";
+    ctx.strokeStyle = "rgba(150,200,235,0.5)";
+    ctx.lineWidth = 1.4;
+    ctx.fillRect(g.tankLeft, g.tankTop, tankW, tankH);
+    ctx.strokeRect(g.tankLeft, g.tankTop, tankW, tankH);
+
+    // cap
+    ctx.fillStyle = "#b8860b";
+    ctx.fillRect(g.tankLeft - 4, g.tankTop - 8, tankW + 8, 8);
+    ctx.fillStyle = "#f7c948";
+    ctx.fillRect(g.tankLeft - 4, g.tankTop - 8, tankW + 8, 3);
+
+    // USA label (above tank)
+    ctx.font = "700 18px ui-monospace, monospace";
+    ctx.textAlign = "center";
+    ctx.shadowColor = "rgba(255, 140, 26, 0.6)";
+    ctx.shadowBlur = 14;
+    ctx.fillStyle = "rgba(255, 240, 220, 1)";
+    ctx.fillText("★ U S A ★", (g.tankLeft + g.tankRight) / 2, g.tankTop - 14);
+    ctx.shadowBlur = 0;
+
+    // light shimmer down left side
+    ctx.strokeStyle = "rgba(255,255,255,0.4)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(g.tankLeft + 8, g.tankTop + 8);
+    ctx.lineTo(g.tankLeft + 8, g.tankBottom - 12);
+    ctx.stroke();
+
+    // pile of shits at bottom
+    ctx.clip = undefined; // not clipping; pile elements drawn in tank
+    for (const p of STATE.pile) {
+      drawShit(ctx, p.x, p.y, p.scale, 0.9, "", p.rot);
+    }
+
+    // tank meter (bottom right of tank)
+    ctx.fillStyle = "rgba(7,9,13,0.85)";
+    ctx.fillRect(g.tankRight - 60, g.tankBottom - 22, 56, 18);
+    ctx.strokeStyle = "rgba(255, 140, 26, 0.6)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(g.tankRight - 60, g.tankBottom - 22, 56, 18);
+    ctx.font = "700 10px ui-monospace, monospace";
+    ctx.fillStyle = "rgba(255, 200, 130, 1)";
+    ctx.textAlign = "center";
+    ctx.fillText(`${STATE.inTank}/100`, g.tankRight - 32, g.tankBottom - 9);
+
+    ctx.restore();
+  }
+
+  // ============================================================
+  //  DRAW RESTAURANT
+  // ============================================================
+  function drawRestaurant(now) {
+    rCtx.clearRect(0, 0, rW, rH);
+    const G = restaurantGeom();
+
+    // tube entry from left (from machine tank) — coming in at top-left
+    // tube horizontal segment crossing into restaurant
+    rCtx.strokeStyle = "rgba(150,200,235,0.45)";
+    rCtx.lineWidth = 1.4;
+    rCtx.fillStyle = "rgba(150,200,235,0.05)";
+    const tubeStartX = 0;
+    const tubeEndX = G.buildingLeft + 8;
+    rCtx.fillRect(tubeStartX, G.tubeY - 12, tubeEndX - tubeStartX, 24);
+    rCtx.beginPath();
+    rCtx.moveTo(tubeStartX, G.tubeY - 12); rCtx.lineTo(tubeEndX, G.tubeY - 12);
+    rCtx.moveTo(tubeStartX, G.tubeY + 12); rCtx.lineTo(tubeEndX, G.tubeY + 12);
+    rCtx.stroke();
+    // shimmer (flow direction)
+    rCtx.strokeStyle = "rgba(184, 120, 56, 0.30)";
+    rCtx.setLineDash([8, 14]);
+    rCtx.lineDashOffset = -((now / 60) % 22);
+    rCtx.beginPath();
+    rCtx.moveTo(tubeStartX, G.tubeY);
+    rCtx.lineTo(tubeEndX, G.tubeY);
+    rCtx.stroke();
+    rCtx.setLineDash([]);
+    rCtx.fillStyle = "rgba(230,232,236,0.35)";
+    rCtx.font = "9px ui-monospace, monospace";
+    rCtx.textAlign = "left";
+    rCtx.fillText("←  D E L I V E R Y   T U B E", 10, G.tubeY - 18);
+
+    // McAmerica building
+    rCtx.fillStyle = "rgba(255, 245, 214, 0.04)";
+    rCtx.strokeStyle = "rgba(220,228,240,0.35)";
+    rCtx.lineWidth = 1.4;
+    rCtx.fillRect(G.buildingLeft, G.buildingTop, G.buildingRight - G.buildingLeft, G.buildingBottom - G.buildingTop);
+    rCtx.strokeRect(G.buildingLeft, G.buildingTop, G.buildingRight - G.buildingLeft, G.buildingBottom - G.buildingTop);
+
+    // red roof
+    rCtx.fillStyle = "#e53935";
+    rCtx.strokeStyle = "rgba(220,228,240,0.5)";
+    rCtx.beginPath();
+    rCtx.moveTo(G.buildingLeft - 10, G.buildingTop);
+    rCtx.lineTo(G.buildingLeft + 10, G.buildingTop - 26);
+    rCtx.lineTo(G.buildingRight - 10, G.buildingTop - 26);
+    rCtx.lineTo(G.buildingRight + 10, G.buildingTop);
+    rCtx.closePath();
+    rCtx.fill();
+    rCtx.stroke();
+
+    // golden arches / sign
+    const signCx = (G.buildingLeft + G.buildingRight) / 2;
+    const signCy = G.buildingTop - 50;
+    rCtx.font = "700 14px ui-monospace, monospace";
+    rCtx.textAlign = "center";
+    rCtx.shadowColor = "rgba(247, 201, 72, 0.8)";
+    rCtx.shadowBlur = 18;
+    rCtx.fillStyle = "#f7c948";
+    rCtx.fillText("McAMERICA", signCx, signCy);
+    rCtx.shadowBlur = 0;
+    // small subscript
+    rCtx.font = "9px ui-monospace, monospace";
+    rCtx.fillStyle = "rgba(230, 232, 236, 0.55)";
+    rCtx.fillText("· OPEN 24/7 ·", signCx, signCy + 14);
+
+    // Window/booth stripes
+    rCtx.strokeStyle = "rgba(229, 57, 53, 0.10)";
+    rCtx.lineWidth = 1;
+    for (let i = 0; i < 8; i++) {
+      const y = G.buildingTop + 20 + i * 28;
+      rCtx.beginPath();
+      rCtx.moveTo(G.buildingLeft + 4, y);
+      rCtx.lineTo(G.buildingRight - 4, y);
+      rCtx.stroke();
+    }
+
+    // table (long bar)
+    const tableLeft = G.buildingLeft + 30;
+    const tableRight = G.buildingRight - 30;
+    rCtx.fillStyle = "#3a2510";
+    rCtx.fillRect(tableLeft, G.tableY, tableRight - tableLeft, 10);
+    rCtx.fillStyle = "#5a3a1a";
+    rCtx.fillRect(tableLeft, G.tableY, tableRight - tableLeft, 3);
+    // table legs
+    rCtx.fillStyle = "#2a1a08";
+    rCtx.fillRect(tableLeft + 10, G.tableY + 10, 4, 22);
+    rCtx.fillRect(tableRight - 14, G.tableY + 10, 4, 22);
+
+    // diners (3 seats)
+    const seatW = (tableRight - tableLeft) / 3;
+    for (let i = 0; i < 3; i++) {
+      const dx = tableLeft + seatW * (i + 0.5);
+      const dy = G.tableY - 20;
+      const d = STATE.diners[i];
+      const eatPhase = d.eating ? (now - d.eatStart) / 1000 : 0;
+      drawDiner(rCtx, dx, dy, 1, d.shirt, d.skin, d.eating, eatPhase);
+      if (d.eating && (now - d.eatStart) > 2500) {
+        d.eating = false; // back to satisfied state
+      }
+    }
+
+    // burgers on plates in front of diners
+    for (let i = 0; i < 3; i++) {
+      const dx = tableLeft + seatW * (i + 0.5);
+      const burger = STATE.burgers.find(b => b.slot === i);
+      if (!burger) continue;
+      const age = (now - burger.born) / 1000;
+      let scale = 1;
+      if (age < 0.4) scale = age / 0.4;
+      if (age > 8) {
+        const fade = 1 - (age - 8) / 1;
+        scale = Math.max(0, fade);
+      }
+      const freshness = clamp(1 - age / 6, 0, 1);
+      // plate
+      rCtx.fillStyle = "rgba(245, 248, 252, 0.85)";
+      rCtx.strokeStyle = "rgba(220, 228, 240, 0.5)";
+      rCtx.beginPath();
+      rCtx.ellipse(dx, G.tableY - 2, 20 * scale, 5 * scale, 0, 0, TAU);
+      rCtx.fill();
+      rCtx.stroke();
+      // burger
+      drawBurger(rCtx, dx, G.tableY - 8, scale, freshness);
+    }
+    // expire stale burgers
+    STATE.burgers = STATE.burgers.filter(b => (now - b.born) < 9000);
+
+    // delivery shits flying through tube
+    for (const d of STATE.deliveries) {
+      const t = d.t;
+      let x, y;
+      if (t < 0.55) {
+        // travel along tube
+        const u = t / 0.55;
+        x = lerp(tubeStartX, tubeEndX, u);
+        y = G.tubeY;
+      } else {
+        // drop down to plate
+        const u = (t - 0.55) / 0.45;
+        const targetX = tableLeft + seatW * (d.slot + 0.5);
+        const targetY = G.tableY - 8;
+        x = lerp(tubeEndX, targetX, u);
+        y = lerp(G.tubeY, targetY, u * u);
+      }
+      const fade = Math.min(1, t * 4) * Math.min(1, (1 - t) * 8);
+      drawShit(rCtx, x, y, 0.6, fade, t > 0.3 ? d.label : "", d.rot || 0);
+    }
+
+    // === FLIES — buzzing around tank and food area ===
+    // their domain: upper part of restaurant panel (above table)
+    const flyBoxX = G.buildingLeft + 20;
+    const flyBoxY = G.buildingTop + 10;
+    const flyBoxW = (G.buildingRight - G.buildingLeft) - 40;
+    const flyBoxH = (G.tableY - G.buildingTop) - 30;
+    for (const f of STATE.flies) {
+      f.x += f.speedX / 60;
+      f.y += f.speedY / 60;
+      if (f.x < 0 || f.x > 1) f.speedX *= -1;
+      if (f.y < 0 || f.y > 1) f.speedY *= -1;
+      f.x = clamp(f.x, 0, 1);
+      f.y = clamp(f.y, 0, 1);
+      const px = flyBoxX + f.x * flyBoxW + Math.sin(now/300 + f.phaseX) * 8;
+      const py = flyBoxY + f.y * flyBoxH + Math.cos(now/350 + f.phaseY) * 6;
+      f.flap += 0.6;
+      const wf = (Math.sin(f.flap) + 1) / 2;
+      drawFly(rCtx, px, py, wf, 0.75);
+    }
+
+    // count update
+    $("rServed").textContent = fmt(STATE.fed);
+  }
+
+  // ============================================================
+  //  ANIMATION PIPELINE
+  // ============================================================
+  function spawnDeposit(event) {
+    STATE.lastDrop = performance.now();
+    STATE.idx = (STATE.idx + 1) % EVENTS.length;
+    if (STATE.idx === 0) {
+      // recycle: clear pile + restart counts
+      STATE.inTank = 0;
+      STATE.fed = 0;
+      STATE.pile.length = 0;
+      STATE.burgers.length = 0;
+    }
+    // headline
+    $("nowLabel").textContent = event.label;
+    $("nowDesc").textContent = event.title;
+    $("nowSource").href = event.url;
+    $("nowEyebrow").textContent = `· NOW DEPOSITING · ${formatDate(event.date).toUpperCase()} ·`;
+    $("nextUp") && ($("nextUp").textContent = EVENTS[STATE.idx % EVENTS.length].label);
+
+    // counters
+    $("cRemaining").textContent = fmt(EVENTS.length - (STATE.history.length + 1));
+
+    // Begin the in-flight animation: shit drops from toilet to chamber, then chamber → catapult → tank
+    runShitJourney(event);
+    refreshAllRowsHighlight();
+    // ticker
+    pushToTicker(event);
+  }
+
+  function runShitJourney(event) {
+    // Phase 1: From toilet to chamber (drop)
+    const startTime = performance.now();
+    const g = machineGeom();
+    const shit = {
+      label: event.label,
+      url: event.url,
+      x: g.cx, y: g.toiletY,
+      scale: 0.8,
+      alpha: 1,
+      rot: 0,
+      showLabel: false,
+      phase: "drop1",
+      phaseStart: startTime,
+    };
+    STATE.shitsInFlight.push(shit);
+  }
+
+  function updateShits(now) {
+    const g = machineGeom();
+    const beltDur = 2400;
+    for (let i = STATE.shitsInFlight.length - 1; i >= 0; i--) {
+      const s = STATE.shitsInFlight[i];
+      const age = now - s.phaseStart;
+
+      if (s.phase === "drop1") {
+        // toilet → chamber (1000ms)
+        const t = Math.min(1, age / 1000);
+        s.y = lerp(g.toiletY + 6, g.chamberY, t * t * 0.95);
+        s.rot = t * Math.PI;
+        s.scale = lerp(0.6, 0.95, t);
+        if (t >= 1) {
+          // chamber flash + label reveal
+          STATE.chamberFlash = now;
+          s.phase = "drop2";
+          s.phaseStart = now;
+          s.showLabel = true;
+        }
+      } else if (s.phase === "drop2") {
+        // chamber → conveyor (700ms)
+        const t = Math.min(1, age / 700);
+        s.y = lerp(g.chamberY, g.beltY - 12, t * t);
+        s.rot = Math.PI + t * Math.PI;
+        s.scale = lerp(0.95, 1.05, t);
+        if (t >= 1) {
+          s.phase = "belt";
+          s.phaseStart = now;
+        }
+      } else if (s.phase === "belt") {
+        // conveyor → catapult (variable, slow ride)
+        const t = Math.min(1, age / beltDur);
+        s.x = lerp(g.cx, g.catapultX, t);
+        s.y = g.beltY - 12;
+        s.rot = t * Math.PI * 4;
+        if (t >= 1) {
+          // fire catapult
+          STATE.catapultFire = now;
+          s.phase = "launch";
+          s.phaseStart = now;
+          s.startX = s.x;
+          s.startY = s.y;
+        }
+      } else if (s.phase === "launch") {
+        // arc into tank
+        const dur = 900;
+        const t = Math.min(1, age / dur);
+        const apexY = Math.min(s.startY - 120, g.tankTop - 40);
+        const endX = g.tankX;
+        const endY = g.tankBottom - 30 - STATE.pile.length * 4;
+        // quadratic bezier
+        const apexX = (s.startX + endX) / 2;
+        const u = 1 - t;
+        s.x = u*u*s.startX + 2*u*t*apexX + t*t*endX;
+        s.y = u*u*s.startY + 2*u*t*apexY + t*t*endY;
+        s.rot = t * Math.PI * 3;
+        if (t >= 1) {
+          // land in tank
+          STATE.shitsInFlight.splice(i, 1);
+          landInTank(s.label, s.url);
+        }
+      }
+    }
+  }
+
+  function landInTank(label, url) {
+    const g = machineGeom();
+    const tankInnerW = (g.tankRight - g.tankLeft) - 16;
+    // column-based piling: divide tank into ~10 columns; pick the shortest
+    const COLS = 10;
+    if (!STATE.pileColumns) STATE.pileColumns = Array(COLS).fill(0);
+    let minH = Infinity;
+    for (const h of STATE.pileColumns) if (h < minH) minH = h;
+    const candidates = [];
+    for (let i = 0; i < COLS; i++) if (STATE.pileColumns[i] <= minH + 1) candidates.push(i);
+    const col = candidates[Math.floor(Math.random() * candidates.length)];
+    const stackI = STATE.pileColumns[col];
+    STATE.pileColumns[col]++;
+
+    const colW = tankInnerW / COLS;
+    const x = g.tankLeft + 8 + col * colW + colW / 2 + rand(-3, 3);
+    const y = g.tankBottom - 12 - stackI * 14 + rand(-2, 2);
+    STATE.pile.push({ x, y, scale: rand(0.85, 1.0), rot: rand(-0.4, 0.4) });
+    STATE.inTank = STATE.pile.length;
+    $("cDumped").textContent = fmt(STATE.inTank);
+
+    // also: spawn a tube delivery to the right panel
+    setTimeout(() => spawnTubeDelivery(label, url), 600);
+  }
+
+  function spawnTubeDelivery(label, url) {
+    // pick a diner slot — round-robin or random
+    const slot = STATE.fed % 3;
+    STATE.deliveries.push({
+      label, url, slot,
+      t: 0,
+      born: performance.now(),
     });
-    d.addEventListener("mouseleave", () => tip.style.display = "none");
-    d.addEventListener("click", () => {
-      if (d.dataset.url) window.open(d.dataset.url, "_blank", "noopener,noreferrer");
+  }
+  function updateDeliveries(now) {
+    for (let i = STATE.deliveries.length - 1; i >= 0; i--) {
+      const d = STATE.deliveries[i];
+      const age = now - d.born;
+      const dur = 1800;
+      d.t = Math.min(1, age / dur);
+      d.rot = d.t * Math.PI * 2;
+      if (d.t >= 1) {
+        STATE.deliveries.splice(i, 1);
+        // burger appears on table
+        STATE.burgers = STATE.burgers.filter(b => b.slot !== d.slot);
+        STATE.burgers.push({ slot: d.slot, born: now, label: d.label });
+        // diner starts eating
+        STATE.diners[d.slot].eating = true;
+        STATE.diners[d.slot].eatStart = now;
+        STATE.fed++;
+        $("cFed").textContent = fmt(STATE.fed);
+      }
+    }
+  }
+
+  // ============================================================
+  //  TICKER
+  // ============================================================
+  function buildTickerStrip() {
+    const strip = $("tickerStrip");
+    // a long horizontal list of all events (so the ticker has stuff to scroll)
+    const items = EVENTS.map(e =>
+      `<span class="item"><span class="date">${formatDate(e.date)}</span> · ${escapeHtml(e.label)}</span>`);
+    strip.innerHTML = items.concat(items).join("");
+  }
+  function pushToTicker(event) {
+    STATE.history.unshift(event);
+    if (STATE.history.length > 20) STATE.history.pop();
+  }
+
+  // ============================================================
+  //  ALL SHITS + COMING TURDS modal
+  // ============================================================
+  function buildAllList() {
+    const tbody = $("allRows");
+    tbody.innerHTML = EVENTS.map((e, i) =>
+      `<tr data-i="${i}">
+        <td class="num">${String(i+1).padStart(2,'0')}</td>
+        <td class="date">${formatDate(e.date)}</td>
+        <td class="label">${escapeHtml(e.label)}</td>
+        <td class="body">${escapeHtml(e.title)}
+          <a class="read-more" href="${e.url}" target="_blank" rel="noopener noreferrer">Source ↗</a>
+        </td>
+      </tr>`).join("");
+  }
+  function refreshAllRowsHighlight() {
+    const currentI = (STATE.idx - 1 + EVENTS.length) % EVENTS.length;
+    document.querySelectorAll("#allRows tr").forEach(tr => {
+      const i = +tr.dataset.i;
+      tr.classList.toggle("current", i === currentI);
     });
+    buildComingList();
+  }
+  function buildComingList() {
+    const list = $("comingList");
+    let html = "";
+    for (let n = 0; n < 10; n++) {
+      const i = (STATE.idx + n) % EVENTS.length;
+      const e = EVENTS[i];
+      const isNow = n === 0;
+      html += `
+        <li>
+          <div style="flex:1">
+            <div class="label-row">${escapeHtml(e.label)}</div>
+            <div class="desc">${formatDate(e.date)} · ${escapeHtml(e.title.slice(0, 110))}${e.title.length>110?'…':''}
+              <a class="read-more" href="${e.url}" target="_blank" rel="noopener noreferrer">Source ↗</a>
+            </div>
+          </div>
+          <div>${isNow ? '<span class="next-badge">NOW</span>' : `<span class="countdown">+${n*8}s</span>`}</div>
+        </li>`;
+    }
+    list.innerHTML = html;
+  }
+
+  function buildCalendar() {
+    const pane = $("paneCal");
+    const byMonth = new Map();
+    EVENTS.forEach((e, i) => {
+      const ym = e.date.slice(0,7);
+      if (!byMonth.has(ym)) byMonth.set(ym, []);
+      byMonth.get(ym).push({ ...e, i });
+    });
+    const months = Array.from(byMonth.keys()).sort();
+    pane.innerHTML = months.map(ym => {
+      const [y, m] = ym.split("-").map(Number);
+      const monthName = new Date(y, m-1, 1).toLocaleString("en", { month: "long" });
+      const firstDay = new Date(y, m-1, 1).getDay();
+      const daysInMonth = new Date(y, m, 0).getDate();
+      const evs = byMonth.get(ym);
+      const eventsByDay = new Map();
+      evs.forEach(e => {
+        const d = +e.date.split("-")[2];
+        if (!eventsByDay.has(d)) eventsByDay.set(d, []);
+        eventsByDay.get(d).push(e);
+      });
+      let cells = '<div class="cal-day weekday-label">S</div><div class="cal-day weekday-label">M</div><div class="cal-day weekday-label">T</div><div class="cal-day weekday-label">W</div><div class="cal-day weekday-label">T</div><div class="cal-day weekday-label">F</div><div class="cal-day weekday-label">S</div>';
+      for (let i = 0; i < firstDay; i++) cells += '<div class="cal-day"></div>';
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dayEvs = eventsByDay.get(d);
+        const has = dayEvs && dayEvs.length;
+        const tip = has ? dayEvs.map(e => `${e.label}: ${e.title}|${e.url}`).join('§') : '';
+        cells += `<div class="cal-day ${has?'has-event':''}" data-tip="${escapeHtml(tip)}" data-url="${has?dayEvs[0].url:''}">${d}</div>`;
+      }
+      return `<div class="cal-month">
+        <h3>${monthName} ${y} — ${evs.length} deposit${evs.length===1?'':'s'}</h3>
+        <div class="cal-grid">${cells}</div>
+      </div>`;
+    }).join("");
+    const tip = $("tooltip");
+    pane.querySelectorAll(".cal-day.has-event").forEach(d => {
+      d.addEventListener("mouseenter", () => {
+        const raw = d.dataset.tip;
+        const lines = raw.split('§').map(line => {
+          const [text, url] = line.split('|');
+          return `${text}<br><a class="tip-link" href="${url}" target="_blank">SOURCE ↗</a>`;
+        });
+        tip.innerHTML = lines.join('<hr style="border:none;border-top:1px dashed #444;margin:6px 0;">');
+        tip.style.display = "block";
+      });
+      d.addEventListener("mousemove", (e) => {
+        tip.style.left = (e.clientX + 12) + "px";
+        tip.style.top  = (e.clientY + 12) + "px";
+      });
+      d.addEventListener("mouseleave", () => tip.style.display = "none");
+      d.addEventListener("click", () => {
+        if (d.dataset.url) window.open(d.dataset.url, "_blank", "noopener,noreferrer");
+      });
+    });
+  }
+
+  // ============================================================
+  //  WIRING
+  // ============================================================
+  function openModal(id) {
+    document.querySelectorAll(".modal").forEach(m => m.classList.remove("open"));
+    $(id).classList.add("open");
+  }
+  function closeModals() {
+    document.querySelectorAll(".modal").forEach(m => m.classList.remove("open"));
+    $("tooltip").style.display = "none";
+  }
+  $("btnAll").addEventListener("click", () => { openModal("modalAll"); refreshAllRowsHighlight(); });
+  $("btnComing").addEventListener("click", () => { openModal("modalComing"); buildComingList(); });
+  document.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeModals));
+  document.addEventListener("click", e => { if (e.target.classList.contains("modal")) closeModals(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeModals(); });
+  $("viewList").addEventListener("click", () => {
+    $("paneList").style.display = "";
+    $("paneCal").style.display = "none";
+    $("viewList").classList.add("active");
+    $("viewCal").classList.remove("active");
   });
-}
+  $("viewCal").addEventListener("click", () => {
+    $("paneList").style.display = "none";
+    $("paneCal").style.display = "";
+    $("viewCal").classList.add("active");
+    $("viewList").classList.remove("active");
+    buildCalendar();
+  });
+  let cadenceTimer = null;
+  $("pauseBtn").addEventListener("click", () => {
+    STATE.paused = !STATE.paused;
+    $("pauseBtn").textContent = STATE.paused ? "▶ RESUME" : "⏸ PAUSE";
+    if (STATE.paused) {
+      clearInterval(cadenceTimer);
+    } else {
+      cadenceTimer = setInterval(tick, CADENCE_MS);
+    }
+  });
 
-// ============================================================
-//  Wire up
-// ============================================================
-function openModal(id) {
-  document.querySelectorAll(".modal").forEach(m => m.classList.remove("open"));
-  el(id).classList.add("open");
-}
-function closeModals() {
-  document.querySelectorAll(".modal").forEach(m => m.classList.remove("open"));
-  el("tooltip").style.display = "none";
-}
-el("btnAll").addEventListener("click", () => { openModal("modalAll"); refreshAllRowsHighlight(); });
-el("btnComing").addEventListener("click", () => { openModal("modalComing"); buildComingList(); });
-document.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", closeModals));
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("modal")) closeModals();
-});
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModals(); });
+  function tick() {
+    if (STATE.paused) return;
+    const event = EVENTS[STATE.idx];
+    spawnDeposit(event);
+  }
 
-el("viewList").addEventListener("click", () => {
-  el("paneList").style.display = "";
-  el("paneCal").style.display = "none";
-  el("viewList").classList.add("active");
-  el("viewCal").classList.remove("active");
-});
-el("viewCal").addEventListener("click", () => {
-  el("paneList").style.display = "none";
-  el("paneCal").style.display = "";
-  el("viewCal").classList.add("active");
-  el("viewList").classList.remove("active");
-  buildCalendar();
-});
+  // ============================================================
+  //  RENDER LOOP
+  // ============================================================
+  function frame(now) {
+    tickHeader(Date.now());
+    updateShits(now);
+    updateDeliveries(now);
+    drawMachine(now);
+    drawRestaurant(now);
+    requestAnimationFrame(frame);
+  }
 
-// Initial paint
-buildAllList();
-buildComingList();
-nextUp.textContent = EVENTS[0].label;
-startLoop();
+  // ============================================================
+  //  INIT
+  // ============================================================
+  function init() {
+    resize();
+    buildAllList();
+    buildComingList();
+    buildTickerStrip();
+    STATE.lastDrop = performance.now() - CADENCE_MS + 1500; // first deposit in 1.5s
+    cadenceTimer = setTimeout(() => {
+      tick();
+      cadenceTimer = setInterval(tick, CADENCE_MS);
+    }, 1500);
+    requestAnimationFrame(frame);
+  }
+  init();
+})();
 </script>
 </body>
 </html>
