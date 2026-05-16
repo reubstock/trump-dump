@@ -3051,25 +3051,56 @@
     ctx.fillStyle = "rgba(255, 220, 130, 0.6)";
     ctx.fillRect(cx - SW/2, signCY - SH/2, SW, 2);
 
-    // === GOLDEN M ===
-    // glow
-    ctx.shadowColor = "rgba(255, 220, 0, 0.7)";
-    ctx.shadowBlur = 14;
-    // gradient fill
+    // === GOLDEN M (rounded curves, no corners) ===
+    // path: left leg → left arch → V → right arch → right leg
+    const tracePath = () => {
+      ctx.beginPath();
+      ctx.moveTo(cx - 18, signCY + 22);
+      ctx.lineTo(cx - 18, signCY - 6);
+      // outer-left arch (smooth top curve)
+      ctx.bezierCurveTo(cx - 18, signCY - 26, cx - 9, signCY - 26, cx - 9, signCY - 6);
+      // angled V down to center
+      ctx.lineTo(cx, signCY + 12);
+      // angled V up to right arch start
+      ctx.lineTo(cx + 9, signCY - 6);
+      // outer-right arch
+      ctx.bezierCurveTo(cx + 9, signCY - 26, cx + 18, signCY - 26, cx + 18, signCY - 6);
+      // right leg down
+      ctx.lineTo(cx + 18, signCY + 22);
+    };
+
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    // dark outer outline
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "rgba(80, 45, 0, 0.95)";
+    ctx.lineWidth = 14;
+    tracePath();
+    ctx.stroke();
+
+    // glowing gold fill (the visible letter)
+    ctx.shadowColor = "rgba(255, 220, 0, 0.75)";
+    ctx.shadowBlur = 12;
     const grad = ctx.createLinearGradient(0, signCY - 26, 0, signCY + 22);
     grad.addColorStop(0, "#fff2a8");
     grad.addColorStop(0.4, "#ffd400");
     grad.addColorStop(1, "#b8860b");
-    ctx.fillStyle = grad;
-    ctx.font = "900 64px 'Arial Black', 'Helvetica Neue', Helvetica, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("M", cx, signCY + 4);
-    // outline
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 10;
+    tracePath();
+    ctx.stroke();
+
+    // bright top highlight (lit edge of each arch)
     ctx.shadowBlur = 0;
-    ctx.strokeStyle = "rgba(100, 60, 0, 0.7)";
-    ctx.lineWidth = 1.2;
-    ctx.strokeText("M", cx, signCY + 4);
+    ctx.strokeStyle = "rgba(255, 250, 200, 0.7)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx - 17, signCY - 14);
+    ctx.bezierCurveTo(cx - 17, signCY - 24, cx - 10, signCY - 24, cx - 10, signCY - 14);
+    ctx.moveTo(cx + 10, signCY - 14);
+    ctx.bezierCurveTo(cx + 10, signCY - 24, cx + 17, signCY - 24, cx + 17, signCY - 14);
+    ctx.stroke();
 
     // tiny "BURGERS" tagline below the sign
     ctx.fillStyle = "rgba(255, 240, 210, 0.85)";
