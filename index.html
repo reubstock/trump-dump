@@ -36,7 +36,7 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: geometricPrecision;
   }
-  .stage { display: grid; grid-template-rows: 96px 1fr; height: 100vh; }
+  .stage { display: grid; grid-template-rows: 96px 1fr; height: 100vh; height: 100dvh; }
 
   /* ===== TOPBAR ===== */
   .topbar {
@@ -586,24 +586,105 @@
   }
   .pause-pill:hover { color: var(--cheeto); border-color: var(--cheeto); }
 
-  /* Responsive — collapse to single panel on mobile */
+  /* ===== Responsive: tablet/landscape phone ===== */
   @media (max-width: 900px) {
-    .stage { grid-template-rows: auto 1fr; }
+    .stage { grid-template-rows: 76px 1fr; }
     .panels { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
     .machine-panel { border-right: none; border-bottom: 1px solid var(--hairline); }
     .topbar {
       grid-template-columns: 1fr auto;
-      padding: 12px 14px;
-      gap: 8px;
+      padding: 8px 12px;
+      gap: 10px;
       height: auto;
     }
     .clock-wrap { display: none; }
-    .counters { gap: 14px; }
+    .title-zone { gap: 8px; }
+    .crown-icon { font-size: 26px; }
+    .title-text h1 {
+      font-size: 18px;
+      letter-spacing: 1.5px;
+    }
+    .title-sub { font-size: 8px; letter-spacing: 2px; }
+    .counters { gap: 12px; }
     .counter .num { font-size: 14px; }
-    .counter .num.primary { font-size: 20px; }
-    .counter .label { font-size: 8.5px; letter-spacing: 1.4px; }
-    .title-text h1 { font-size: 18px; letter-spacing: 1.5px; }
-    .topbar-buttons { display: none; }
+    .counter .label { font-size: 7.5px; letter-spacing: 1.2px; margin-top: 4px; }
+    .topbar-buttons {
+      display: flex;
+      margin-left: 10px;
+      padding-left: 12px;
+      gap: 6px;
+    }
+    .topbar-buttons button {
+      font-size: 9px;
+      letter-spacing: 1.2px;
+      padding: 7px 9px;
+    }
+    .now-headline { bottom: 38px; left: 14px; right: 14px; }
+    .now-headline .now-eyebrow { font-size: 8px; letter-spacing: 2px; margin-bottom: 4px; }
+    .now-headline .now-label   { font-size: 16px; }
+    .now-headline .now-desc    { font-size: 11px; line-height: 1.35; }
+    .now-headline .now-source  { font-size: 8px; padding: 3px 6px; }
+    .cadence-bar { left: 14px; right: 14px; bottom: 14px; }
+    .restaurant-readout {
+      bottom: 44px;
+      right: 12px;
+    }
+    .restaurant-readout .readout-num { font-size: 22px; }
+    .restaurant-readout .readout-label { font-size: 8px; letter-spacing: 1.5px; margin-top: 5px; }
+    .ticker { height: 22px; }
+    .ticker .strip { font-size: 10px; gap: 34px; letter-spacing: 1.4px; }
+    .footnote {
+      left: 14px;
+      bottom: 22px;
+      font-size: 8px;
+      letter-spacing: 1.2px;
+      max-width: calc(100% - 28px);
+    }
+    .footnote.right { right: 14px; }
+    .pause-pill { top: 10px; right: 10px; font-size: 9px; padding: 6px 10px; }
+  }
+
+  /* ===== Phone (portrait) ===== */
+  @media (max-width: 560px) {
+    .stage { grid-template-rows: 64px 1fr; }
+    .topbar { padding: 6px 10px; gap: 6px; }
+    .title-text h1 { font-size: 15px; letter-spacing: 1.2px; }
+    .title-sub { display: none; }
+    .crown-icon { font-size: 22px; }
+    .counters { gap: 8px; }
+    .counter .num { font-size: 12px; }
+    .counter .label { font-size: 6.5px; letter-spacing: 1px; margin-top: 3px; }
+    .topbar-buttons {
+      margin-left: 6px;
+      padding-left: 8px;
+      gap: 4px;
+    }
+    /* icon-only buttons on tiny screens — emoji conveys meaning */
+    .topbar-buttons button {
+      font-size: 0;
+      padding: 7px 8px;
+      min-width: 30px;
+    }
+    .topbar-buttons button::first-letter { font-size: 14px; }
+    .topbar-buttons button#btnAll::before {
+      content: "💩";
+      font-size: 13px;
+    }
+    .topbar-buttons button#btnComing::before {
+      content: "⏭";
+      font-size: 12px;
+    }
+    .now-headline .now-label { font-size: 14px; }
+    .now-headline .now-desc { font-size: 10px; }
+    .footnote { display: none; }
+    .restaurant-readout { bottom: 36px; right: 10px; }
+    .restaurant-readout .readout-num { font-size: 18px; }
+    .ticker .strip { font-size: 9.5px; gap: 26px; }
+    .modal { padding: 12px; }
+    .modal-body { padding: 12px 14px; font-size: 11px; }
+    .modal-body th, .modal-body td { padding: 6px 4px; font-size: 10px; }
+    .modal-body td.date { width: 80px; font-size: 9px; letter-spacing: 0.5px; }
+    .modal-body td.label { width: 110px; font-size: 11px; }
   }
 </style>
 </head>
@@ -868,6 +949,8 @@
     catapult: { phase: "idle", phaseStart: 0 },
     // single in-flight projectile (cross-panel)
     projectile: null,
+    // mobile-only: turd dropping into tank from above the right panel
+    incoming: null,
     // turd travelling from toilet → tube → ramp → cup
     toiletShit: null,
     // vote rising from ballot box to Trump's mouth (per deposit)
@@ -2754,12 +2837,17 @@
     drawUSFlag(ctx, (G.tankLeft + G.tankRight)/2, G.tankTop - 10, now);
 
     // In-flight projectile in right-panel coords (worldX - mW)
-    if (STATE.projectile && STATE.projectile.active) {
+    if (STATE.projectile && STATE.projectile.active && !STATE.projectile.stacked) {
       const p = STATE.projectile;
       if (p.worldX >= mW) {
         const localX = p.worldX - mW;
         drawShit(ctx, localX, p.worldY, 0.95, 1, p.showLabel ? p.label : "", p.rot || 0);
       }
+    }
+    // Mobile: incoming projectile falling into tank from above
+    if (STATE.incoming && STATE.incoming.active) {
+      const ip = STATE.incoming;
+      drawShit(ctx, ip.x, ip.y, 0.95, 1, ip.label, ip.rot || 0);
     }
   }
 
@@ -3111,33 +3199,69 @@
     }, TRANSIT_TOTAL + CATAPULT.wind_up + CATAPULT.loaded + CATAPULT.fire);
   }
 
+  function isStacked() {
+    return window.innerWidth <= 900;
+  }
+
   function launchProjectile(event) {
     const g = machineGeom();
-    // Start at arm tip when arm is fully forward (matches drawCatapult angle = +0.2)
     const armLen = 42;
     const angle = 0.2;
     const startX = g.catapultBaseX + Math.sin(angle) * armLen;
     const startY = g.catapultBaseY - 28 - Math.cos(angle) * armLen;
-
-    // End: surface of the tank in right panel — world X = mW + tank position
     const G = restaurantGeom();
-    const endWorldX = mW + (G.tankLeft + G.tankRight) / 2 + rand(-30, 30);
-    const endWorldY = G.tankTop + 28;
+    const stacked = isStacked();
+
+    let endWorldX, endWorldY, apexY, duration;
+    if (stacked) {
+      // On mobile, panels are vertically stacked — arc up + off the top-right
+      // of the machine panel; a second projectile drops into the tank below.
+      endWorldX = mW + 30;
+      endWorldY = -40;
+      apexY = startY - 200;
+      duration = 700;
+    } else {
+      endWorldX = mW + (G.tankLeft + G.tankRight) / 2 + rand(-30, 30);
+      endWorldY = G.tankTop + 28;
+      apexY = Math.min(startY, endWorldY) - 160;
+      duration = CATAPULT.flight;
+    }
 
     STATE.projectile = {
       active: true,
       label: event.label,
       url: event.url,
       startTime: performance.now(),
-      duration: CATAPULT.flight,
+      duration,
       startX, startY,
       endWorldX, endWorldY,
-      apexY: Math.min(startY, endWorldY) - 160,
+      apexY,
       worldX: startX,
       worldY: startY,
       rot: 0,
       showLabel: true,
+      stacked,
     };
+
+    // On mobile, spawn an "incoming" projectile that drops into the tank
+    // from above shortly after the first one exits the machine panel.
+    if (stacked) {
+      setTimeout(() => {
+        const G2 = restaurantGeom();
+        STATE.incoming = {
+          active: true,
+          label: event.label,
+          url: event.url,
+          startTime: performance.now(),
+          duration: 650,
+          startX: G2.tankLeft + (G2.tankRight - G2.tankLeft) * 0.5,
+          startY: -20,
+          endX: G2.tankLeft + (G2.tankRight - G2.tankLeft) * 0.5 + rand(-30, 30),
+          endY: G2.tankTop + 28,
+          x: 0, y: 0, rot: 0,
+        };
+      }, 600);
+    }
   }
 
   // === VOTE eaten by Trump (parallel with catapult) ===
@@ -3217,18 +3341,33 @@
 
     // ---- CROSS-PANEL PROJECTILE (catapult → tank) ----
     const p = STATE.projectile;
-    if (!p || !p.active) return;
-    const t = Math.min(1, (now - p.startTime) / p.duration);
-    const u = 1 - t;
-    const ctrlX = (p.startX + p.endWorldX) / 2;
-    const ctrlY = p.apexY;
-    p.worldX = u*u * p.startX + 2*u*t * ctrlX + t*t * p.endWorldX;
-    p.worldY = u*u * p.startY + 2*u*t * ctrlY + t*t * p.endWorldY;
-    p.rot = t * Math.PI * 4;
-    if (t >= 1) {
-      p.active = false;
-      splashIntoTank(p.label, p.url);
-      STATE.projectile = null;
+    if (p && p.active) {
+      const t = Math.min(1, (now - p.startTime) / p.duration);
+      const u = 1 - t;
+      const ctrlX = (p.startX + p.endWorldX) / 2;
+      const ctrlY = p.apexY;
+      p.worldX = u*u * p.startX + 2*u*t * ctrlX + t*t * p.endWorldX;
+      p.worldY = u*u * p.startY + 2*u*t * ctrlY + t*t * p.endWorldY;
+      p.rot = t * Math.PI * 4;
+      if (t >= 1) {
+        p.active = false;
+        if (!p.stacked) splashIntoTank(p.label, p.url);
+        STATE.projectile = null;
+      }
+    }
+
+    // ---- INCOMING (mobile-only): falls into the tank from top of right panel ----
+    const ip = STATE.incoming;
+    if (ip && ip.active) {
+      const t = Math.min(1, (now - ip.startTime) / ip.duration);
+      ip.x = lerp(ip.startX, ip.endX, t);
+      ip.y = lerp(ip.startY, ip.endY, t * t); // gravity ease
+      ip.rot = t * Math.PI * 5;
+      if (t >= 1) {
+        ip.active = false;
+        splashIntoTank(ip.label, ip.url);
+        STATE.incoming = null;
+      }
     }
   }
 
