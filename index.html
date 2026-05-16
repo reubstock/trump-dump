@@ -3032,7 +3032,17 @@
     ctx.fillRect(G.tankLeft - 6, G.tankTop - 10, w + 12, 3);
 
     // === FLYING USA FLAG ON TANK ===
-    drawUSFlag(ctx, (G.tankLeft + G.tankRight)/2, G.tankTop - 10, now);
+    if (isStacked()) {
+      // Mobile: short pole + smaller flag, offset left so it doesn't sit
+      // behind the drop tube; clamp pole so the flag stays on-canvas.
+      const poleBaseY = G.tankTop - 6;
+      const poleH     = Math.max(20, Math.min(40, poleBaseY - 4));
+      drawUSFlag(ctx, G.tankLeft + 22, poleBaseY, now, {
+        poleH, flagW: 38, flagH: 24,
+      });
+    } else {
+      drawUSFlag(ctx, (G.tankLeft + G.tankRight)/2, G.tankTop - 10, now);
+    }
 
     // In-flight projectile in right-panel coords (worldX - mW)
     if (STATE.projectile && STATE.projectile.active && !STATE.projectile.stacked) {
@@ -3049,10 +3059,15 @@
     }
   }
 
-  function drawUSFlag(ctx, baseX, baseY, now) {
+  function drawUSFlag(ctx, baseX, baseY, now, opts) {
+    opts = opts || {};
+    const poleH = opts.poleH != null ? opts.poleH : 110;
+    const flagW = opts.flagW != null ? opts.flagW : 78;
+    const flagH = opts.flagH != null ? opts.flagH : 48;
+    const waveAmp = Math.max(2, Math.min(4, flagW / 20));
+
     ctx.save();
     // Flagpole rises from the gold cap
-    const poleH = 110;
     const poleTop = baseY - poleH;
     ctx.strokeStyle = "rgba(220, 220, 230, 0.85)";
     ctx.lineWidth = 2.2;
@@ -3070,11 +3085,10 @@
     ctx.stroke();
 
     // Waving flag: 13 stripes + canton with stars
-    const flagW = 78, flagH = 48;
     const flagX = baseX + 2;
     const flagY = poleTop + 4;
     // Wave displacement per column (animated sine)
-    const wave = (x) => Math.sin((x / 14) - now / 380) * 4;
+    const wave = (x) => Math.sin((x / 14) - now / 380) * waveAmp;
 
     // Draw stripes as horizontal bands with wavy right edge
     for (let i = 0; i < 13; i++) {
