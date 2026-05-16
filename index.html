@@ -1091,6 +1091,25 @@
     return [x, y];
   }
 
+  // Returns the tube bezier control points based on layout.
+  // On mobile, tube goes vertically out the bottom of the machine panel
+  // and aligns horizontally with the tank center in the restaurant panel.
+  function getTubePath(g) {
+    if (isStacked()) {
+      const exitX = mW * 0.50;        // line up with tank in panel below
+      return {
+        p0: [g.trumpX + 30, g.toiletY + 14],
+        p1: [exitX, g.toiletY + 80],   // gentle bend to vertical
+        p2: [exitX, mH + 20],          // off bottom of machine panel
+      };
+    }
+    return {
+      p0: [g.tubeP0X, g.tubeP0Y],
+      p1: [g.tubeP1X, g.tubeP1Y],
+      p2: [g.tubeP2X, g.tubeP2Y],
+    };
+  }
+
   function restaurantGeom() {
     // Tank top lowered ~2 inches so flag + flies have headroom
     const tankLeft   = rW * 0.18;
@@ -1689,9 +1708,8 @@
 
   // === TUBE (glass pipe with flowing water) ===
   function drawTube(ctx, g, now) {
-    const p0 = [g.tubeP0X, g.tubeP0Y];
-    const p1 = [g.tubeP1X, g.tubeP1Y];
-    const p2 = [g.tubeP2X, g.tubeP2Y];
+    const path = getTubePath(g);
+    const p0 = path.p0, p1 = path.p1, p2 = path.p2;
     const TUBE_W = 22;
 
     // outer glass walls
@@ -1765,6 +1783,49 @@
       ctx.arc(p0[0] + Math.cos(a) * (TUBE_W/2 + 1.5), p0[1] + Math.sin(a) * (TUBE_W/2 + 1.5), 1, 0, TAU);
       ctx.fill();
     }
+    ctx.restore();
+  }
+
+  // === DROP TUBE (mobile only) — vertical tube at top of restaurant panel
+  //     extending down to just above the tank, continuing the machine-panel tube
+  function drawDropTube(ctx, x, yTop, yBottom, now) {
+    const TUBE_W = 22;
+    ctx.save();
+    ctx.lineCap = "round";
+    // outer rim
+    ctx.strokeStyle = "rgba(180, 220, 240, 0.55)";
+    ctx.lineWidth = TUBE_W + 4;
+    ctx.beginPath();
+    ctx.moveTo(x, yTop); ctx.lineTo(x, yBottom);
+    ctx.stroke();
+    // glass body
+    ctx.strokeStyle = "rgba(180, 220, 250, 0.18)";
+    ctx.lineWidth = TUBE_W;
+    ctx.beginPath();
+    ctx.moveTo(x, yTop); ctx.lineTo(x, yBottom);
+    ctx.stroke();
+    // water
+    ctx.strokeStyle = "rgba(80, 160, 220, 0.55)";
+    ctx.lineWidth = TUBE_W - 6;
+    ctx.beginPath();
+    ctx.moveTo(x, yTop); ctx.lineTo(x, yBottom);
+    ctx.stroke();
+    // animated flow highlights
+    ctx.strokeStyle = "rgba(220, 240, 255, 0.55)";
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([12, 18]);
+    ctx.lineDashOffset = -((now / 25) % 30);
+    ctx.beginPath();
+    ctx.moveTo(x, yTop); ctx.lineTo(x, yBottom);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // rim shine
+    ctx.strokeStyle = "rgba(255,255,255,0.4)";
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(x - TUBE_W/2 + 2, yTop);
+    ctx.lineTo(x - TUBE_W/2 + 2, yBottom);
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -2693,14 +2754,15 @@
       mCtx.fillText("YES! YES! YES!", bubX, bubY + 3);
     }
 
-    // === DELIVERY SYSTEM: tube + ramp from toilet to catapult ===
+    // === DELIVERY SYSTEM ===
     drawTube(mCtx, g, now);
-    drawRamp(mCtx, g);
-
-    // Catapult
-    const armAngle = currentArmAngle(now);
-    const cupLoaded = (STATE.catapult.phase === "wind_up" || STATE.catapult.phase === "loaded");
-    drawCatapult(mCtx, g.catapultBaseX, g.catapultBaseY, armAngle, cupLoaded);
+    if (!isStacked()) {
+      // Desktop only: ramp slides into catapult cup
+      drawRamp(mCtx, g);
+      const armAngle = currentArmAngle(now);
+      const cupLoaded = (STATE.catapult.phase === "wind_up" || STATE.catapult.phase === "loaded");
+      drawCatapult(mCtx, g.catapultBaseX, g.catapultBaseY, armAngle, cupLoaded);
+    }
 
     // === TURD IN TRANSIT (toilet → tube → ramp → cup) ===
     if (STATE.toiletShit && STATE.toiletShit.active) {
@@ -2954,6 +3016,11 @@
     rCtx.clearRect(0, 0, rW, rH);
     const G = restaurantGeom();
 
+    // Mobile-only: drop tube continuing from machine panel above
+    if (isStacked()) {
+      drawDropTube(rCtx, rW * 0.50, -10, G.tankTop - 2, now);
+    }
+
     // === USA WATER TANK (top of right panel) ===
     drawWaterTank(rCtx, G, now);
 
@@ -3170,7 +3237,6 @@
 
   function runShitJourney(event) {
     const now = performance.now();
-    // Start turd in toilet bowl. updateShits drives the transit each frame.
     STATE.toiletShit = {
       active: true,
       label: event.label,
@@ -3180,7 +3246,15 @@
       scale: 0.7,
       x: 0, y: 0, rot: 0,
     };
-    // After transit, kick off the catapult sequence (wind_up → loaded → fire)
+
+    if (isStacked()) {
+      // Mobile: no catapult. After tube transit, drop straight into the tank.
+      const TUBE_END = TRANSIT.in_toilet + TRANSIT.in_tube;
+      setTimeout(() => spawnDropIntoTank(event), TUBE_END);
+      return;
+    }
+
+    // Desktop: catapult sequence (wind_up → loaded → fire → recoil)
     setTimeout(() => {
       STATE.catapult = { phase: "wind_up", phaseStart: performance.now(), event };
     }, TRANSIT_TOTAL);
@@ -3197,6 +3271,24 @@
         STATE.catapult = { phase: "idle", phaseStart: performance.now() };
       }, CATAPULT.recoil);
     }, TRANSIT_TOTAL + CATAPULT.wind_up + CATAPULT.loaded + CATAPULT.fire);
+  }
+
+  // Mobile-only: turd appears at top of drop tube and falls into the tank
+  function spawnDropIntoTank(event) {
+    const G = restaurantGeom();
+    const dropX = rW * 0.50;
+    STATE.incoming = {
+      active: true,
+      label: event.label,
+      url: event.url,
+      startTime: performance.now(),
+      duration: 700,
+      startX: dropX,
+      startY: -10,                  // enters from top of drop tube
+      endX: dropX + rand(-8, 8),
+      endY: G.tankTop + 32,         // splashes into water
+      x: 0, y: 0, rot: 0,
+    };
   }
 
   function isStacked() {
@@ -3314,26 +3406,22 @@
         ts.scale = 0.62;
         ts.rot = Math.sin(now / 80) * 0.15;
       } else if (age < TRANSIT.in_toilet + TRANSIT.in_tube) {
-        // Travel along the tube bezier
+        // Travel along the tube bezier (layout-aware path)
         const t = (age - TRANSIT.in_toilet) / TRANSIT.in_tube;
-        const [bx, by] = bezier2(
-          [g.tubeP0X, g.tubeP0Y],
-          [g.tubeP1X, g.tubeP1Y],
-          [g.tubeP2X, g.tubeP2Y],
-          t
-        );
+        const path = getTubePath(g);
+        const [bx, by] = bezier2(path.p0, path.p1, path.p2, t);
         ts.x = bx; ts.y = by;
         ts.scale = 0.58;
         ts.rot = t * Math.PI * 3;
-      } else if (age < TRANSIT_TOTAL) {
-        // Slide down ramp toward the cup
+      } else if (!isStacked() && age < TRANSIT_TOTAL) {
+        // Desktop only: slide down ramp toward the cup
         const t = (age - TRANSIT.in_toilet - TRANSIT.in_tube) / TRANSIT.on_ramp;
         ts.x = lerp(g.rampTopX, g.cupRestX, t);
         ts.y = lerp(g.rampTopY - 4, g.cupRestY - 4, t);
         ts.scale = lerp(0.58, 0.55, t);
         ts.rot += 0.25;
       } else {
-        // delivered into cup; catapult animation handles the visible turd there
+        // delivered (cup on desktop / off-bottom on mobile)
         ts.active = false;
         STATE.toiletShit = null;
       }
