@@ -1786,7 +1786,44 @@
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "rgba(247, 201, 72, 0.55)";
-    ctx.fillText("🦅", sx, sy + 2);
+    ctx.fillText("🦅", sx, sy - sr * 0.05);
+    // turd in the eagle's claws (smaller, just below the eagle)
+    ctx.font = `${sr*0.45}px serif`;
+    ctx.fillText("💩", sx, sy + sr * 0.55);
+
+    // === KLEPTOCRACY AT WORK plaque (high on wall, behind Trump) ===
+    const isSmall = w < 500;
+    const signCY  = wallTop + 22;
+    const signW   = Math.min(380, w * 0.62);
+    const signH   = isSmall ? 22 : 28;
+    const signX   = w/2 - signW/2;
+    const signY   = signCY - signH/2;
+    // dark plaque body
+    ctx.fillStyle = "rgba(15, 8, 3, 0.95)";
+    ctx.fillRect(signX, signY, signW, signH);
+    // gold double-border
+    ctx.strokeStyle = "rgba(247, 201, 72, 0.9)";
+    ctx.lineWidth = 1.8;
+    ctx.strokeRect(signX, signY, signW, signH);
+    ctx.strokeStyle = "rgba(247, 201, 72, 0.45)";
+    ctx.lineWidth = 0.8;
+    ctx.strokeRect(signX + 3, signY + 3, signW - 6, signH - 6);
+    // little gold stars at each end
+    ctx.fillStyle = "rgba(247, 201, 72, 0.9)";
+    ctx.font = "10px serif";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+    ctx.fillText("★", signX + 6, signCY);
+    ctx.textAlign = "right";
+    ctx.fillText("★", signX + signW - 6, signCY);
+    // engraved gold text
+    ctx.textAlign = "center";
+    ctx.font = `700 ${isSmall ? 11 : 14}px ui-monospace, monospace`;
+    ctx.shadowColor = "rgba(247, 201, 72, 0.7)";
+    ctx.shadowBlur = 7;
+    ctx.fillStyle = "#f7c948";
+    ctx.fillText("KLEPTOCRACY AT WORK", w/2, signCY);
+    ctx.shadowBlur = 0;
 
     // columns (left and right)
     drawColumn(ctx, w*0.06, wallTop - 12, wallBottom + 4 - (wallTop - 12));
