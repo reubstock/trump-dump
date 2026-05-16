@@ -967,11 +967,11 @@
     // catapult sits to the right of Thiel
     const catapultBaseX = mW * 0.82;
     const catapultBaseY = floorY - 30;       // sits on floor
-    // ballot box on Trump's right (viewer's left), between him and the column
+    // ballot box on Trump's right (viewer's left), raised to his level
     const ballotX = mW * 0.14;
-    const ballotY = floorY;                  // bottom of box sits on floor
+    const ballotY = toiletY + 24;            // bottom of box, raised next to Trump
     const ballotSlotX = ballotX;
-    const ballotSlotY = ballotY - 76;        // slot at top of box
+    const ballotSlotY = ballotY - 96;        // slot at top of box (taller box now)
     // Trump's mouth (absolute coords)
     const trumpMouthX = trumpX;
     const trumpMouthY = trumpY + 17;
@@ -1904,74 +1904,102 @@
   }
 
   // === BALLOT BOX ===
-  // (cx, cy) = bottom-center of the box on the floor
+  // (cx, cy) = bottom-center of the box (sits on a small stand)
   function drawBallotBox(ctx, cx, cy) {
     ctx.save();
     ctx.translate(cx, cy);
-    const W = 64, H = 80;
+    const W = 78, H = 96;
+
+    // === stand / pedestal under the box ===
+    ctx.fillStyle = "#5a3a18";
+    ctx.strokeStyle = "rgba(20, 10, 5, 0.7)";
+    ctx.lineWidth = 1.2;
+    // floor base
+    ctx.fillRect(-W/2 - 6, 28, W + 12, 6);
+    ctx.strokeRect(-W/2 - 6, 28, W + 12, 6);
+    // post
+    ctx.fillStyle = "#7a5028";
+    ctx.fillRect(-10, 0, 20, 28);
+    ctx.strokeRect(-10, 0, 20, 28);
+    // top of post (box rests here)
+    ctx.fillStyle = "#5a3a18";
+    ctx.fillRect(-W/2 - 4, -2, W + 8, 6);
+    ctx.strokeRect(-W/2 - 4, -2, W + 8, 6);
+
     // box body (cardboard tan with USA accent)
     const grad = ctx.createLinearGradient(-W/2, 0, W/2, 0);
     grad.addColorStop(0, "#c9a878");
-    grad.addColorStop(0.5, "#e3c896");
+    grad.addColorStop(0.5, "#f0d6a4");
     grad.addColorStop(1, "#a88858");
     ctx.fillStyle = grad;
     ctx.fillRect(-W/2, -H, W, H);
-    ctx.strokeStyle = "rgba(60, 30, 10, 0.7)";
+    ctx.strokeStyle = "rgba(60, 30, 10, 0.85)";
+    ctx.lineWidth = 1.6;
+    ctx.strokeRect(-W/2, -H, W, H);
+
+    // outer glow halo for visibility
+    ctx.save();
+    ctx.shadowColor = "rgba(255, 220, 130, 0.65)";
+    ctx.shadowBlur = 20;
+    ctx.strokeStyle = "rgba(255, 220, 130, 0.4)";
     ctx.lineWidth = 1.4;
     ctx.strokeRect(-W/2, -H, W, H);
+    ctx.restore();
 
     // top of box (perspective trapezoid lid)
     ctx.fillStyle = "#b8956a";
+    ctx.strokeStyle = "rgba(60, 30, 10, 0.85)";
+    ctx.lineWidth = 1.6;
     ctx.beginPath();
     ctx.moveTo(-W/2, -H);
-    ctx.lineTo(-W/2 + 6, -H - 6);
-    ctx.lineTo(W/2 - 6, -H - 6);
+    ctx.lineTo(-W/2 + 8, -H - 8);
+    ctx.lineTo(W/2 - 8, -H - 8);
     ctx.lineTo(W/2, -H);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
-    // ballot slot
-    ctx.fillStyle = "#1a0e04";
-    ctx.fillRect(-18, -H - 3, 36, 3);
-    ctx.strokeStyle = "rgba(0,0,0,0.8)";
-    ctx.lineWidth = 0.8;
-    ctx.strokeRect(-18, -H - 3, 36, 3);
+    // ballot slot (deep black)
+    ctx.fillStyle = "#000";
+    ctx.fillRect(-22, -H - 4, 44, 4);
+    ctx.strokeStyle = "rgba(0,0,0,1)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(-22, -H - 4, 44, 4);
 
     // USA flag stripes (red banner across top third of front)
     ctx.fillStyle = "#c52d2d";
-    ctx.fillRect(-W/2, -H + 10, W, 4);
+    ctx.fillRect(-W/2, -H + 12, W, 5);
     ctx.fillStyle = "#1f3a78";
-    ctx.fillRect(-W/2, -H + 14, W, 4);
+    ctx.fillRect(-W/2, -H + 17, W, 5);
     ctx.fillStyle = "#c52d2d";
-    ctx.fillRect(-W/2, -H + 18, W, 4);
+    ctx.fillRect(-W/2, -H + 22, W, 5);
 
     // "BALLOT BOX" label
-    ctx.font = "700 7px ui-monospace, monospace";
+    ctx.font = "700 8.5px ui-monospace, monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#3a1a08";
-    ctx.fillText("★ BALLOT BOX ★", 0, -H + 30);
+    ctx.fillStyle = "#2a0e02";
+    ctx.fillText("★ BALLOT BOX ★", 0, -H + 38);
 
-    // "77M VOTES" — big bold call-out
-    ctx.font = "700 14px ui-monospace, monospace";
+    // "77M VOTES" — large bold call-out
+    ctx.shadowColor = "rgba(255, 240, 180, 0.9)";
+    ctx.shadowBlur = 6;
+    ctx.font = "800 22px ui-monospace, monospace";
     ctx.fillStyle = "#1a0a05";
-    ctx.shadowColor = "rgba(255, 240, 200, 0.6)";
-    ctx.shadowBlur = 4;
-    ctx.fillText("77M", 0, -H + 48);
-    ctx.font = "700 10px ui-monospace, monospace";
-    ctx.fillText("VOTES", 0, -H + 62);
+    ctx.fillText("77M", 0, -H + 58);
+    ctx.font = "700 13px ui-monospace, monospace";
+    ctx.fillText("VOTES", 0, -H + 76);
     ctx.shadowBlur = 0;
 
-    // little star decoration
-    ctx.fillStyle = "rgba(247, 201, 72, 0.9)";
-    ctx.font = "10px serif";
-    ctx.fillText("★", -W/2 + 8, -H + 72);
-    ctx.fillText("★", W/2 - 8, -H + 72);
+    // gold stars
+    ctx.fillStyle = "rgba(247, 201, 72, 1)";
+    ctx.font = "13px serif";
+    ctx.fillText("★", -W/2 + 10, -H + 88);
+    ctx.fillText("★", W/2 - 10, -H + 88);
 
-    // floor shadow
-    ctx.fillStyle = "rgba(0,0,0,0.3)";
+    // floor shadow (under the stand)
+    ctx.fillStyle = "rgba(0,0,0,0.4)";
     ctx.beginPath();
-    ctx.ellipse(0, 3, W/2 + 4, 3, 0, 0, TAU);
+    ctx.ellipse(0, 36, W/2 + 6, 3.5, 0, 0, TAU);
     ctx.fill();
 
     ctx.restore();
