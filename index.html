@@ -3356,15 +3356,11 @@
     rCtx.closePath();
     rCtx.fill();
     rCtx.stroke();
-    // sign
+    // "OPEN 24/7" tagline (the SHITDONALDS branding is now on the
+    // golden-arches sign next to the building, so the duplicate
+    // yellow header was removed)
     const signCx = (G.buildingLeft + G.buildingRight) / 2;
-    rCtx.font = "700 12px ui-monospace, monospace";
     rCtx.textAlign = "center";
-    rCtx.shadowColor = "rgba(247, 201, 72, 0.8)";
-    rCtx.shadowBlur = 14;
-    rCtx.fillStyle = "#f7c948";
-    rCtx.fillText("SHITDONALDS", signCx, G.buildingTop - 32);
-    rCtx.shadowBlur = 0;
     rCtx.font = "8px ui-monospace, monospace";
     rCtx.fillStyle = "rgba(230, 232, 236, 0.55)";
     rCtx.fillText("· OPEN 24/7 ·", signCx, G.buildingTop - 20);
