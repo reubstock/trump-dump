@@ -3012,100 +3012,127 @@
     }
   }
 
+  // Single filled arch (thick inverted-U shape with hollow interior)
+  function drawSingleArch(ctx, cx, archTop, botY, halfW, thick) {
+    const archCY = archTop + halfW;
+    const innerW = halfW - thick;
+
+    const buildPath = () => {
+      ctx.beginPath();
+      // outer left leg up
+      ctx.moveTo(cx - halfW, botY);
+      ctx.lineTo(cx - halfW, archCY);
+      // outer arc over the top (counterclockwise visually = false in canvas)
+      ctx.arc(cx, archCY, halfW, Math.PI, 0, false);
+      // outer right leg down
+      ctx.lineTo(cx + halfW, botY);
+      // bottom-right to inner-right
+      ctx.lineTo(cx + innerW, botY);
+      // inner-right leg up
+      ctx.lineTo(cx + innerW, archCY);
+      // inner arc back (going the other way)
+      ctx.arc(cx, archCY, innerW, 0, Math.PI, true);
+      // inner-left leg down
+      ctx.lineTo(cx - innerW, botY);
+      ctx.closePath();
+    };
+
+    // Gold gradient (lit on left side)
+    const grad = ctx.createLinearGradient(cx - halfW, 0, cx + halfW, 0);
+    grad.addColorStop(0, "#ffe55c");
+    grad.addColorStop(0.35, "#ffd400");
+    grad.addColorStop(1, "#c89000");
+
+    // Soft yellow glow
+    ctx.save();
+    ctx.shadowColor = "rgba(255, 220, 0, 0.55)";
+    ctx.shadowBlur = 7;
+    ctx.fillStyle = grad;
+    buildPath();
+    ctx.fill();
+    ctx.restore();
+
+    // Dark amber outline
+    ctx.strokeStyle = "rgba(80, 45, 0, 0.9)";
+    ctx.lineWidth = 1.4;
+    buildPath();
+    ctx.stroke();
+
+    // Bright lit-edge highlight (top-left of arch)
+    ctx.strokeStyle = "rgba(255, 250, 220, 0.6)";
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW + 1, botY - 2);
+    ctx.lineTo(cx - halfW + 1, archCY);
+    ctx.arc(cx, archCY, halfW - 1, Math.PI, Math.PI + Math.PI * 0.4, false);
+    ctx.stroke();
+  }
+
   function drawGoldenArches(ctx, cx, baseY, signCY) {
     ctx.save();
-    const poleTop = signCY + 30;
-    const poleH   = baseY - poleTop;
 
-    // ground plate / shadow
+    // === DIMENSIONS ===
+    const SIGN_W = 76, SIGN_H = 22;
+    const ARCH_HW = 13;        // half-width of one arch
+    const ARCH_THICK = 5;
+    const ARCH_H = 64;         // total arch height
+    const ARCH_GAP = 0;        // 0 = touching, negative = overlap
+
+    const signTop = signCY - SIGN_H/2;
+    const signBot = signCY + SIGN_H/2;
+    const archBot = signTop;
+    const archTop = archBot - ARCH_H;
+    const archSpacing = ARCH_HW * 2 + ARCH_GAP;
+    const leftCX  = cx - archSpacing / 2;
+    const rightCX = cx + archSpacing / 2;
+
+    // === Ground plate + pole ===
     ctx.fillStyle = "rgba(0,0,0,0.45)";
     ctx.beginPath();
     ctx.ellipse(cx, baseY, 16, 3.5, 0, 0, TAU);
     ctx.fill();
-
-    // pole base flange
     ctx.fillStyle = "#2a2a32";
     ctx.fillRect(cx - 9, baseY - 4, 18, 4);
-    ctx.strokeStyle = "rgba(255,255,255,0.15)";
-    ctx.lineWidth = 0.6;
-    ctx.strokeRect(cx - 9, baseY - 4, 18, 4);
-
-    // pole
     ctx.fillStyle = "#3a3a44";
-    ctx.fillRect(cx - 3, poleTop, 6, poleH);
+    ctx.fillRect(cx - 3, signBot, 6, baseY - signBot);
     ctx.strokeStyle = "rgba(20,20,28,0.7)";
     ctx.lineWidth = 0.8;
-    ctx.strokeRect(cx - 3, poleTop, 6, poleH);
-    // pole highlight
+    ctx.strokeRect(cx - 3, signBot, 6, baseY - signBot);
     ctx.fillStyle = "rgba(255,255,255,0.18)";
-    ctx.fillRect(cx - 2, poleTop, 1, poleH);
+    ctx.fillRect(cx - 2, signBot, 1, baseY - signBot);
 
-    // === SIGN BOX (red back panel) ===
-    const SW = 64, SH = 64;
-    ctx.fillStyle = "#c52d2d";
-    ctx.fillRect(cx - SW/2, signCY - SH/2, SW, SH);
-    ctx.strokeStyle = "rgba(40, 0, 0, 0.9)";
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(cx - SW/2, signCY - SH/2, SW, SH);
-    // sign top trim (lit edge)
-    ctx.fillStyle = "rgba(255, 220, 130, 0.6)";
-    ctx.fillRect(cx - SW/2, signCY - SH/2, SW, 2);
+    // === Two arches ===
+    drawSingleArch(ctx, leftCX,  archTop, archBot, ARCH_HW, ARCH_THICK);
+    drawSingleArch(ctx, rightCX, archTop, archBot, ARCH_HW, ARCH_THICK);
 
-    // === GOLDEN M (rounded curves, no corners) ===
-    // path: left leg → left arch → V → right arch → right leg
-    const tracePath = () => {
-      ctx.beginPath();
-      ctx.moveTo(cx - 18, signCY + 22);
-      ctx.lineTo(cx - 18, signCY - 6);
-      // outer-left arch (smooth top curve)
-      ctx.bezierCurveTo(cx - 18, signCY - 26, cx - 9, signCY - 26, cx - 9, signCY - 6);
-      // angled V down to center
-      ctx.lineTo(cx, signCY + 12);
-      // angled V up to right arch start
-      ctx.lineTo(cx + 9, signCY - 6);
-      // outer-right arch
-      ctx.bezierCurveTo(cx + 9, signCY - 26, cx + 18, signCY - 26, cx + 18, signCY - 6);
-      // right leg down
-      ctx.lineTo(cx + 18, signCY + 22);
-    };
+    // === Red sign plaque ===
+    ctx.fillStyle = "#cf1923";
+    ctx.fillRect(cx - SIGN_W/2, signTop, SIGN_W, SIGN_H);
+    // top lit edge
+    ctx.fillStyle = "rgba(255, 200, 130, 0.4)";
+    ctx.fillRect(cx - SIGN_W/2, signTop, SIGN_W, 1.5);
+    // bottom shadow
+    ctx.fillStyle = "rgba(0,0,0,0.3)";
+    ctx.fillRect(cx - SIGN_W/2, signBot - 1.5, SIGN_W, 1.5);
+    // outline
+    ctx.strokeStyle = "rgba(70, 0, 0, 0.85)";
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(cx - SIGN_W/2, signTop, SIGN_W, SIGN_H);
 
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    // dark outer outline
+    // === "Shitdonals" text ===
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "italic 800 12px 'Helvetica Neue', Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = 2;
+    ctx.fillText("Shitdonals", cx, signCY + 0.5);
     ctx.shadowBlur = 0;
-    ctx.strokeStyle = "rgba(80, 45, 0, 0.95)";
-    ctx.lineWidth = 14;
-    tracePath();
-    ctx.stroke();
 
-    // glowing gold fill (the visible letter)
-    ctx.shadowColor = "rgba(255, 220, 0, 0.75)";
-    ctx.shadowBlur = 12;
-    const grad = ctx.createLinearGradient(0, signCY - 26, 0, signCY + 22);
-    grad.addColorStop(0, "#fff2a8");
-    grad.addColorStop(0.4, "#ffd400");
-    grad.addColorStop(1, "#b8860b");
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 10;
-    tracePath();
-    ctx.stroke();
-
-    // bright top highlight (lit edge of each arch)
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = "rgba(255, 250, 200, 0.7)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(cx - 17, signCY - 14);
-    ctx.bezierCurveTo(cx - 17, signCY - 24, cx - 10, signCY - 24, cx - 10, signCY - 14);
-    ctx.moveTo(cx + 10, signCY - 14);
-    ctx.bezierCurveTo(cx + 10, signCY - 24, cx + 17, signCY - 24, cx + 17, signCY - 14);
-    ctx.stroke();
-
-    // tiny "BURGERS" tagline below the sign
-    ctx.fillStyle = "rgba(255, 240, 210, 0.85)";
-    ctx.font = "700 6.5px ui-monospace, monospace";
-    ctx.fillText("BURGERS", cx, signCY + SH/2 - 8);
+    // ™ symbol
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.font = "700 4.5px sans-serif";
+    ctx.fillText("TM", cx + SIGN_W/2 - 4, signTop + 3.5);
 
     ctx.restore();
   }
@@ -3145,10 +3172,10 @@
     rCtx.textAlign = "left";
     rCtx.fillText("↓  D E L I V E R Y", G.tubeX + 16, G.tubeTop + 18);
 
-    // === Golden Arches sign just left of the building ===
-    const archesX  = G.buildingLeft - 22;
+    // === Shitdonals sign just left of the building ===
+    const archesX  = G.buildingLeft - 42;
     const archesBaseY = G.buildingBottom;
-    const archesSignCY = G.buildingTop - 38;
+    const archesSignCY = G.buildingTop - 30;
     drawGoldenArches(rCtx, archesX, archesBaseY, archesSignCY);
 
     // === McAmerica restaurant (smaller, below tube) ===
