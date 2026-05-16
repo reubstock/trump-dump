@@ -118,10 +118,8 @@
     line-height: 1;
     transition: text-shadow 0.4s;
   }
-  .counter .num.primary { font-size: 22px; font-weight: 600; }
   .counter .num.impact-up   { color: #ff7878; text-shadow: 0 0 12px rgba(255,120,120,0.5); }
   .counter .num.impact-down { color: #ff8c1a; text-shadow: 0 0 12px rgba(255,140,26,0.5); }
-  .counter .num.impact-war  { color: var(--cheeto); text-shadow: 0 0 14px rgba(255,140,26,0.6); }
   .counter .num.flash       { text-shadow: 0 0 22px rgba(255,255,255,0.9); }
   .counter .label {
     font-size: 9.5px;
@@ -205,11 +203,11 @@
 
   /* Footnotes */
   .footnote {
-    position: absolute; left: 18px; bottom: 14px;
+    position: absolute; left: 110px; bottom: 14px;
     font-size: 10px; color: rgba(241,243,247,0.6);
     letter-spacing: 1.6px; text-transform: uppercase;
     pointer-events: none;
-    max-width: calc(100% - 36px);
+    max-width: calc(100% - 130px);
   }
   .footnote.right { left: auto; right: 18px; text-align: right; }
   .footnote em { font-style: normal; color: rgba(241,243,247,0.5); }
@@ -218,8 +216,8 @@
   .now-headline {
     position: absolute;
     bottom: 50px;
-    left: 24px;
-    right: 24px;
+    left: 110px;
+    right: 30px;
     z-index: 3;
     pointer-events: none;
     font-family: ui-monospace, monospace;
@@ -267,8 +265,8 @@
   .cadence-bar {
     position: absolute;
     bottom: 20px;
-    left: 24px;
-    right: 24px;
+    left: 110px;
+    right: 30px;
     height: 2px;
     background: rgba(255,255,255,0.08);
     z-index: 3;
@@ -641,10 +639,6 @@
 
     <div class="counters">
       <div class="counter impact">
-        <div class="num primary impact-up" id="cICE">580,247</div>
-        <div class="label">ICE Deport. ▲</div>
-      </div>
-      <div class="counter impact">
         <div class="num impact-down" id="cNasdaq">18,524</div>
         <div class="label">NASDAQ ▼</div>
       </div>
@@ -653,8 +647,8 @@
         <div class="label">Homeless ▲</div>
       </div>
       <div class="counter impact">
-        <div class="num impact-war" id="cWars">6</div>
-        <div class="label">Active Wars</div>
+        <div class="num impact-up" id="cICE">580,247</div>
+        <div class="label">ICE Deport. ▲</div>
       </div>
       <div class="topbar-buttons">
         <button id="btnAll">💩 All Shits</button>
@@ -665,11 +659,6 @@
 
   <main class="panels">
     <section class="machine-panel">
-      <div class="panel-title">
-        <h2>T H E   O V A L   O F F I C E</h2>
-        <div class="accent-line"></div>
-        <div class="panel-sub">production · trump on toilet · thiel cheering</div>
-      </div>
       <canvas id="machineCanvas"></canvas>
       <button class="pause-pill" id="pauseBtn">⏸ PAUSE</button>
       <div class="now-headline">
@@ -683,11 +672,6 @@
     </section>
 
     <section class="restaurant-panel">
-      <div class="panel-title">
-        <h2>U S A   T A N K   ·   M c A M E R I C A</h2>
-        <div class="accent-line"></div>
-        <div class="panel-sub">water · flies · floaters · tube → diner table</div>
-      </div>
       <canvas id="restaurantCanvas"></canvas>
       <div class="restaurant-readout">
         <div class="readout-num" id="rServed">0</div>
@@ -873,7 +857,6 @@
     fed: 0,
     paused: false,
     lastDrop: 0,
-    shitsInFlight: [],
     deliveries: [],
     burgers: [],
     floating: [],
@@ -881,12 +864,15 @@
     flies: [],
     diners: [],
     history: [],
+    // catapult phase machine: 'idle' | 'load' | 'wind_up' | 'loaded' | 'fire' | 'recoil'
+    catapult: { phase: "idle", phaseStart: 0 },
+    // single in-flight projectile (cross-panel)
+    projectile: null,
     // === IMPACT METRICS (simulated, climb/drop on each dump) ===
     impacts: {
-      ice: 580_247,        // ICE deportations (realistic 2025-2026 baseline)
+      ice: 580_247,        // ICE deportations
       nasdaq: 18524.32,    // NASDAQ index value
       homeless: 871_309,   // US homeless count
-      wars: 6,             // active US-involved conflicts
     },
   };
 
@@ -966,26 +952,34 @@
   //  MACHINE GEOMETRY (computed each frame from mW/mH)
   // ============================================================
   function machineGeom() {
-    const trumpX = mW * 0.40;
-    const trumpY = mH * 0.50;       // head/upper-body center
-    const toiletY = trumpY + 100;   // toilet seat y
-    const thielX = mW * 0.72;
+    const trumpX = mW * 0.32;
+    const trumpY = mH * 0.50;
+    const toiletY = trumpY + 100;
+    const thielX = mW * 0.56;
     const thielY = mH * 0.58;
     const floorY = mH - 90;
-    // pipe exits Oval Office through the right wall, runs down to floor
-    const pipeOutX = mW - 6;
-    const pipeOutY = toiletY + 26;
-    return { trumpX, trumpY, toiletY, thielX, thielY, floorY, pipeOutX, pipeOutY };
+    // catapult sits to the right of Thiel
+    const catapultBaseX = mW * 0.82;
+    const catapultBaseY = toiletY + 36;
+    const cupRestX     = catapultBaseX - 18; // arm pulled back, cup near base
+    const cupRestY     = catapultBaseY - 6;
+    const cupFiredX    = catapultBaseX + 32; // arm fully forward
+    const cupFiredY    = catapultBaseY - 56;
+    return {
+      trumpX, trumpY, toiletY, thielX, thielY, floorY,
+      catapultBaseX, catapultBaseY,
+      cupRestX, cupRestY, cupFiredX, cupFiredY,
+    };
   }
 
   function restaurantGeom() {
-    // Tank takes top 55%; tube spans middle 8%; restaurant takes bottom 37%
+    // Tank top lowered ~2 inches so flag + flies have headroom
     const tankLeft   = rW * 0.18;
     const tankRight  = rW * 0.82;
-    const tankTop    = rH * 0.10;
-    const tankBottom = rH * 0.58;
+    const tankTop    = rH * 0.25;
+    const tankBottom = rH * 0.60;
     const tubeTop    = tankBottom;
-    const tubeBottom = rH * 0.66;
+    const tubeBottom = rH * 0.67;
     const tubeX      = rW * 0.50;
     // smaller restaurant (~half previous size, bottom of panel)
     const buildingLeft   = rW * 0.22;
@@ -1094,41 +1088,63 @@
     ctx.closePath();
     ctx.fill();
 
-    // tiny hands (cheeto orange)
-    ctx.fillStyle = "#ff8c1a";
+    // tiny hands (cheeto orange — small for emphasis)
+    ctx.fillStyle = "#f0a060";
+    ctx.strokeStyle = "rgba(120, 50, 0, 0.4)";
+    ctx.lineWidth = 0.7;
     ctx.beginPath();
-    ctx.ellipse(-36, 78, 7, 5, -0.4, 0, TAU);
-    ctx.ellipse(36, 78, 7, 5, 0.4, 0, TAU);
-    ctx.fill();
+    ctx.ellipse(-36, 78, 6, 4, -0.4, 0, TAU);
+    ctx.fill(); ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(36, 78, 6, 4, 0.4, 0, TAU);
+    ctx.fill(); ctx.stroke();
 
     // === HEAD === (wider at jowls than forehead — pear-ish)
-    ctx.fillStyle = "#ff8c1a";
+    ctx.fillStyle = "#f0a060";
     ctx.beginPath();
-    ctx.moveTo(-22, -28);            // top-left of forehead
-    ctx.bezierCurveTo(-30, -14, -34, 2, -28, 14);    // down left, widens to jowl
-    ctx.bezierCurveTo(-22, 22, -10, 26, 0, 26);       // chin
-    ctx.bezierCurveTo(10, 26, 22, 22, 28, 14);        // up jowl right
-    ctx.bezierCurveTo(34, 2, 30, -14, 22, -28);       // up right side
-    ctx.bezierCurveTo(15, -30, -15, -30, -22, -28);   // across forehead
+    ctx.moveTo(-22, -28);
+    ctx.bezierCurveTo(-30, -14, -34, 4, -29, 16);
+    ctx.bezierCurveTo(-24, 24, -12, 28, 0, 28);
+    ctx.bezierCurveTo(12, 28, 24, 24, 29, 16);
+    ctx.bezierCurveTo(34, 4, 30, -14, 22, -28);
+    ctx.bezierCurveTo(15, -30, -15, -30, -22, -28);
     ctx.closePath();
     ctx.fill();
+    // outline for definition
+    ctx.strokeStyle = "rgba(120, 50, 0, 0.4)";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
 
     // jowl shadows (bulges)
-    ctx.fillStyle = "rgba(185, 87, 0, 0.55)";
+    ctx.fillStyle = "rgba(180, 80, 10, 0.5)";
     ctx.beginPath();
-    ctx.ellipse(-18, 14, 9, 5, 0.3, 0, TAU);
+    ctx.ellipse(-19, 16, 10, 5, 0.3, 0, TAU);
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(18, 14, 9, 5, -0.3, 0, TAU);
+    ctx.ellipse(19, 16, 10, 5, -0.3, 0, TAU);
     ctx.fill();
+    // jowl crease lines (signature wrinkles down from mouth corners)
+    ctx.strokeStyle = "rgba(120, 50, 0, 0.55)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-8, 14);
+    ctx.bezierCurveTo(-12, 20, -16, 22, -18, 22);
+    ctx.moveTo(8, 14);
+    ctx.bezierCurveTo(12, 20, 16, 22, 18, 22);
+    ctx.stroke();
     // double chin
-    ctx.fillStyle = "rgba(185, 87, 0, 0.35)";
+    ctx.fillStyle = "rgba(180, 80, 10, 0.4)";
     ctx.beginPath();
-    ctx.ellipse(0, 22, 8, 2.5, 0, 0, TAU);
+    ctx.ellipse(0, 24, 9, 3, 0, 0, TAU);
     ctx.fill();
     // neck
-    ctx.fillStyle = "#ff8c1a";
-    ctx.fillRect(-9, 22, 18, 8);
+    ctx.fillStyle = "#f0a060";
+    ctx.fillRect(-10, 24, 20, 9);
+    // neck shadow underside (turkey neck)
+    ctx.fillStyle = "rgba(180, 80, 10, 0.4)";
+    ctx.beginPath();
+    ctx.ellipse(0, 32, 9, 2, 0, 0, TAU);
+    ctx.fill();
 
     // === HAIR === (iconic combover, large blonde swoop)
     // base mass
@@ -1154,12 +1170,20 @@
     ctx.closePath();
     ctx.fill();
 
-    // forehead strand
+    // dangling forelock strand (signature)
     ctx.fillStyle = "#f7d65d";
     ctx.beginPath();
-    ctx.moveTo(6, -28);
-    ctx.bezierCurveTo(14, -23, 8, -18, -2, -22);
-    ctx.bezierCurveTo(-8, -26, 0, -30, 6, -28);
+    ctx.moveTo(12, -28);
+    ctx.bezierCurveTo(18, -22, 10, -16, -4, -20);
+    ctx.bezierCurveTo(-12, -24, 0, -32, 12, -28);
+    ctx.closePath();
+    ctx.fill();
+    // forelock highlight
+    ctx.fillStyle = "rgba(255, 240, 180, 0.55)";
+    ctx.beginPath();
+    ctx.moveTo(10, -27);
+    ctx.bezierCurveTo(14, -24, 9, -20, 2, -22);
+    ctx.bezierCurveTo(0, -24, 6, -28, 10, -27);
     ctx.closePath();
     ctx.fill();
 
@@ -1323,15 +1347,52 @@
     ctx.ellipse(0, 14, 11, 4, 0, 0, TAU);
     ctx.fill();
 
-    // hair (short, dark, slick)
+    // hair (short, dark, slick — peeks under hat)
     ctx.fillStyle = "#3a2a1a";
     ctx.beginPath();
-    ctx.moveTo(-16, -14);
-    ctx.bezierCurveTo(-19, -24, -8, -28, 0, -28);
-    ctx.bezierCurveTo(12, -28, 19, -22, 16, -14);
-    ctx.bezierCurveTo(12, -18, 6, -16, 0, -15);
-    ctx.bezierCurveTo(-10, -15, -16, -14, -16, -14);
+    ctx.ellipse(0, -14, 16, 4, 0, 0, Math.PI);
+    ctx.fill();
+    // small tuft on side
+    ctx.beginPath();
+    ctx.ellipse(-14, -10, 3, 4, -0.4, 0, TAU);
+    ctx.fill();
+
+    // === RED MAGA HAT ===
+    ctx.fillStyle = "#c52d2d";
+    ctx.strokeStyle = "rgba(80, 0, 0, 0.7)";
+    ctx.lineWidth = 0.9;
+    // hat dome
+    ctx.beginPath();
+    ctx.moveTo(-18, -16);
+    ctx.bezierCurveTo(-20, -28, -10, -34, 0, -34);
+    ctx.bezierCurveTo(12, -34, 20, -28, 18, -16);
+    ctx.lineTo(-18, -16);
     ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // hat band
+    ctx.fillStyle = "#a51e1e";
+    ctx.fillRect(-18, -17, 36, 3);
+    // brim (curved, sticks out front)
+    ctx.fillStyle = "#c52d2d";
+    ctx.beginPath();
+    ctx.ellipse(7, -14, 18, 3.5, 0, 0, Math.PI);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(80, 0, 0, 0.7)";
+    ctx.beginPath();
+    ctx.ellipse(7, -14, 18, 3.5, 0, 0, Math.PI);
+    ctx.stroke();
+    // MAGA text on hat
+    ctx.fillStyle = "#fff";
+    ctx.font = "700 6.5px ui-monospace, monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("MAGA", 0, -24);
+    // tiny star
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    ctx.beginPath();
+    ctx.arc(-14, -23, 0.8, 0, TAU);
     ctx.fill();
 
     // eyes (open intense)
@@ -1493,6 +1554,103 @@
     }
   }
 
+  // === CATAPULT ===
+  // armAngle: -1 = fully wound back, 0 = vertical, +1 = fully released forward
+  function drawCatapult(ctx, baseX, baseY, armAngle, holdsTurd) {
+    ctx.save();
+    ctx.translate(baseX, baseY);
+
+    // wooden frame (A-frame stand)
+    ctx.fillStyle = "#5a3a18";
+    ctx.strokeStyle = "rgba(20, 10, 5, 0.6)";
+    ctx.lineWidth = 1.4;
+    // base beam
+    ctx.fillRect(-30, 0, 60, 6);
+    ctx.strokeRect(-30, 0, 60, 6);
+    // legs angled inward to pivot
+    ctx.beginPath();
+    ctx.moveTo(-28, 0); ctx.lineTo(-4, -28); ctx.lineTo(0, -28);
+    ctx.lineTo(-22, 0); ctx.closePath();
+    ctx.fillStyle = "#7a5028";
+    ctx.fill(); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(28, 0); ctx.lineTo(4, -28); ctx.lineTo(0, -28);
+    ctx.lineTo(22, 0); ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    // cross brace
+    ctx.fillStyle = "#4a2a10";
+    ctx.fillRect(-18, -6, 36, 3);
+    // pivot block
+    ctx.fillStyle = "#3a2008";
+    ctx.beginPath();
+    ctx.arc(0, -28, 4, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 200, 100, 0.6)";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    // counterweight at base of front-of-pivot
+    ctx.fillStyle = "#222";
+    ctx.fillRect(-8, 0, 16, 4);
+
+    // === SWING ARM ===
+    // arm pivots at (0, -28). When wound back (armAngle = -1) the cup
+    // points to the back-left and down. When released (+1) the cup is
+    // forward-upper-right (toward the right panel).
+    // angle in radians: -1 → -2.0 (back), 0 → -1.0 (vertical), +1 → +0.2 (forward)
+    const angle = -1.0 + armAngle * 1.2;
+    ctx.save();
+    ctx.translate(0, -28);
+    ctx.rotate(angle);
+    const armLen = 42;
+    // arm shaft
+    ctx.fillStyle = "#6a3f18";
+    ctx.fillRect(-2, -armLen, 4, armLen + 4);
+    ctx.strokeStyle = "rgba(20, 10, 5, 0.6)";
+    ctx.strokeRect(-2, -armLen, 4, armLen + 4);
+    // metal bracing
+    ctx.fillStyle = "rgba(180, 180, 200, 0.5)";
+    ctx.fillRect(-3, -armLen - 1, 6, 3);
+    ctx.fillRect(-3, -10, 6, 2);
+    // cup (sling) at far end
+    ctx.fillStyle = "#3a1a08";
+    ctx.beginPath();
+    ctx.ellipse(0, -armLen - 2, 9, 4, 0, 0, Math.PI);
+    ctx.lineTo(-9, -armLen - 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 200, 100, 0.5)";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    // turd resting in cup (if still loaded)
+    if (holdsTurd) {
+      ctx.save();
+      // counter-rotate so turd stays upright while arm swings
+      ctx.rotate(-angle);
+      // small turd visible in cup
+      ctx.translate(0, -armLen);
+      ctx.rotate(angle);
+      drawShit(ctx, 0, -3, 0.55, 1, "", 0);
+      ctx.restore();
+    }
+    ctx.restore();
+
+    // back tension rope (visible when wound)
+    if (armAngle < 0.6) {
+      const rOpacity = 0.25 + 0.45 * (1 - Math.max(0, armAngle));
+      ctx.strokeStyle = `rgba(220, 200, 140, ${rOpacity})`;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      // rope from arm tip to base behind
+      const tipX = Math.sin(angle) * armLen;
+      const tipY = -28 - Math.cos(angle) * armLen;
+      ctx.moveTo(tipX, tipY);
+      ctx.lineTo(-18, 0);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
   function drawToilet(ctx, cx, cy) {
     ctx.save();
     ctx.translate(cx, cy);
@@ -1547,47 +1705,66 @@
     ctx.scale(size, size);
     ctx.globalAlpha = alpha;
 
-    // glow
-    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, 26);
-    glow.addColorStop(0, "rgba(184, 120, 56, 0.5)");
-    glow.addColorStop(1, "rgba(184, 120, 56, 0)");
+    // bright glow halo (legibility)
+    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, 30);
+    glow.addColorStop(0, "rgba(232, 168, 96, 0.75)");
+    glow.addColorStop(1, "rgba(232, 168, 96, 0)");
     ctx.fillStyle = glow;
     ctx.beginPath();
-    ctx.arc(0, 0, 26, 0, TAU);
+    ctx.arc(0, 0, 30, 0, TAU);
     ctx.fill();
 
-    // stacked swirl
-    ctx.fillStyle = "#6b3f1a";
+    // stacked swirl — brightened
+    ctx.fillStyle = "#a16a2e";
     ctx.beginPath();
-    ctx.ellipse(0, 8, 14, 5, 0, 0, TAU);  // base
+    ctx.ellipse(0, 8, 14, 5, 0, 0, TAU);
     ctx.fill();
-    ctx.fillStyle = "#7a4820";
+    ctx.fillStyle = "#b87838";
     ctx.beginPath();
     ctx.ellipse(0, 2, 12, 5, 0, 0, TAU);
     ctx.fill();
-    ctx.fillStyle = "#8a5828";
+    ctx.fillStyle = "#cb8c46";
     ctx.beginPath();
     ctx.ellipse(0, -4, 9, 4, 0, 0, TAU);
     ctx.fill();
-    ctx.fillStyle = "#8e5e30";
+    ctx.fillStyle = "#d99a55";
     ctx.beginPath();
     ctx.ellipse(0, -9, 6, 3, 0, 0, TAU);
     ctx.fill();
     // tip
-    ctx.fillStyle = "#a06a35";
+    ctx.fillStyle = "#e6ad68";
     ctx.beginPath();
     ctx.moveTo(0, -14);
     ctx.bezierCurveTo(-3, -16, 3, -16, 0, -10);
     ctx.fill();
 
-    // highlight
-    ctx.fillStyle = "rgba(184, 120, 56, 0.45)";
+    // bright highlights (light side)
+    ctx.fillStyle = "rgba(255, 220, 170, 0.65)";
     ctx.beginPath();
     ctx.ellipse(-4, -3, 4, 1.5, -0.3, 0, TAU);
     ctx.fill();
     ctx.beginPath();
     ctx.ellipse(-3, 3, 5, 2, -0.2, 0, TAU);
     ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(-3, -8, 2.5, 1, -0.3, 0, TAU);
+    ctx.fill();
+
+    // dark outline for definition against any background
+    ctx.strokeStyle = "rgba(60, 30, 8, 0.65)";
+    ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    ctx.ellipse(0, 8, 14, 5, 0, 0, TAU);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(0, 2, 12, 5, 0, 0, TAU);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(0, -4, 9, 4, 0, 0, TAU);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(0, -9, 6, 3, 0, 0, TAU);
+    ctx.stroke();
 
     ctx.restore();
 
@@ -1839,17 +2016,43 @@
     // === MOUTH ===
     const lipColor = acc.includes('lipstick') ? "#c52d2d" : "#7a1818";
     if (eating) {
-      const open = 1 + Math.sin(eatPhase * 8) * 0.4;
+      // wide chewing mouth — opens and closes
+      const chew = (Math.sin(eatPhase * 12) + 1) / 2; // 0..1
+      const openH = 1.2 + chew * 3.4;
       ctx.fillStyle = "#2a0a05";
       ctx.beginPath();
-      ctx.ellipse(0, headY + 5, 3.5, 2.5 * open, 0, 0, TAU);
+      ctx.ellipse(0, headY + 5, 4.2, openH, 0, 0, TAU);
       ctx.fill();
-      // brown smear (eating shit-burger)
-      ctx.fillStyle = "rgba(107, 63, 26, 0.6)";
+      // teeth (top row, visible when open)
+      ctx.fillStyle = "#f0e6cc";
+      ctx.fillRect(-3.5, headY + 5 - openH, 7, 1.2);
+      // tongue
+      ctx.fillStyle = "#b04050";
       ctx.beginPath();
-      ctx.arc(-3, headY + 3, 1.3, 0, TAU);
-      ctx.arc(3, headY + 3, 1.3, 0, TAU);
+      ctx.ellipse(0, headY + 5 + openH * 0.3, 2.5, 1.2, 0, 0, TAU);
       ctx.fill();
+      // brown smear around mouth (eating shit-burger)
+      ctx.fillStyle = "rgba(107, 63, 26, 0.75)";
+      ctx.beginPath();
+      ctx.arc(-4, headY + 3, 1.6, 0, TAU);
+      ctx.arc(4, headY + 3, 1.6, 0, TAU);
+      ctx.arc(-3, headY + 8, 1.2, 0, TAU);
+      ctx.arc(3, headY + 8, 1.2, 0, TAU);
+      ctx.fill();
+      // crumbs falling
+      ctx.fillStyle = "#a16a2e";
+      const fallY = (eatPhase * 80) % 14;
+      ctx.beginPath();
+      ctx.arc(-2, headY + 12 + fallY, 0.8, 0, TAU);
+      ctx.arc(2, headY + 14 + fallY * 0.7, 0.7, 0, TAU);
+      ctx.fill();
+      // "om nom" speech puff
+      if (chew > 0.85) {
+        ctx.fillStyle = "rgba(255, 200, 130, 0.7)";
+        ctx.font = "700 4px ui-monospace, monospace";
+        ctx.textAlign = "center";
+        ctx.fillText("MMM", 0, headY - headR - 4);
+      }
     } else if (acc.includes('lipstick')) {
       // full painted lips
       ctx.fillStyle = lipColor;
@@ -1975,8 +2178,7 @@
   // ============================================================
   //  DINERS (3 seats)
   // ============================================================
-  // Three diverse diners: Black woman w/ glasses + curly hair, Latina woman
-  // w/ long hair + lipstick + earrings, and a child in a USA cap.
+  // Five diverse diners
   STATE.diners = [
     { seat: 0, eating: false, eatStart: 0,
       skin: "#7a4a2a", shirt: "#2a6d4a", age: "adult",
@@ -1989,6 +2191,14 @@
     { seat: 2, eating: false, eatStart: 0,
       skin: "#e7b885", shirt: "#e8c440", age: "child",
       hairColor: "#5a3a1a", hairStyle: "cap",
+      accessories: [] },
+    { seat: 3, eating: false, eatStart: 0,
+      skin: "#c98a5a", shirt: "#5a89c2", age: "adult",
+      hairColor: "#0a0a05", hairStyle: "short",
+      accessories: ["beard"] },
+    { seat: 4, eating: false, eatStart: 0,
+      skin: "#f2cfa0", shirt: "#9a5ec2", age: "child",
+      hairColor: "#a8801d", hairStyle: "pigtails",
       accessories: [] },
   ];
 
@@ -2036,31 +2246,25 @@
       mCtx.fillText("YES! YES! YES!", bubX, bubY + 3);
     }
 
-    // Pipe exit through right wall (sewer pipe going OUT of the oval office)
-    mCtx.strokeStyle = "rgba(180, 130, 70, 0.55)";
-    mCtx.lineWidth = 1.2;
+    // Sewer trough from toilet to catapult base
+    mCtx.strokeStyle = "rgba(180, 130, 70, 0.45)";
+    mCtx.lineWidth = 1;
     mCtx.beginPath();
-    // toilet base → right wall
-    mCtx.moveTo(g.trumpX + 16, g.toiletY + 24);
-    mCtx.lineTo(g.pipeOutX, g.pipeOutY - 8);
     mCtx.moveTo(g.trumpX + 16, g.toiletY + 28);
-    mCtx.lineTo(g.pipeOutX, g.pipeOutY + 8);
+    mCtx.lineTo(g.catapultBaseX - 30, g.catapultBaseY + 2);
     mCtx.stroke();
-    // shimmer line
-    mCtx.strokeStyle = "rgba(150, 90, 40, 0.30)";
-    mCtx.lineWidth = 4;
-    mCtx.beginPath();
-    mCtx.moveTo(g.trumpX + 16, g.toiletY + 26);
-    mCtx.lineTo(g.pipeOutX, g.pipeOutY);
-    mCtx.stroke();
-    mCtx.fillStyle = "rgba(230,232,236,0.30)";
-    mCtx.font = "8px ui-monospace, monospace";
-    mCtx.textAlign = "right";
-    mCtx.fillText("→ SEWER LINE", g.pipeOutX - 6, g.pipeOutY - 12);
 
-    // In-flight shits inside the Oval Office (toilet → pipe exit)
-    for (const s of STATE.shitsInFlight) {
-      drawShit(mCtx, s.x, s.y, s.scale || 1, s.alpha != null ? s.alpha : 1, s.showLabel ? s.label : "", s.rot || 0);
+    // Catapult
+    const armAngle = currentArmAngle(now);
+    const cupLoaded = (STATE.catapult.phase === "wind_up" || STATE.catapult.phase === "loaded");
+    drawCatapult(mCtx, g.catapultBaseX, g.catapultBaseY, armAngle, cupLoaded);
+
+    // In-flight projectile in the left panel (catapult → off right edge)
+    if (STATE.projectile && STATE.projectile.active) {
+      const p = STATE.projectile;
+      if (p.worldX <= mW) {
+        drawShit(mCtx, p.worldX, p.worldY, 0.95, 1, p.showLabel ? p.label : "", p.rot || 0);
+      }
     }
 
     // Cadence bar
@@ -2170,25 +2374,103 @@
     ctx.fillRect(G.tankLeft - 6, G.tankTop - 10, w + 12, 10);
     ctx.fillStyle = "#f7c948";
     ctx.fillRect(G.tankLeft - 6, G.tankTop - 10, w + 12, 3);
-    // USA label above
-    ctx.font = "700 20px ui-monospace, monospace";
-    ctx.textAlign = "center";
-    ctx.shadowColor = "rgba(255, 140, 26, 0.6)";
-    ctx.shadowBlur = 16;
-    ctx.fillStyle = "rgba(255, 240, 220, 1)";
-    ctx.fillText("★  U S A   T A N K  ★", (G.tankLeft + G.tankRight)/2, G.tankTop - 18);
-    ctx.shadowBlur = 0;
 
-    // tank meter
-    ctx.fillStyle = "rgba(7,9,13,0.85)";
-    ctx.fillRect(G.tankRight - 76, G.tankBottom - 22, 72, 18);
-    ctx.strokeStyle = "rgba(255, 140, 26, 0.6)";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(G.tankRight - 76, G.tankBottom - 22, 72, 18);
-    ctx.font = "700 10px ui-monospace, monospace";
-    ctx.fillStyle = "rgba(255, 200, 130, 1)";
-    ctx.textAlign = "center";
-    ctx.fillText(`${STATE.floating ? STATE.floating.length : 0} floaters`, G.tankRight - 40, G.tankBottom - 9);
+    // === FLYING USA FLAG ON TANK ===
+    drawUSFlag(ctx, (G.tankLeft + G.tankRight)/2, G.tankTop - 10, now);
+
+    // In-flight projectile in right-panel coords (worldX - mW)
+    if (STATE.projectile && STATE.projectile.active) {
+      const p = STATE.projectile;
+      if (p.worldX >= mW) {
+        const localX = p.worldX - mW;
+        drawShit(ctx, localX, p.worldY, 0.95, 1, p.showLabel ? p.label : "", p.rot || 0);
+      }
+    }
+  }
+
+  function drawUSFlag(ctx, baseX, baseY, now) {
+    ctx.save();
+    // Flagpole rises from the gold cap
+    const poleH = 110;
+    const poleTop = baseY - poleH;
+    ctx.strokeStyle = "rgba(220, 220, 230, 0.85)";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(baseX, baseY);
+    ctx.lineTo(baseX, poleTop);
+    ctx.stroke();
+    // gold finial ball
+    ctx.fillStyle = "#f7c948";
+    ctx.beginPath();
+    ctx.arc(baseX, poleTop - 3, 3.5, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(180, 130, 20, 0.7)";
+    ctx.lineWidth = 0.6;
+    ctx.stroke();
+
+    // Waving flag: 13 stripes + canton with stars
+    const flagW = 78, flagH = 48;
+    const flagX = baseX + 2;
+    const flagY = poleTop + 4;
+    // Wave displacement per column (animated sine)
+    const wave = (x) => Math.sin((x / 14) - now / 380) * 4;
+
+    // Draw stripes as horizontal bands with wavy right edge
+    for (let i = 0; i < 13; i++) {
+      const stripeY0 = flagY + (i * flagH) / 13;
+      const stripeY1 = flagY + ((i + 1) * flagH) / 13;
+      ctx.fillStyle = (i % 2 === 0) ? "#c52d2d" : "#f5f5f5";
+      ctx.beginPath();
+      ctx.moveTo(flagX, stripeY0);
+      for (let x = 0; x <= flagW; x += 4) {
+        ctx.lineTo(flagX + x, stripeY0 + wave(x));
+      }
+      for (let x = flagW; x >= 0; x -= 4) {
+        ctx.lineTo(flagX + x, stripeY1 + wave(x));
+      }
+      ctx.closePath();
+      ctx.fill();
+    }
+    // Canton (blue with stars), covers top 7 stripes, ~40% width
+    const cantonW = flagW * 0.4;
+    const cantonH = (flagH * 7) / 13;
+    ctx.beginPath();
+    ctx.moveTo(flagX, flagY);
+    for (let x = 0; x <= cantonW; x += 4) {
+      ctx.lineTo(flagX + x, flagY + wave(x));
+    }
+    for (let x = cantonW; x >= 0; x -= 4) {
+      ctx.lineTo(flagX + x, flagY + cantonH + wave(x));
+    }
+    ctx.closePath();
+    ctx.fillStyle = "#1f3a78";
+    ctx.fill();
+    // stars (5×4 grid simplified)
+    ctx.fillStyle = "#fff";
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 5; col++) {
+        const sx = flagX + ((col + 0.5) / 5) * cantonW;
+        const sy = flagY + ((row + 0.5) / 4) * cantonH;
+        ctx.beginPath();
+        ctx.arc(sx + wave(sx - flagX), sy + wave(sx - flagX), 1.1, 0, TAU);
+        ctx.fill();
+      }
+    }
+    // subtle outline
+    ctx.strokeStyle = "rgba(0,0,0,0.25)";
+    ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(flagX, flagY);
+    for (let x = 0; x <= flagW; x += 4) {
+      ctx.lineTo(flagX + x, flagY + wave(x));
+    }
+    for (let x = flagW; x >= 0; x -= 4) {
+      ctx.lineTo(flagX + x, flagY + flagH + wave(x));
+    }
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.restore();
   }
 
   function initFloatingShits(G) {
@@ -2287,36 +2569,42 @@
     rCtx.fillRect(tableLeft + 6, G.tableY + 8, 3, 18);
     rCtx.fillRect(tableRight - 9, G.tableY + 8, 3, 18);
 
-    // 3 diners (smaller scale)
-    const seatW = (tableRight - tableLeft) / 3;
-    for (let i = 0; i < 3; i++) {
+    // 5 diners (smaller scale)
+    const NSEATS = STATE.diners.length;
+    const seatW = (tableRight - tableLeft) / NSEATS;
+    for (let i = 0; i < NSEATS; i++) {
       const dx = tableLeft + seatW * (i + 0.5);
       const dy = G.tableY - 16;
       const d = STATE.diners[i];
       const eatPhase = d.eating ? (now - d.eatStart) / 1000 : 0;
-      drawDiner(rCtx, dx, dy, 0.85, d, d.eating, eatPhase);
-      if (d.eating && (now - d.eatStart) > 2500) d.eating = false;
+      drawDiner(rCtx, dx, dy, 0.75, d, d.eating, eatPhase);
+      if (d.eating && (now - d.eatStart) > 3200) d.eating = false;
     }
 
     // burgers on plates
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < NSEATS; i++) {
       const dx = tableLeft + seatW * (i + 0.5);
       const burger = STATE.burgers.find(b => b.slot === i);
       if (!burger) continue;
       const age = (now - burger.born) / 1000;
-      let scale = 0.7;
-      if (age < 0.4) scale = (age / 0.4) * 0.7;
-      if (age > 8) scale = Math.max(0, 0.7 * (1 - (age - 8)));
-      const freshness = clamp(1 - age / 6, 0, 1);
-      rCtx.fillStyle = "rgba(245, 248, 252, 0.85)";
-      rCtx.strokeStyle = "rgba(220, 228, 240, 0.5)";
-      rCtx.beginPath();
-      rCtx.ellipse(dx, G.tableY - 1, 15 * (scale/0.7), 4 * (scale/0.7), 0, 0, TAU);
-      rCtx.fill();
-      rCtx.stroke();
-      drawBurger(rCtx, dx, G.tableY - 6, scale, freshness);
+      let scale = 0.6;
+      if (age < 0.4) scale = (age / 0.4) * 0.6;
+      // bite-by-bite: shrink in steps after spawn
+      const bites = Math.min(4, Math.floor(age / 0.7));
+      scale *= (1 - bites * 0.18);
+      if (age > 4) scale = Math.max(0, scale * (1 - (age - 4) / 2));
+      const freshness = clamp(1 - age / 4, 0, 1);
+      if (scale > 0.05) {
+        rCtx.fillStyle = "rgba(245, 248, 252, 0.85)";
+        rCtx.strokeStyle = "rgba(220, 228, 240, 0.5)";
+        rCtx.beginPath();
+        rCtx.ellipse(dx, G.tableY - 1, 14 * (scale/0.6), 3.5 * (scale/0.6), 0, 0, TAU);
+        rCtx.fill();
+        rCtx.stroke();
+        drawBurger(rCtx, dx, G.tableY - 6, scale, freshness);
+      }
     }
-    STATE.burgers = STATE.burgers.filter(b => (now - b.born) < 9000);
+    STATE.burgers = STATE.burgers.filter(b => (now - b.born) < 7000);
 
     // delivery shit traveling down the tube → plate
     for (const d of STATE.deliveries) {
@@ -2370,38 +2658,109 @@
     pushToTicker(event);
   }
 
+  // === CATAPULT TIMING (per phase, ms) ===
+  const CATAPULT = {
+    load:    400,   // turd slides into cup
+    wind_up: 800,   // arm pulls back
+    loaded:  400,   // brief pause at full tension
+    fire:    260,   // arm snaps forward
+    recoil:  600,   // arm bounces back to neutral
+    flight: 1100,   // turd arcs across to tank
+  };
+
+  // armAngle: -1 = wound back, 0 = neutral (forward-up), +1 = released
+  function currentArmAngle(now) {
+    const c = STATE.catapult;
+    const age = now - c.phaseStart;
+    switch (c.phase) {
+      case "load": return -0.2; // arm slightly raised, cup pre-positioned
+      case "wind_up": {
+        const t = Math.min(1, age / CATAPULT.wind_up);
+        return lerp(-0.2, -1.0, t);
+      }
+      case "loaded": return -1.0;
+      case "fire": {
+        const t = Math.min(1, age / CATAPULT.fire);
+        // ease-in snap then overshoot
+        const e = t * t;
+        return lerp(-1.0, 1.0, e);
+      }
+      case "recoil": {
+        const t = Math.min(1, age / CATAPULT.recoil);
+        // damped oscillation back to 0
+        return Math.cos(t * Math.PI * 2) * (1 - t) * 0.5;
+      }
+      default: return 0;
+    }
+  }
+
   function runShitJourney(event) {
+    const now = performance.now();
+    // queue catapult sequence: load → wind_up → loaded → fire → flight
+    STATE.catapult = { phase: "load", phaseStart: now, event };
+    setTimeout(() => {
+      STATE.catapult = { phase: "wind_up", phaseStart: performance.now(), event };
+    }, CATAPULT.load);
+    setTimeout(() => {
+      STATE.catapult = { phase: "loaded", phaseStart: performance.now(), event };
+    }, CATAPULT.load + CATAPULT.wind_up);
+    setTimeout(() => {
+      STATE.catapult = { phase: "fire", phaseStart: performance.now(), event };
+    }, CATAPULT.load + CATAPULT.wind_up + CATAPULT.loaded);
+    // launch projectile + start recoil at the END of fire phase
+    setTimeout(() => {
+      launchProjectile(event);
+      STATE.catapult = { phase: "recoil", phaseStart: performance.now() };
+      setTimeout(() => {
+        STATE.catapult = { phase: "idle", phaseStart: performance.now() };
+      }, CATAPULT.recoil);
+    }, CATAPULT.load + CATAPULT.wind_up + CATAPULT.loaded + CATAPULT.fire);
+  }
+
+  function launchProjectile(event) {
     const g = machineGeom();
-    STATE.shitsInFlight.push({
+    // Start at arm tip when arm is fully forward (matches drawCatapult angle = +0.2)
+    const armLen = 42;
+    const angle = 0.2;
+    const startX = g.catapultBaseX + Math.sin(angle) * armLen;
+    const startY = g.catapultBaseY - 28 - Math.cos(angle) * armLen;
+
+    // End: surface of the tank in right panel — world X = mW + tank position
+    const G = restaurantGeom();
+    const endWorldX = mW + (G.tankLeft + G.tankRight) / 2 + rand(-30, 30);
+    const endWorldY = G.tankTop + 28;
+
+    STATE.projectile = {
+      active: true,
       label: event.label,
       url: event.url,
-      x: g.trumpX, y: g.toiletY + 4,
-      scale: 0.85,
-      alpha: 1,
+      startTime: performance.now(),
+      duration: CATAPULT.flight,
+      startX, startY,
+      endWorldX, endWorldY,
+      apexY: Math.min(startY, endWorldY) - 160,
+      worldX: startX,
+      worldY: startY,
       rot: 0,
       showLabel: true,
-      phase: "exit",
-      phaseStart: performance.now(),
-    });
+    };
   }
 
   function updateShits(now) {
-    const g = machineGeom();
-    for (let i = STATE.shitsInFlight.length - 1; i >= 0; i--) {
-      const s = STATE.shitsInFlight[i];
-      const age = now - s.phaseStart;
-      if (s.phase === "exit") {
-        // toilet → right wall pipe exit (1600ms)
-        const t = Math.min(1, age / 1600);
-        s.x = lerp(g.trumpX + 4, g.pipeOutX - 4, t);
-        s.y = lerp(g.toiletY + 8, g.pipeOutY, t * t * 0.6 + t * 0.4);
-        s.rot = t * Math.PI * 2;
-        if (t >= 1) {
-          STATE.shitsInFlight.splice(i, 1);
-          // splash into the water tank — adds a floater and triggers bubbles
-          splashIntoTank(s.label, s.url);
-        }
-      }
+    const p = STATE.projectile;
+    if (!p || !p.active) return;
+    const t = Math.min(1, (now - p.startTime) / p.duration);
+    // Quadratic bezier with apex control point
+    const u = 1 - t;
+    const ctrlX = (p.startX + p.endWorldX) / 2;
+    const ctrlY = p.apexY;
+    p.worldX = u*u * p.startX + 2*u*t * ctrlX + t*t * p.endWorldX;
+    p.worldY = u*u * p.startY + 2*u*t * ctrlY + t*t * p.endWorldY;
+    p.rot = t * Math.PI * 4;
+    if (t >= 1) {
+      p.active = false;
+      splashIntoTank(p.label, p.url);
+      STATE.projectile = null;
     }
   }
 
@@ -2435,8 +2794,7 @@
   }
 
   function spawnTubeDelivery(label, url) {
-    // pick a diner slot — round-robin or random
-    const slot = STATE.fed % 3;
+    const slot = STATE.fed % STATE.diners.length;
     STATE.deliveries.push({
       label, url, slot,
       t: 0,
@@ -2447,7 +2805,7 @@
     for (let i = STATE.deliveries.length - 1; i >= 0; i--) {
       const d = STATE.deliveries[i];
       const age = now - d.born;
-      const dur = 1800;
+      const dur = 2800;
       d.t = Math.min(1, age / dur);
       d.rot = d.t * Math.PI * 2;
       if (d.t >= 1) {
@@ -2627,21 +2985,15 @@
   // === IMPACT METRICS — climb/drop with each dump ===
   function tickImpacts() {
     const I = STATE.impacts;
-    // ICE deportations: relentless climb (+200 to +500 per dump)
     I.ice += Math.floor(rand(200, 500));
-    // NASDAQ: mostly down, occasional small bounce
     I.nasdaq += rand(-110, 30);
-    if (I.nasdaq < 9000) I.nasdaq = 9000; // floor
-    // Homeless: steady climb (+80 to +220 per dump)
+    if (I.nasdaq < 9000) I.nasdaq = 9000;
     I.homeless += Math.floor(rand(80, 220));
-    // Wars: stays same usually, occasional escalation
-    if (Math.random() < 0.04) I.wars += 1;
 
-    const ce = $("cICE"), cn = $("cNasdaq"), ch = $("cHomeless"), cw = $("cWars");
+    const ce = $("cICE"), cn = $("cNasdaq"), ch = $("cHomeless");
     if (ce) { ce.textContent = fmt(I.ice);         flashNum(ce); }
     if (cn) { cn.textContent = fmt(I.nasdaq);      flashNum(cn); }
     if (ch) { ch.textContent = fmt(I.homeless);    flashNum(ch); }
-    if (cw) { cw.textContent = fmt(I.wars);        flashNum(cw); }
   }
   function flashNum(el) {
     el.classList.add("flash");
@@ -2673,7 +3025,6 @@
     $("cICE").textContent       = fmt(I.ice);
     $("cNasdaq").textContent    = fmt(I.nasdaq);
     $("cHomeless").textContent  = fmt(I.homeless);
-    $("cWars").textContent      = fmt(I.wars);
     STATE.lastDrop = performance.now() - CADENCE_MS + 1500; // first deposit in 1.5s
     cadenceTimer = setTimeout(() => {
       tick();
