@@ -1249,13 +1249,13 @@
   }
 
   function restaurantGeom() {
-    // Tank top lowered ~2 inches so flag + flies have headroom
+    // Tank + tube raised ~1 inch
     const tankLeft   = rW * 0.18;
     const tankRight  = rW * 0.82;
-    const tankTop    = rH * 0.25;
-    const tankBottom = rH * 0.60;
+    const tankTop    = rH * 0.18;
+    const tankBottom = rH * 0.53;
     const tubeTop    = tankBottom;
-    const tubeBottom = rH * 0.67;
+    const tubeBottom = rH * 0.60;
     const tubeX      = rW * 0.50;
     // smaller restaurant (~half previous size, bottom of panel)
     const buildingLeft   = rW * 0.22;
@@ -3044,13 +3044,14 @@
 
     // === FLYING USA FLAG ON TANK ===
     if (isStacked()) {
-      // Mobile: short pole + smaller flag, offset left so it doesn't sit
-      // behind the drop tube; clamp pole so the flag stays on-canvas.
-      const poleBaseY = G.tankTop - 6;
-      const poleH     = Math.max(20, Math.min(40, poleBaseY - 4));
-      drawUSFlag(ctx, G.tankLeft + 22, poleBaseY, now, {
-        poleH, flagW: 38, flagH: 24,
-      });
+      // Mobile: tank is raised so flag space is tight; size everything
+      // off the actual available height above the tank.
+      const poleBaseY = G.tankTop - 4;
+      const avail     = Math.max(14, poleBaseY - 2);
+      const poleH     = Math.min(35, avail);
+      const flagH     = Math.min(18, Math.max(12, poleH - 4));
+      const flagW     = Math.round(flagH * 1.55);
+      drawUSFlag(ctx, G.tankLeft + 22, poleBaseY, now, { poleH, flagW, flagH });
     } else {
       drawUSFlag(ctx, (G.tankLeft + G.tankRight)/2, G.tankTop - 10, now);
     }
