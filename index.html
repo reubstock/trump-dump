@@ -2863,24 +2863,30 @@
     // Peter Thiel, standing to Trump's right, cheering on each cycle
     const thielCheer = (now - STATE.lastDrop) < 1800;
     drawThiel(mCtx, g.thielX, g.thielY, 1.0, thielCheer);
-    // Thiel speech bubble
+    // Thiel speech bubble — floats directly above his MAGA hat
     if (thielCheer) {
-      const bubX = g.thielX - 80;
-      const bubY = g.thielY - 76;
+      const bw = 120, bh = 36;
+      const bubX = g.thielX;             // centered horizontally on Thiel
+      const bubY = g.thielY - 62;        // above the hat (hat top ≈ thielY - 34)
       mCtx.fillStyle = "rgba(252, 247, 236, 0.95)";
       mCtx.strokeStyle = "rgba(10, 10, 22, 0.7)";
       mCtx.lineWidth = 1.4;
-      const bw = 120, bh = 36;
       strokeRoundedRect(mCtx, bubX - bw/2, bubY - bh/2, bw, bh, 5);
       mCtx.fill(); mCtx.stroke();
-      // tail
+      // tail — points down to the hat
       mCtx.beginPath();
-      mCtx.moveTo(bubX + 26, bubY + bh/2 - 1);
-      mCtx.lineTo(bubX + 42, bubY + bh/2 + 10);
-      mCtx.lineTo(bubX + 34, bubY + bh/2 - 1);
+      mCtx.moveTo(bubX - 5, bubY + bh/2 - 1);
+      mCtx.lineTo(bubX,     bubY + bh/2 + 11);
+      mCtx.lineTo(bubX + 5, bubY + bh/2 - 1);
       mCtx.closePath();
       mCtx.fillStyle = "rgba(252, 247, 236, 0.95)";
       mCtx.fill();
+      mCtx.strokeStyle = "rgba(10, 10, 22, 0.7)";
+      mCtx.beginPath();
+      mCtx.moveTo(bubX - 5, bubY + bh/2);
+      mCtx.lineTo(bubX,     bubY + bh/2 + 11);
+      mCtx.lineTo(bubX + 5, bubY + bh/2);
+      mCtx.stroke();
       // two-line text
       mCtx.font = "700 9px ui-monospace, monospace";
       mCtx.fillStyle = "#c52d2d";
