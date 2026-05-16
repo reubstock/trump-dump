@@ -3232,11 +3232,12 @@
   function drawGoldenArches(ctx, cx, baseY, signCY) {
     ctx.save();
 
-    // === DIMENSIONS ===
-    const SIGN_W = 76, SIGN_H = 22;
-    const ARCH_HW = 13;        // half-width of one arch
-    const ARCH_THICK = 5;
-    const ARCH_H = 64;         // total arch height
+    // === DIMENSIONS (all 35% bigger) ===
+    const S = 1.35;
+    const SIGN_W = 76 * S, SIGN_H = 22 * S;
+    const ARCH_HW = 13 * S;    // half-width of one arch
+    const ARCH_THICK = 5 * S;
+    const ARCH_H = 64 * S;     // total arch height
     const ARCH_GAP = 0;        // 0 = touching, negative = overlap
 
     const signTop = signCY - SIGN_H/2;
@@ -3247,20 +3248,21 @@
     const leftCX  = cx - archSpacing / 2;
     const rightCX = cx + archSpacing / 2;
 
-    // === Ground plate + pole ===
+    // === Ground plate + pole (scaled) ===
+    const POLE_W = 6 * S, FLANGE_W = 18 * S, GROUND_RX = 16 * S;
     ctx.fillStyle = "rgba(0,0,0,0.45)";
     ctx.beginPath();
-    ctx.ellipse(cx, baseY, 16, 3.5, 0, 0, TAU);
+    ctx.ellipse(cx, baseY, GROUND_RX, 3.5 * S, 0, 0, TAU);
     ctx.fill();
     ctx.fillStyle = "#2a2a32";
-    ctx.fillRect(cx - 9, baseY - 4, 18, 4);
+    ctx.fillRect(cx - FLANGE_W/2, baseY - 4, FLANGE_W, 4);
     ctx.fillStyle = "#3a3a44";
-    ctx.fillRect(cx - 3, signBot, 6, baseY - signBot);
+    ctx.fillRect(cx - POLE_W/2, signBot, POLE_W, baseY - signBot);
     ctx.strokeStyle = "rgba(20,20,28,0.7)";
     ctx.lineWidth = 0.8;
-    ctx.strokeRect(cx - 3, signBot, 6, baseY - signBot);
+    ctx.strokeRect(cx - POLE_W/2, signBot, POLE_W, baseY - signBot);
     ctx.fillStyle = "rgba(255,255,255,0.18)";
-    ctx.fillRect(cx - 2, signBot, 1, baseY - signBot);
+    ctx.fillRect(cx - POLE_W/2 + 1, signBot, 1, baseY - signBot);
 
     // === Two arches ===
     drawSingleArch(ctx, leftCX,  archTop, archBot, ARCH_HW, ARCH_THICK);
@@ -3280,20 +3282,20 @@
     ctx.lineWidth = 1.2;
     ctx.strokeRect(cx - SIGN_W/2, signTop, SIGN_W, SIGN_H);
 
-    // === "Shitdonals" text ===
+    // === "Shitdonalds" text (scaled) ===
     ctx.fillStyle = "#ffffff";
-    ctx.font = "italic 800 12px 'Helvetica Neue', Arial, sans-serif";
+    ctx.font = `italic 800 ${Math.round(12 * S)}px 'Helvetica Neue', Arial, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.shadowColor = "rgba(0,0,0,0.5)";
     ctx.shadowBlur = 2;
-    ctx.fillText("Shitdonalds", cx, signCY + 0.5);
+    ctx.fillText("Shitdonalds", cx, signCY + 0.5 * S);
     ctx.shadowBlur = 0;
 
     // ™ symbol
     ctx.fillStyle = "rgba(255,255,255,0.85)";
-    ctx.font = "700 4.5px sans-serif";
-    ctx.fillText("TM", cx + SIGN_W/2 - 4, signTop + 3.5);
+    ctx.font = `700 ${(4.5 * S).toFixed(1)}px sans-serif`;
+    ctx.fillText("TM", cx + SIGN_W/2 - 5 * S, signTop + 4 * S);
 
     ctx.restore();
   }
@@ -3333,10 +3335,10 @@
     rCtx.textAlign = "left";
     rCtx.fillText("↓  D E L I V E R Y", G.tubeX + 16, G.tubeTop + 18);
 
-    // === Shitdonals sign just left of the building ===
-    const archesX  = G.buildingLeft - 42;
+    // === Shitdonalds sign just left of the building (lowered, 35% bigger) ===
+    const archesX  = G.buildingLeft - 56;
     const archesBaseY = G.buildingBottom;
-    const archesSignCY = G.buildingTop - 30;
+    const archesSignCY = G.buildingTop - 8;
     drawGoldenArches(rCtx, archesX, archesBaseY, archesSignCY);
 
     // === McAmerica restaurant (smaller, below tube) ===
