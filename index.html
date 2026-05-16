@@ -3012,6 +3012,73 @@
     }
   }
 
+  function drawGoldenArches(ctx, cx, baseY, signCY) {
+    ctx.save();
+    const poleTop = signCY + 30;
+    const poleH   = baseY - poleTop;
+
+    // ground plate / shadow
+    ctx.fillStyle = "rgba(0,0,0,0.45)";
+    ctx.beginPath();
+    ctx.ellipse(cx, baseY, 16, 3.5, 0, 0, TAU);
+    ctx.fill();
+
+    // pole base flange
+    ctx.fillStyle = "#2a2a32";
+    ctx.fillRect(cx - 9, baseY - 4, 18, 4);
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 0.6;
+    ctx.strokeRect(cx - 9, baseY - 4, 18, 4);
+
+    // pole
+    ctx.fillStyle = "#3a3a44";
+    ctx.fillRect(cx - 3, poleTop, 6, poleH);
+    ctx.strokeStyle = "rgba(20,20,28,0.7)";
+    ctx.lineWidth = 0.8;
+    ctx.strokeRect(cx - 3, poleTop, 6, poleH);
+    // pole highlight
+    ctx.fillStyle = "rgba(255,255,255,0.18)";
+    ctx.fillRect(cx - 2, poleTop, 1, poleH);
+
+    // === SIGN BOX (red back panel) ===
+    const SW = 64, SH = 64;
+    ctx.fillStyle = "#c52d2d";
+    ctx.fillRect(cx - SW/2, signCY - SH/2, SW, SH);
+    ctx.strokeStyle = "rgba(40, 0, 0, 0.9)";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(cx - SW/2, signCY - SH/2, SW, SH);
+    // sign top trim (lit edge)
+    ctx.fillStyle = "rgba(255, 220, 130, 0.6)";
+    ctx.fillRect(cx - SW/2, signCY - SH/2, SW, 2);
+
+    // === GOLDEN M ===
+    // glow
+    ctx.shadowColor = "rgba(255, 220, 0, 0.7)";
+    ctx.shadowBlur = 14;
+    // gradient fill
+    const grad = ctx.createLinearGradient(0, signCY - 26, 0, signCY + 22);
+    grad.addColorStop(0, "#fff2a8");
+    grad.addColorStop(0.4, "#ffd400");
+    grad.addColorStop(1, "#b8860b");
+    ctx.fillStyle = grad;
+    ctx.font = "900 64px 'Arial Black', 'Helvetica Neue', Helvetica, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("M", cx, signCY + 4);
+    // outline
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "rgba(100, 60, 0, 0.7)";
+    ctx.lineWidth = 1.2;
+    ctx.strokeText("M", cx, signCY + 4);
+
+    // tiny "BURGERS" tagline below the sign
+    ctx.fillStyle = "rgba(255, 240, 210, 0.85)";
+    ctx.font = "700 6.5px ui-monospace, monospace";
+    ctx.fillText("BURGERS", cx, signCY + SH/2 - 8);
+
+    ctx.restore();
+  }
+
   function drawRestaurant(now) {
     rCtx.clearRect(0, 0, rW, rH);
     const G = restaurantGeom();
@@ -3046,6 +3113,12 @@
     rCtx.font = "8px ui-monospace, monospace";
     rCtx.textAlign = "left";
     rCtx.fillText("↓  D E L I V E R Y", G.tubeX + 16, G.tubeTop + 18);
+
+    // === Golden Arches sign just left of the building ===
+    const archesX  = G.buildingLeft - 22;
+    const archesBaseY = G.buildingBottom;
+    const archesSignCY = G.buildingTop - 38;
+    drawGoldenArches(rCtx, archesX, archesBaseY, archesSignCY);
 
     // === McAmerica restaurant (smaller, below tube) ===
     rCtx.fillStyle = "rgba(255, 245, 214, 0.05)";
