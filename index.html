@@ -1081,6 +1081,8 @@
     floating: [],
     bubbles: [],
     flies: [],
+    splashes: [],
+    fish: [],
     diners: [],
     history: [],
     // catapult phase machine: 'idle' | 'load' | 'wind_up' | 'loaded' | 'fire' | 'recoil'
@@ -1249,11 +1251,11 @@
   }
 
   function restaurantGeom() {
-    // Tank + tube raised ~1 inch
+    // Thinner tank — top stays where it is, bottom raised
     const tankLeft   = rW * 0.18;
     const tankRight  = rW * 0.82;
     const tankTop    = rH * 0.18;
-    const tankBottom = rH * 0.53;
+    const tankBottom = rH * 0.42;
     const tubeTop    = tankBottom;
     const tubeBottom = rH * 0.60;
     const tubeX      = rW * 0.50;
@@ -2427,6 +2429,147 @@
     }
   }
 
+  // === TROPICAL FISH ===
+  const FISH_COLORS = [
+    { body: "#ff6b35", fin: "#c0392b", stripe: "#ffe85c", eye: "#fff" }, // orange clownfish
+    { body: "#3fb6e0", fin: "#1976d2", stripe: "#e1f5fe", eye: "#fff" }, // blue tang
+    { body: "#ffd400", fin: "#f57f17", stripe: "#0a0a0a", eye: "#fff" }, // yellow tang
+    { body: "#b04dd6", fin: "#7b1fa2", stripe: "#f3e5f5", eye: "#fff" }, // purple
+    { body: "#52c41a", fin: "#2d8a0d", stripe: "#dcedc8", eye: "#fff" }, // green
+  ];
+  function initFish(n) {
+    STATE.fish = [];
+    for (let i = 0; i < n; i++) {
+      STATE.fish.push({
+        x: Math.random(),
+        y: 0.25 + Math.random() * 0.55,
+        vx: (Math.random() < 0.5 ? -1 : 1) * (0.06 + Math.random() * 0.10),
+        color: FISH_COLORS[i % FISH_COLORS.length],
+        scale: 0.75 + Math.random() * 0.35,
+        wiggle: Math.random() * TAU,
+      });
+    }
+  }
+  function drawFish(ctx, x, y, scale, color, wiggle, dir) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale * dir, scale);
+    const tailW = Math.sin(wiggle) * 2.5;
+    // tail
+    ctx.fillStyle = color.fin;
+    ctx.beginPath();
+    ctx.moveTo(-7, 0);
+    ctx.lineTo(-13, -4 + tailW);
+    ctx.lineTo(-13,  4 + tailW);
+    ctx.closePath();
+    ctx.fill();
+    // body
+    ctx.fillStyle = color.body;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 9, 4.5, 0, 0, TAU);
+    ctx.fill();
+    // body outline
+    ctx.strokeStyle = "rgba(0,0,0,0.35)";
+    ctx.lineWidth = 0.6;
+    ctx.stroke();
+    // belly highlight
+    ctx.fillStyle = "rgba(255,255,255,0.35)";
+    ctx.beginPath();
+    ctx.ellipse(0, 1.5, 7, 1.5, 0, 0, TAU);
+    ctx.fill();
+    // stripe
+    ctx.fillStyle = color.stripe;
+    ctx.fillRect(-2, -3.5, 1.5, 7);
+    // top fin
+    ctx.fillStyle = color.fin;
+    ctx.beginPath();
+    ctx.moveTo(-3, -4);
+    ctx.lineTo(0, -8 + Math.sin(wiggle * 1.4) * 0.6);
+    ctx.lineTo(3, -4);
+    ctx.closePath();
+    ctx.fill();
+    // bottom fin
+    ctx.beginPath();
+    ctx.moveTo(-1, 4);
+    ctx.lineTo(1, 7);
+    ctx.lineTo(3, 4);
+    ctx.closePath();
+    ctx.fill();
+    // eye
+    ctx.fillStyle = color.eye;
+    ctx.beginPath();
+    ctx.arc(5, -1, 1.4, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.beginPath();
+    ctx.arc(5.2, -1, 0.75, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // === SPLASH effect (droplets + ripple + crown) ===
+  function spawnSplash(splashX, surfaceY) {
+    const droplets = [];
+    const N = 9;
+    for (let i = 0; i < N; i++) {
+      const angle = -Math.PI/2 + (i - N/2) * 0.22 + (Math.random() - 0.5) * 0.18;
+      const speed = 80 + Math.random() * 80;
+      droplets.push({
+        x: splashX + (Math.random() - 0.5) * 6,
+        y: surfaceY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        r:  1 + Math.random() * 1.4,
+        color: Math.random() < 0.55 ? "rgba(184, 120, 56, 0.85)" : "rgba(200, 230, 250, 0.9)",
+      });
+    }
+    STATE.splashes.push({
+      x: splashX,
+      y: surfaceY,
+      startTime: performance.now(),
+      droplets,
+    });
+  }
+  function drawSplashes(ctx, now) {
+    const GRAV = 320; // px/s^2
+    for (const s of STATE.splashes) {
+      const age = (now - s.startTime) / 1000;
+      if (age > 0.9) continue;
+      // crown — quick white expanding arc at impact (first 120ms)
+      if (age < 0.18) {
+        const u = age / 0.18;
+        ctx.strokeStyle = `rgba(220, 240, 255, ${1 - u})`;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 4 + u * 14, Math.PI * 1.1, Math.PI * 1.9);
+        ctx.stroke();
+      }
+      // expanding ripple rings on water surface
+      const ringT = Math.min(1, age / 0.7);
+      for (let i = 0; i < 3; i++) {
+        const phase = ringT - i * 0.18;
+        if (phase <= 0 || phase > 1) continue;
+        ctx.strokeStyle = `rgba(220, 240, 255, ${0.55 * (1 - phase)})`;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.ellipse(s.x, s.y, 6 + phase * 26, 1.5 + phase * 5, 0, 0, TAU);
+        ctx.stroke();
+      }
+      // droplets in flight
+      for (const d of s.droplets) {
+        const px = d.x + d.vx * age;
+        const py = d.y + d.vy * age + 0.5 * GRAV * age * age;
+        if (py > s.y) continue; // landed back in water
+        const alpha = Math.max(0, 1 - age * 1.2);
+        ctx.fillStyle = d.color.replace(/[\d.]+\)/, (alpha * 0.9).toFixed(2) + ")");
+        ctx.beginPath();
+        ctx.arc(px, py, d.r, 0, TAU);
+        ctx.fill();
+      }
+    }
+    STATE.splashes = STATE.splashes.filter(s => (now - s.startTime) / 1000 <= 0.9);
+  }
+
   function drawFly(ctx, x, y, wingFlap=1, alpha=0.85) {
     ctx.save();
     ctx.translate(x, y);
@@ -3005,6 +3148,23 @@
       b.life += 1;
     }
     STATE.bubbles = STATE.bubbles.filter(b => b.life < b.maxLife);
+
+    // tropical fish (swim back and forth, below the water surface)
+    if (!STATE.fish || STATE.fish.length === 0) initFish(isStacked() ? 3 : 5);
+    const tankW = G.tankRight - G.tankLeft;
+    const tankH = G.tankBottom - waterTop;
+    for (const fish of STATE.fish) {
+      fish.x += fish.vx / 60;
+      if (fish.x < 0.05 || fish.x > 0.95) { fish.vx *= -1; fish.x = clamp(fish.x, 0.05, 0.95); }
+      fish.wiggle += 0.32;
+      const fxp = G.tankLeft + 12 + fish.x * (tankW - 24);
+      const fyp = waterTop + 8 + fish.y * Math.max(20, tankH - 16);
+      const dir = fish.vx > 0 ? 1 : -1;
+      drawFish(ctx, fxp, fyp, fish.scale * (isStacked() ? 0.7 : 1), fish.color, fish.wiggle, dir);
+    }
+
+    // splash effects (droplets, ripples, crown)
+    drawSplashes(ctx, now);
 
     // flies buzzing ABOVE the water surface, inside the tank's air gap
     const flyBoxX = G.tankLeft + 8;
@@ -3774,6 +3934,12 @@
         r: rand(1.5, 3.5),
       });
     }
+    // visible splash effect at the water surface
+    const G = restaurantGeom();
+    const newest = STATE.floating[STATE.floating.length - 1];
+    const splashX = G.tankLeft + 16 + (newest ? newest.x : 0.5) * (G.tankRight - G.tankLeft - 32);
+    const surfaceY = G.tankTop + 22;
+    spawnSplash(splashX, surfaceY);
     // now send the tube delivery to McAmerica
     setTimeout(() => spawnTubeDelivery(label, url), 400);
   }
