@@ -2865,26 +2865,29 @@
     drawThiel(mCtx, g.thielX, g.thielY, 1.0, thielCheer);
     // Thiel speech bubble
     if (thielCheer) {
-      const bubX = g.thielX - 70;
-      const bubY = g.thielY - 70;
+      const bubX = g.thielX - 80;
+      const bubY = g.thielY - 76;
       mCtx.fillStyle = "rgba(252, 247, 236, 0.95)";
       mCtx.strokeStyle = "rgba(10, 10, 22, 0.7)";
       mCtx.lineWidth = 1.4;
-      const bw = 80, bh = 26;
-      strokeRoundedRect(mCtx, bubX - bw/2, bubY - bh/2, bw, bh, 4);
+      const bw = 120, bh = 36;
+      strokeRoundedRect(mCtx, bubX - bw/2, bubY - bh/2, bw, bh, 5);
       mCtx.fill(); mCtx.stroke();
       // tail
       mCtx.beginPath();
-      mCtx.moveTo(bubX + 16, bubY + bh/2 - 1);
-      mCtx.lineTo(bubX + 30, bubY + bh/2 + 8);
-      mCtx.lineTo(bubX + 22, bubY + bh/2 - 1);
+      mCtx.moveTo(bubX + 26, bubY + bh/2 - 1);
+      mCtx.lineTo(bubX + 42, bubY + bh/2 + 10);
+      mCtx.lineTo(bubX + 34, bubY + bh/2 - 1);
       mCtx.closePath();
       mCtx.fillStyle = "rgba(252, 247, 236, 0.95)";
       mCtx.fill();
+      // two-line text
       mCtx.font = "700 9px ui-monospace, monospace";
       mCtx.fillStyle = "#c52d2d";
       mCtx.textAlign = "center";
-      mCtx.fillText("YES! YES! YES!", bubX, bubY + 3);
+      mCtx.textBaseline = "middle";
+      mCtx.fillText("THE ANTICHRIST", bubX, bubY - 5);
+      mCtx.fillText("THANKS YOU!",    bubX, bubY + 7);
     }
 
     // === DELIVERY SYSTEM ===
