@@ -671,8 +671,8 @@
       font-size: 13px;
     }
     .topbar-buttons button#btnComing::before {
-      content: "⏭";
-      font-size: 12px;
+      content: "✊";
+      font-size: 13px;
     }
     .now-headline .now-label { font-size: 14px; }
     .now-headline .now-desc { font-size: 10px; }
@@ -733,7 +733,7 @@
       </div>
       <div class="topbar-buttons">
         <button id="btnAll">💩 All Shits</button>
-        <button id="btnComing">⏭ Coming Turds</button>
+        <button id="btnComing">✊ Remove Turds</button>
       </div>
     </div>
   </header>
@@ -792,16 +792,16 @@
   </div>
 </div>
 
-<!-- COMING TURDS modal -->
+<!-- REMOVE TURDS modal -->
 <div class="modal" id="modalComing">
-  <div class="modal-card" style="max-width:560px;">
+  <div class="modal-card" style="max-width:680px;">
     <div class="modal-head">
-      <h2>⏭ <span class="cheeto">COMING</span> TURDS</h2>
+      <h2>✊ <span class="cheeto">REMOVE</span> TURDS</h2>
       <button class="close" data-close>×</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:11px;color:var(--ink-faint);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase;">
-        Next ten in the chamber · one drops every 8 seconds
+      <p style="font-size:11px;color:var(--ink-faint);letter-spacing:1px;margin-bottom:14px;text-transform:uppercase;">
+        20 actions to undo the damage · pick one · do it today
       </p>
       <ul class="coming-list" id="comingList"></ul>
     </div>
@@ -927,6 +927,132 @@
     { date:"2026-04-01", label:"Tariff Round 4",   title:"Fourth wave of tariffs; recession watch upgraded by Fed.", url:W("Trump_tariffs") },
     { date:"2026-04-28", label:"3rd-Term Talk",    title:"Floated 'ways' to run again in 2028 despite 22nd Amendment; sold THIRD TERM hats.", url:W("Twenty-second_Amendment_to_the_United_States_Constitution") },
     { date:"2026-05-12", label:"Federalize Cops",  title:"Proposed federalizing big-city police forces and creating a 'Patriot Force.'", url:W("Second_presidency_of_Donald_Trump") },
+  ];
+
+  // ============================================================
+  //  20 COUNTER-ACTIONS — each one fights a specific top turd
+  // ============================================================
+  const COUNTERS = [
+    {
+      label: "Sponsor a Refugee",
+      counters: "Muslim Ban (EO 13769)",
+      title: "Trump's Muslim Ban tore families apart at airports. Sponsor a refugee through HIAS or Welcome.US — covering rent, groceries, and orientation runs ~$500/month and resettles a real person.",
+      url: "https://welcome.us/",
+    },
+    {
+      label: "Defend the DOJ",
+      counters: "Comey Firing / Mueller Spin",
+      title: "After Trump fired Comey to obstruct the Russia probe, demand a statutorily-protected Special Counsel. Donate to Protect Democracy and CREW; ask your senator to cosponsor the Special Counsel Independence Act.",
+      url: "https://protectdemocracy.org/",
+    },
+    {
+      label: "Power Your Home Green",
+      counters: "Paris Climate Pullout",
+      title: "Trump pulled the US out of Paris (twice). Switch your utility to a clean-energy plan, install rooftop solar, and vote in local public-utility-commission elections — they decide ratepayer mix.",
+      url: "https://www.energy.gov/save/electricity-grid",
+    },
+    {
+      label: "Counter Hate Locally",
+      counters: "'Fine People' / Charlottesville",
+      title: "Hate-group counts spiked after Charlottesville. SPLC tracks them; SURJ (Showing Up for Racial Justice) trains white allies to counter-organize and show up safely at hate events in your town.",
+      url: "https://www.splcenter.org/",
+    },
+    {
+      label: "Pay a DACA Renewal",
+      counters: "Killing DACA",
+      title: "Trump tried to deport 800k Dreamers. United We Dream and ImmDef sponsor the $495 DACA renewal fee — one donation literally keeps someone employed and protected for two years.",
+      url: "https://unitedwedream.org/",
+    },
+    {
+      label: "Enroll Someone in ACA",
+      counters: "Sabotaging the ACA",
+      title: "Trump ended cost-sharing subsidies, hoping enrollment would collapse. Volunteer as a navigator during open enrollment (Nov–Jan) — millions are eligible but unenrolled, mostly Latino and rural.",
+      url: "https://www.healthcare.gov/get-coverage/",
+    },
+    {
+      label: "Fight for Fair Taxes",
+      counters: "TCJA Top-Bracket Bonanza",
+      title: "The 2017 tax law gave 83% of permanent cuts to the top 1%. Donate to Americans for Tax Fairness and the Patriotic Millionaires; back candidates who pledge to let the top-bracket cuts expire.",
+      url: "https://americansfortaxfairness.org/",
+    },
+    {
+      label: "Reunite Border Families",
+      counters: "Family Separation / Kids in Cages",
+      title: "Thousands of children were separated from parents under 'zero tolerance' — hundreds are still unreunited. RAICES and KIND provide free legal representation and reunification services.",
+      url: "https://www.raicestexas.org/",
+    },
+    {
+      label: "Back Nuclear Diplomacy",
+      counters: "Trashing the Iran Deal",
+      title: "Withdrawing from JCPOA moved Iran months from a bomb. Ploughshares Fund grants to non-proliferation orgs; ask Congress to restore arms-control diplomacy with Iran, North Korea, and Russia.",
+      url: "https://ploughshares.org/",
+    },
+    {
+      label: "Become a Poll Worker",
+      counters: "Helsinki / Election Interference",
+      title: "Russia interfered and Trump applauded Putin on stage. The single best defense is robust local elections — Power the Polls recruits poll workers nationwide; you get paid and defend democracy.",
+      url: "https://www.powerthepolls.org/",
+    },
+    {
+      label: "Protect a Journalist",
+      counters: "Khashoggi Cover-Up",
+      title: "Trump shielded MBS after Khashoggi's bone-saw murder. CPJ and Reporters Without Borders run legal-defense and safety programs for reporters under threat from authoritarian governments worldwide.",
+      url: "https://cpj.org/",
+    },
+    {
+      label: "Drop Water at the Border",
+      counters: "Wall / Tear-Gas Asylum",
+      title: "Trump's wall pushed migration into deadlier desert routes; thousands die of dehydration each year. Border Angels and No More Deaths leave water caches along migrant trails — ~$5 per jug.",
+      url: "https://www.borderangels.org/",
+    },
+    {
+      label: "Send Aid to Ukraine",
+      counters: "Ukraine Extortion Call",
+      title: "Trump withheld lethal aid to coerce dirt on Biden — now he openly sides with the Kremlin. Razom for Ukraine and United24 deliver medical kits, ambulances, and demining gear directly to the front.",
+      url: "https://www.razomforukraine.org/",
+    },
+    {
+      label: "Fund a Bail Fund",
+      counters: "Lafayette Gas / 'Shooting Starts'",
+      title: "Trump cheered the gassing of George Floyd protesters and tweeted 'when the looting starts, the shooting starts.' The National Bail Fund Network gets peaceful protesters out of jail in 70+ cities.",
+      url: "https://www.communityjusticeexchange.org/nbfn-directory",
+    },
+    {
+      label: "Defend the USPS",
+      counters: "USPS Sabotage",
+      title: "Trump-DeJoy slowed mail to suppress 2020 ballots and is gutting rural delivery again. Save the Post Office and APWU fight branch closures, on-time-delivery rollbacks, and privatization schemes.",
+      url: "https://www.savethepostoffice.com/",
+    },
+    {
+      label: "Combat COVID Disinfo",
+      counters: "Bleach Cure / 'Disappear'",
+      title: "Denial, bleach, and 'it will disappear' contributed to 400k+ avoidable US deaths. Get vaccinated, encourage others, and pre-bunk health lies in your own group chats — silence is amplification.",
+      url: "https://www.ucsusa.org/",
+    },
+    {
+      label: "Fund Abortion Access",
+      counters: "Dobbs / Roe Overturn",
+      title: "Trump's three Justices killed Roe; 1-in-3 women now live under a ban. The National Network of Abortion Funds covers procedure, travel, and lodging — $100 funds one full out-of-state trip.",
+      url: "https://abortionfunds.org/",
+    },
+    {
+      label: "Back State Prosecutions",
+      counters: "Pardon Spree / J6 Pardons",
+      title: "Trump pardons co-conspirators to dangle freedom for loyalty. State-level RICO/felony cases (Fani Willis in GA, NY DA Bragg) survive any federal pardon — donate to state-court watchdog orgs.",
+      url: "https://www.brennancenter.org/",
+    },
+    {
+      label: "Shield Civil Servants",
+      counters: "Project 2025 / Schedule F",
+      title: "Schedule F + Project 2025 aim to purge ~50,000 federal workers and replace them with loyalists. AFGE, Government Accountability Project, and POGO defend whistleblowers and fight politicized firings.",
+      url: "https://www.pogo.org/",
+    },
+    {
+      label: "Run for Local Office",
+      counters: "Everything Else",
+      title: "Above all: take the seat. Run for Something, Emerge America, and Brand New Congress recruit and train first-time candidates for school board, city council, and statehouse — where the next decade is actually decided.",
+      url: "https://runforsomething.net/",
+    },
   ];
 
   // ============================================================
@@ -3307,7 +3433,6 @@
     $("nowDesc").textContent = event.title;
     $("nowSource").href = event.url;
     $("nowEyebrow").textContent = `· NOW DEPOSITING · ${formatDate(event.date).toUpperCase()} ·`;
-    $("nextUp") && ($("nextUp").textContent = EVENTS[STATE.idx % EVENTS.length].label);
 
     // Update impact metrics — each dump degrades the country
     tickImpacts();
@@ -3683,26 +3808,25 @@
       const i = +tr.dataset.i;
       tr.classList.toggle("current", i === currentI);
     });
-    buildComingList();
   }
   function buildComingList() {
     const list = $("comingList");
     let html = "";
-    for (let n = 0; n < 10; n++) {
-      const i = (STATE.idx + n) % EVENTS.length;
-      const e = EVENTS[i];
-      const isNow = n === 0;
+    COUNTERS.forEach((c, i) => {
       html += `
         <li>
           <div style="flex:1">
-            <div class="label-row">${escapeHtml(e.label)}</div>
-            <div class="desc">${formatDate(e.date)} · ${escapeHtml(e.title.slice(0, 110))}${e.title.length>110?'…':''}
-              <a class="read-more" href="${e.url}" target="_blank" rel="noopener noreferrer">Source ↗</a>
+            <div class="label-row">${escapeHtml(c.label)}</div>
+            <div class="desc">
+              <span style="color:var(--cheeto);font-weight:600">Counters:</span>
+              <span style="color:rgba(255,255,255,0.85)">${escapeHtml(c.counters)}</span><br>
+              ${escapeHtml(c.title)}
+              <a class="read-more" href="${c.url}" target="_blank" rel="noopener noreferrer">Act ↗</a>
             </div>
           </div>
-          <div>${isNow ? '<span class="next-badge">NOW</span>' : `<span class="countdown">+${n*8}s</span>`}</div>
+          <div><span class="next-badge">#${String(i+1).padStart(2,'0')}</span></div>
         </li>`;
-    }
+    });
     list.innerHTML = html;
   }
 
