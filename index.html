@@ -108,23 +108,27 @@
   }
   .clock-meta .cal-date { display: block; font-size: 11px; color: var(--ink-dim); margin-top: 1px; letter-spacing: 1.5px; }
 
-  .counters { display: flex; gap: 28px; justify-content: flex-end; align-items: center; }
+  .counters { display: flex; gap: 22px; justify-content: flex-end; align-items: center; }
   .counter { text-align: right; }
   .counter .num {
-    font-size: 22px;
+    font-size: 20px;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.5px;
     color: var(--ink);
     line-height: 1;
+    transition: text-shadow 0.4s;
   }
-  .counter .num.primary { font-size: 30px; font-weight: 600; color: var(--cheeto); text-shadow: 0 0 14px rgba(255,140,26,0.5); }
-  .counter .num.fed     { color: var(--shit-bright); }
+  .counter .num.primary { font-size: 22px; font-weight: 600; }
+  .counter .num.impact-up   { color: #ff7878; text-shadow: 0 0 12px rgba(255,120,120,0.5); }
+  .counter .num.impact-down { color: #ff8c1a; text-shadow: 0 0 12px rgba(255,140,26,0.5); }
+  .counter .num.impact-war  { color: var(--cheeto); text-shadow: 0 0 14px rgba(255,140,26,0.6); }
+  .counter .num.flash       { text-shadow: 0 0 22px rgba(255,255,255,0.9); }
   .counter .label {
-    font-size: 10.5px;
+    font-size: 9.5px;
     text-transform: uppercase;
-    letter-spacing: 2.5px;
+    letter-spacing: 2px;
     color: var(--ink-faint);
-    margin-top: 8px;
+    margin-top: 7px;
   }
 
   .topbar-buttons {
@@ -318,13 +322,13 @@
     display: inline-flex;
     align-items: center;
     height: 100%;
-    gap: 28px;
+    gap: 56px;
     white-space: nowrap;
     padding-left: 100%;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 2px;
-    color: rgba(230,232,236,0.55);
-    animation: ticker-roll 90s linear infinite;
+    color: rgba(230,232,236,0.60);
+    animation: ticker-roll 360s linear infinite;
     will-change: transform;
   }
   .ticker .strip .item { display: inline-flex; gap: 8px; align-items: center; }
@@ -430,7 +434,8 @@
   }
   .modal-body td.body { color: var(--ink-dim); font-size: 12px; line-height: 1.5; }
   .modal-body tr.current { background: rgba(255,140,26,0.10); }
-  .modal-body tr.played td.label::before { content: "💩 "; }
+  .modal-body td.label::before { content: "💩 "; }
+  .modal-body tr.played td.label { color: var(--cheeto); }
   .modal-body a.read-more {
     display: inline-block;
     font-size: 9px;
@@ -635,21 +640,25 @@
     <div></div>
 
     <div class="counters">
-      <div class="counter">
-        <div class="num primary" id="cDumped">0</div>
-        <div class="label">In Tank</div>
+      <div class="counter impact">
+        <div class="num primary impact-up" id="cICE">580,247</div>
+        <div class="label">ICE Deport. ▲</div>
       </div>
-      <div class="counter">
-        <div class="num fed" id="cFed">0</div>
-        <div class="label">Fed to America</div>
+      <div class="counter impact">
+        <div class="num impact-down" id="cNasdaq">18,524</div>
+        <div class="label">NASDAQ ▼</div>
       </div>
-      <div class="counter">
-        <div class="num" id="cRemaining">100</div>
-        <div class="label">Remaining</div>
+      <div class="counter impact">
+        <div class="num impact-up" id="cHomeless">871,309</div>
+        <div class="label">Homeless ▲</div>
+      </div>
+      <div class="counter impact">
+        <div class="num impact-war" id="cWars">6</div>
+        <div class="label">Active Wars</div>
       </div>
       <div class="topbar-buttons">
-        <button id="btnAll">All Shits</button>
-        <button id="btnComing">Coming Turds</button>
+        <button id="btnAll">💩 All Shits</button>
+        <button id="btnComing">⏭ Coming Turds</button>
       </div>
     </div>
   </header>
@@ -694,7 +703,7 @@
 <div class="modal" id="modalAll">
   <div class="modal-card">
     <div class="modal-head">
-      <h2>📋 <span class="cheeto">ALL</span> SHITS — the catalog</h2>
+      <h2>💩 <span class="cheeto">ALL</span> SHITS — the catalog</h2>
       <button class="close" data-close>×</button>
     </div>
     <div class="modal-body">
@@ -860,18 +869,25 @@
   // ============================================================
   const STATE = {
     idx: 0,
-    inTank: 0,      // ambient floaters in tank
+    inTank: 0,
     fed: 0,
     paused: false,
     lastDrop: 0,
-    shitsInFlight: [],     // shits in left panel (toilet → pipe-exit)
-    deliveries: [],        // shits going down tube → table
+    shitsInFlight: [],
+    deliveries: [],
     burgers: [],
-    floating: [],          // ambient floaters in water tank
+    floating: [],
     bubbles: [],
     flies: [],
     diners: [],
     history: [],
+    // === IMPACT METRICS (simulated, climb/drop on each dump) ===
+    impacts: {
+      ice: 580_247,        // ICE deportations (realistic 2025-2026 baseline)
+      nasdaq: 18524.32,    // NASDAQ index value
+      homeless: 871_309,   // US homeless count
+      wars: 6,             // active US-involved conflicts
+    },
   };
 
   // ============================================================
@@ -1618,85 +1634,246 @@
     ctx.restore();
   }
 
-  function drawDiner(ctx, cx, cy, scale=1, shirtColor="#2a4d8f", skinColor="#f3c89a", eating=false, eatPhase=0) {
+  // Diner config schema:
+  // { skin, shirt, hairColor, hairStyle: 'short'|'curly'|'long'|'pigtails'|'cap',
+  //   age: 'adult'|'child', accessories: ['glasses','lipstick','beard','earrings'] }
+  function drawDiner(ctx, cx, cy, scale=1, cfg, eating=false, eatPhase=0) {
     ctx.save();
     ctx.translate(cx, cy);
     ctx.scale(scale, scale);
 
-    // body
-    ctx.fillStyle = shirtColor;
-    ctx.beginPath();
-    ctx.moveTo(-18, 6);
-    ctx.bezierCurveTo(-22, 30, -16, 40, -10, 40);
-    ctx.lineTo(10, 40);
-    ctx.bezierCurveTo(16, 40, 22, 30, 18, 6);
-    ctx.closePath();
-    ctx.fill();
-    // shirt collar
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.moveTo(-5, 6);
-    ctx.lineTo(0, 14);
-    ctx.lineTo(5, 6);
-    ctx.closePath();
-    ctx.fill();
+    const isChild = cfg.age === 'child';
+    const headR = isChild ? 11 : 12;
+    const headY = isChild ? -6 : -8;
+    const acc = cfg.accessories || [];
 
-    // head
-    ctx.fillStyle = skinColor;
-    ctx.beginPath();
-    ctx.arc(0, -8, 12, 0, TAU);
-    ctx.fill();
-
-    // hair tuft
-    ctx.fillStyle = "rgba(80, 50, 30, 0.85)";
-    ctx.beginPath();
-    ctx.arc(0, -16, 10, Math.PI * 1.1, Math.PI * 1.9);
-    ctx.fill();
-
-    // eyes (closed in happiness when eating)
-    ctx.strokeStyle = "#0a0a16";
-    ctx.lineWidth = 1.4;
-    ctx.lineCap = "round";
-    if (eating) {
-      // happy closed eyes ^^
+    // === body ===
+    ctx.fillStyle = cfg.shirt;
+    if (isChild) {
       ctx.beginPath();
-      ctx.arc(-4, -10, 1.8, Math.PI * 0.2, Math.PI * 0.8, true);
-      ctx.arc(4,  -10, 1.8, Math.PI * 0.2, Math.PI * 0.8, true);
+      ctx.moveTo(-14, 4);
+      ctx.bezierCurveTo(-18, 24, -12, 32, -8, 32);
+      ctx.lineTo(8, 32);
+      ctx.bezierCurveTo(12, 24, 18, 24, 14, 4);
+      ctx.closePath();
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(-18, 6);
+      ctx.bezierCurveTo(-22, 30, -16, 40, -10, 40);
+      ctx.lineTo(10, 40);
+      ctx.bezierCurveTo(16, 40, 22, 30, 18, 6);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // shirt highlight (collar / neckline)
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    ctx.beginPath();
+    ctx.moveTo(-5, headY + headR);
+    ctx.lineTo(0, headY + headR + 6);
+    ctx.lineTo(5, headY + headR);
+    ctx.closePath();
+    ctx.fill();
+
+    // === head ===
+    ctx.fillStyle = cfg.skin;
+    ctx.beginPath();
+    ctx.ellipse(0, headY, headR, headR + (isChild ? 1 : 1.5), 0, 0, TAU);
+    ctx.fill();
+    // chin/neck shadow
+    ctx.fillStyle = "rgba(0,0,0,0.18)";
+    ctx.beginPath();
+    ctx.ellipse(0, headY + headR + 2, headR - 2, 3, 0, 0, TAU);
+    ctx.fill();
+    // neck
+    ctx.fillStyle = cfg.skin;
+    ctx.fillRect(-3.5, headY + headR - 1, 7, 6);
+
+    // === HAIR ===
+    const hc = cfg.hairColor || "#2a1a08";
+    if (cfg.hairStyle === 'curly') {
+      // Voluminous curly/afro
+      ctx.fillStyle = hc;
+      // base scalp
+      ctx.beginPath();
+      ctx.ellipse(0, headY - 4, headR + 4, headR + 1, 0, Math.PI, 0);
+      ctx.fill();
+      // texture puffs
+      for (let i = 0; i < 7; i++) {
+        const a = Math.PI + (i / 6) * Math.PI;
+        const x = Math.cos(a) * (headR + 1);
+        const y = headY + Math.sin(a) * (headR + 0.5);
+        ctx.beginPath();
+        ctx.arc(x, y - 2, 4, 0, TAU);
+        ctx.fill();
+      }
+    } else if (cfg.hairStyle === 'long') {
+      ctx.fillStyle = hc;
+      // top of head
+      ctx.beginPath();
+      ctx.ellipse(0, headY - 4, headR + 1, headR, 0, Math.PI, 0);
+      ctx.fill();
+      // long strands down sides past shoulders
+      ctx.beginPath();
+      ctx.moveTo(-headR - 1, headY - 2);
+      ctx.bezierCurveTo(-headR - 3, headY + 12, -headR, headY + 28, -headR + 3, headY + 32);
+      ctx.lineTo(-headR + 5, headY + 12);
+      ctx.lineTo(-headR - 1, headY - 2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(headR + 1, headY - 2);
+      ctx.bezierCurveTo(headR + 3, headY + 12, headR, headY + 28, headR - 3, headY + 32);
+      ctx.lineTo(headR - 5, headY + 12);
+      ctx.lineTo(headR + 1, headY - 2);
+      ctx.closePath();
+      ctx.fill();
+      // forehead fringe
+      ctx.beginPath();
+      ctx.moveTo(-headR, headY - headR + 3);
+      ctx.bezierCurveTo(-3, headY - headR + 5, 3, headY - headR + 5, headR, headY - headR + 3);
+      ctx.lineTo(headR - 2, headY - headR + 7);
+      ctx.lineTo(-headR + 2, headY - headR + 7);
+      ctx.closePath();
+      ctx.fill();
+    } else if (cfg.hairStyle === 'pigtails') {
+      ctx.fillStyle = hc;
+      ctx.beginPath();
+      ctx.ellipse(0, headY - 4, headR + 1, headR, 0, Math.PI, 0);
+      ctx.fill();
+      // pigtails sticking out the sides
+      ctx.beginPath();
+      ctx.ellipse(-headR - 2, headY + 3, 4, 6, -0.3, 0, TAU);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(headR + 2, headY + 3, 4, 6, 0.3, 0, TAU);
+      ctx.fill();
+      // ribbons
+      ctx.fillStyle = "#e53935";
+      ctx.beginPath();
+      ctx.ellipse(-headR - 2, headY - 1, 2.5, 1.5, -0.3, 0, TAU);
+      ctx.ellipse(headR + 2, headY - 1, 2.5, 1.5, 0.3, 0, TAU);
+      ctx.fill();
+    } else if (cfg.hairStyle === 'cap') {
+      // Red MAGA-style baseball cap with USA
+      ctx.fillStyle = "#c52d2d";
+      ctx.beginPath();
+      ctx.ellipse(0, headY - 3, headR + 1, headR - 2, 0, Math.PI, 0);
+      ctx.fill();
+      ctx.fillRect(-headR - 1, headY - 5, headR * 2 + 2, 3);
+      // brim
+      ctx.beginPath();
+      ctx.ellipse(headR / 2, headY - 3, headR + 4, 2.2, 0, 0, Math.PI);
+      ctx.fill();
+      // "USA" embroidered
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 4.5px monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("USA", 0, headY - 8);
+      // a tuft of hair peeking out
+      ctx.fillStyle = hc;
+      ctx.beginPath();
+      ctx.ellipse(-headR + 1, headY + 1, 2.5, 2, -0.2, 0, TAU);
+      ctx.fill();
+    } else {
+      // short
+      ctx.fillStyle = hc;
+      ctx.beginPath();
+      ctx.ellipse(0, headY - 3, headR, headR - 2, 0, Math.PI, 0);
+      ctx.fill();
+      ctx.fillRect(-headR + 1, headY - 5, headR * 2 - 2, 2);
+    }
+
+    // === EYES + GLASSES ===
+    if (acc.includes('glasses')) {
+      // frames
+      ctx.strokeStyle = "#0a0a16";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(-4, headY - 1, 3.2, 0, TAU);
+      ctx.arc(4, headY - 1, 3.2, 0, TAU);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-1, headY - 1); ctx.lineTo(1, headY - 1);
+      ctx.stroke();
+    }
+    if (eating) {
+      ctx.strokeStyle = "#0a0a16";
+      ctx.lineWidth = 1.3;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.arc(-4, headY - 1, 1.6, Math.PI * 0.2, Math.PI * 0.8, true);
+      ctx.arc(4, headY - 1, 1.6, Math.PI * 0.2, Math.PI * 0.8, true);
       ctx.stroke();
     } else {
-      // open dots
       ctx.fillStyle = "#0a0a16";
       ctx.beginPath();
-      ctx.arc(-4, -10, 1.2, 0, TAU);
-      ctx.arc(4,  -10, 1.2, 0, TAU);
+      ctx.arc(-4, headY - 1, 1.1, 0, TAU);
+      ctx.arc(4, headY - 1, 1.1, 0, TAU);
       ctx.fill();
     }
 
-    // mouth (chewing animation)
+    // === EARRINGS ===
+    if (acc.includes('earrings')) {
+      ctx.fillStyle = "#f7c948";
+      ctx.beginPath();
+      ctx.arc(-headR + 1, headY + 4, 1.4, 0, TAU);
+      ctx.arc(headR - 1, headY + 4, 1.4, 0, TAU);
+      ctx.fill();
+    }
+
+    // === BEARD ===
+    if (acc.includes('beard')) {
+      ctx.fillStyle = hc;
+      ctx.beginPath();
+      ctx.ellipse(0, headY + 7, 8, 4, 0, 0, TAU);
+      ctx.fill();
+      // mustache
+      ctx.fillStyle = hc;
+      ctx.beginPath();
+      ctx.ellipse(0, headY + 3, 5, 1.5, 0, 0, TAU);
+      ctx.fill();
+    }
+
+    // === MOUTH ===
+    const lipColor = acc.includes('lipstick') ? "#c52d2d" : "#7a1818";
     if (eating) {
       const open = 1 + Math.sin(eatPhase * 8) * 0.4;
-      ctx.fillStyle = "#3d2510";
+      ctx.fillStyle = "#2a0a05";
       ctx.beginPath();
-      ctx.ellipse(0, -5, 3.5, 2.5 * open, 0, 0, TAU);
+      ctx.ellipse(0, headY + 5, 3.5, 2.5 * open, 0, 0, TAU);
       ctx.fill();
-      // brown smear (shit)
-      ctx.fillStyle = "rgba(107, 63, 26, 0.7)";
+      // brown smear (eating shit-burger)
+      ctx.fillStyle = "rgba(107, 63, 26, 0.6)";
       ctx.beginPath();
-      ctx.arc(-3, -3, 1.5, 0, TAU);
-      ctx.arc(3, -3, 1.5, 0, TAU);
+      ctx.arc(-3, headY + 3, 1.3, 0, TAU);
+      ctx.arc(3, headY + 3, 1.3, 0, TAU);
+      ctx.fill();
+    } else if (acc.includes('lipstick')) {
+      // full painted lips
+      ctx.fillStyle = lipColor;
+      ctx.beginPath();
+      ctx.moveTo(-3.5, headY + 5);
+      ctx.bezierCurveTo(-2, headY + 4, -1, headY + 4, 0, headY + 5);
+      ctx.bezierCurveTo(1, headY + 4, 2, headY + 4, 3.5, headY + 5);
+      ctx.bezierCurveTo(2, headY + 7, -2, headY + 7, -3.5, headY + 5);
+      ctx.closePath();
       ctx.fill();
     } else {
-      // contented smile
+      ctx.strokeStyle = lipColor;
+      ctx.lineWidth = 1.3;
+      ctx.lineCap = "round";
       ctx.beginPath();
-      ctx.arc(0, -5, 3, 0.15, Math.PI - 0.15);
+      ctx.arc(0, headY + 4, 2.5, 0.15, Math.PI - 0.15);
       ctx.stroke();
     }
 
     // happy cheek blush
-    ctx.fillStyle = "rgba(255, 140, 140, 0.4)";
+    ctx.fillStyle = "rgba(255, 140, 140, 0.35)";
     ctx.beginPath();
-    ctx.arc(-7, -5, 2, 0, TAU);
-    ctx.arc(7,  -5, 2, 0, TAU);
+    ctx.arc(-headR + 3, headY + 3, 1.8, 0, TAU);
+    ctx.arc(headR - 3, headY + 3, 1.8, 0, TAU);
     ctx.fill();
 
     ctx.restore();
@@ -1798,10 +1975,21 @@
   // ============================================================
   //  DINERS (3 seats)
   // ============================================================
+  // Three diverse diners: Black woman w/ glasses + curly hair, Latina woman
+  // w/ long hair + lipstick + earrings, and a child in a USA cap.
   STATE.diners = [
-    { seat: 0, eating: false, eatStart: 0, shirt: "#2a4d8f", skin: "#f3c89a" },
-    { seat: 1, eating: false, eatStart: 0, shirt: "#e53935", skin: "#e7b885" },
-    { seat: 2, eating: false, eatStart: 0, shirt: "#7ab84a", skin: "#d4a373" },
+    { seat: 0, eating: false, eatStart: 0,
+      skin: "#7a4a2a", shirt: "#2a6d4a", age: "adult",
+      hairColor: "#1a0a05", hairStyle: "curly",
+      accessories: ["glasses", "earrings"] },
+    { seat: 1, eating: false, eatStart: 0,
+      skin: "#d49a6a", shirt: "#e0588f", age: "adult",
+      hairColor: "#1a0a05", hairStyle: "long",
+      accessories: ["lipstick", "earrings"] },
+    { seat: 2, eating: false, eatStart: 0,
+      skin: "#e7b885", shirt: "#e8c440", age: "child",
+      hairColor: "#5a3a1a", hairStyle: "cap",
+      accessories: [] },
   ];
 
   // ============================================================
@@ -2106,7 +2294,7 @@
       const dy = G.tableY - 16;
       const d = STATE.diners[i];
       const eatPhase = d.eating ? (now - d.eatStart) / 1000 : 0;
-      drawDiner(rCtx, dx, dy, 0.72, d.shirt, d.skin, d.eating, eatPhase);
+      drawDiner(rCtx, dx, dy, 0.85, d, d.eating, eatPhase);
       if (d.eating && (now - d.eatStart) > 2500) d.eating = false;
     }
 
@@ -2172,10 +2360,10 @@
     $("nowEyebrow").textContent = `· NOW DEPOSITING · ${formatDate(event.date).toUpperCase()} ·`;
     $("nextUp") && ($("nextUp").textContent = EVENTS[STATE.idx % EVENTS.length].label);
 
-    // counters
-    $("cRemaining").textContent = fmt(EVENTS.length - (STATE.history.length + 1));
+    // Update impact metrics — each dump degrades the country
+    tickImpacts();
 
-    // Begin the in-flight animation: shit drops from toilet to chamber, then chamber → catapult → tank
+    // Begin the in-flight animation
     runShitJourney(event);
     refreshAllRowsHighlight();
     // ticker
@@ -2232,7 +2420,6 @@
       scale: rand(0.65, 0.95),
     });
     STATE.inTank = STATE.floating.length;
-    $("cDumped").textContent = fmt(STATE.inTank);
     // splash bubbles
     for (let i = 0; i < 6; i++) {
       STATE.bubbles.push({
@@ -2272,7 +2459,6 @@
         STATE.diners[d.slot].eating = true;
         STATE.diners[d.slot].eatStart = now;
         STATE.fed++;
-        $("cFed").textContent = fmt(STATE.fed);
       }
     }
   }
@@ -2438,6 +2624,30 @@
     spawnDeposit(event);
   }
 
+  // === IMPACT METRICS — climb/drop with each dump ===
+  function tickImpacts() {
+    const I = STATE.impacts;
+    // ICE deportations: relentless climb (+200 to +500 per dump)
+    I.ice += Math.floor(rand(200, 500));
+    // NASDAQ: mostly down, occasional small bounce
+    I.nasdaq += rand(-110, 30);
+    if (I.nasdaq < 9000) I.nasdaq = 9000; // floor
+    // Homeless: steady climb (+80 to +220 per dump)
+    I.homeless += Math.floor(rand(80, 220));
+    // Wars: stays same usually, occasional escalation
+    if (Math.random() < 0.04) I.wars += 1;
+
+    const ce = $("cICE"), cn = $("cNasdaq"), ch = $("cHomeless"), cw = $("cWars");
+    if (ce) { ce.textContent = fmt(I.ice);         flashNum(ce); }
+    if (cn) { cn.textContent = fmt(I.nasdaq);      flashNum(cn); }
+    if (ch) { ch.textContent = fmt(I.homeless);    flashNum(ch); }
+    if (cw) { cw.textContent = fmt(I.wars);        flashNum(cw); }
+  }
+  function flashNum(el) {
+    el.classList.add("flash");
+    setTimeout(() => el.classList.remove("flash"), 400);
+  }
+
   // ============================================================
   //  RENDER LOOP
   // ============================================================
@@ -2458,6 +2668,12 @@
     buildAllList();
     buildComingList();
     buildTickerStrip();
+    // seed impact metric displays
+    const I = STATE.impacts;
+    $("cICE").textContent       = fmt(I.ice);
+    $("cNasdaq").textContent    = fmt(I.nasdaq);
+    $("cHomeless").textContent  = fmt(I.homeless);
+    $("cWars").textContent      = fmt(I.wars);
     STATE.lastDrop = performance.now() - CADENCE_MS + 1500; // first deposit in 1.5s
     cadenceTimer = setTimeout(() => {
       tick();
