@@ -1827,7 +1827,12 @@
 
     // columns (left and right)
     drawColumn(ctx, w*0.06, wallTop - 12, wallBottom + 4 - (wallTop - 12));
-    drawColumn(ctx, w*0.94, wallTop - 12, wallBottom + 4 - (wallTop - 12));
+    // Right column: gap aligned with the projectile's flight path so
+    // the catapulted turd has a clean opening to fly through
+    const rightColH = wallBottom + 4 - (wallTop - 12);
+    const gapY = wallTop + (wallBottom - wallTop) * 0.30;
+    const gapH = 36;
+    drawColumn(ctx, w*0.94, wallTop - 12, rightColH, gapY, gapH);
 
     // floor (parquet)
     ctx.fillStyle = "rgba(60, 40, 20, 0.35)";
@@ -1861,24 +1866,54 @@
     return { wallTop, wallBottom };
   }
 
-  function drawColumn(ctx, x, y, h) {
+  // gapY / gapH optional — leave an opening in the shaft so projectiles
+  // can pass through this column without intersecting it visually
+  function drawColumn(ctx, x, y, h, gapY, gapH) {
     ctx.fillStyle = "rgba(245, 240, 220, 0.6)";
     ctx.strokeStyle = "rgba(180, 160, 130, 0.35)";
     ctx.lineWidth = 1;
     // capital
     ctx.fillRect(x - 16, y, 32, 10);
     ctx.fillRect(x - 14, y + 10, 28, 6);
-    // shaft
-    ctx.fillRect(x - 10, y + 16, 20, h - 32);
+
+    const shaftTop = y + 16;
+    const shaftBot = y + h - 16;
+    const hasGap = gapY != null && gapH != null
+                && gapY > shaftTop + 2 && (gapY + gapH) < shaftBot - 2;
+
+    if (hasGap) {
+      // shaft split into two segments around the gap
+      ctx.fillRect(x - 10, shaftTop, 20, gapY - shaftTop);
+      ctx.fillRect(x - 10, gapY + gapH, 20, shaftBot - (gapY + gapH));
+      // dark rough edges at the gap (looks like a broken/blasted opening)
+      ctx.fillStyle = "rgba(20, 10, 5, 0.7)";
+      ctx.fillRect(x - 11, gapY - 2, 22, 3);
+      ctx.fillRect(x - 11, gapY + gapH - 1, 22, 3);
+      // small rubble chunks
+      ctx.fillStyle = "rgba(160, 140, 110, 0.65)";
+      ctx.fillRect(x - 10, gapY + 1, 4, 2);
+      ctx.fillRect(x + 6, gapY + gapH - 3, 4, 2);
+      ctx.fillRect(x - 3, gapY + gapH - 4, 3, 3);
+    } else {
+      ctx.fillRect(x - 10, shaftTop, 20, h - 32);
+    }
+
     // base
     ctx.fillRect(x - 14, y + h - 16, 28, 6);
     ctx.fillRect(x - 16, y + h - 10, 32, 10);
-    // fluting
+    // fluting (split around gap when present)
     ctx.strokeStyle = "rgba(140, 130, 110, 0.3)";
     for (let i = -2; i <= 2; i++) {
       ctx.beginPath();
-      ctx.moveTo(x + i*4, y + 18);
-      ctx.lineTo(x + i*4, y + h - 18);
+      if (hasGap) {
+        ctx.moveTo(x + i*4, y + 18);
+        ctx.lineTo(x + i*4, gapY - 1);
+        ctx.moveTo(x + i*4, gapY + gapH + 1);
+        ctx.lineTo(x + i*4, y + h - 18);
+      } else {
+        ctx.moveTo(x + i*4, y + 18);
+        ctx.lineTo(x + i*4, y + h - 18);
+      }
       ctx.stroke();
     }
   }
