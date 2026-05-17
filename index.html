@@ -1827,11 +1827,16 @@
 
     // columns (left and right)
     drawColumn(ctx, w*0.06, wallTop - 12, wallBottom + 4 - (wallTop - 12));
-    // Right column: gap aligned with the projectile's flight path so
-    // the catapulted turd has a clean opening to fly through
+    // Right column: gap aligned with the projectile's actual trajectory
+    // (derived from the catapult start + tank end + bezier apex, sampled
+    // at t≈0.16 where the arc crosses x = mW * 0.94)
     const rightColH = wallBottom + 4 - (wallTop - 12);
-    const gapY = wallTop + (wallBottom - wallTop) * 0.30;
-    const gapH = 36;
+    let gapY = null, gapH = null;
+    if (!(typeof isStacked === 'function' && isStacked())) {
+      const projectileY = clamp(h * 0.76 - 168, wallTop + 40, wallBottom - 90);
+      gapH = 70;
+      gapY = projectileY - 30; // projectile passes ~10px below gap top
+    }
     drawColumn(ctx, w*0.94, wallTop - 12, rightColH, gapY, gapH);
 
     // floor (parquet)
@@ -3806,11 +3811,11 @@
     flight: 1100,   // turd arcs across to tank
   };
 
-  // === TURD TRANSIT TIMING ===
+  // === TURD TRANSIT TIMING (slowed for visibility) ===
   const TRANSIT = {
-    in_toilet: 280,   // sits briefly in bowl
-    in_tube:   700,   // flows through tube
-    on_ramp:   320,   // slides down ramp into cup
+    in_toilet: 400,   // sits in bowl
+    in_tube:   1300,  // flows through tube (slowest leg, fully visible)
+    on_ramp:   500,   // slides down ramp into cup
   };
   const TRANSIT_TOTAL = TRANSIT.in_toilet + TRANSIT.in_tube + TRANSIT.on_ramp;
 
